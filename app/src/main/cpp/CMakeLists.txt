@@ -24,13 +24,18 @@ add_library( # Sets the name of the library.
 # default, you only need to specify the name of the public NDK library
 # you want to add. CMake verifies that the library exists before
 # completing its build.
+set(OBOE_DIR ~/oboe)
+include_directories (${OBOE_DIR}/include)
 
 find_library( # Sets the name of the path variable.
               log-lib
 
               # Specifies the name of the NDK library that
               # you want CMake to locate.
-              log )
+              log
+
+             oboe
+            )
 
 # Specifies libraries CMake should link to your target library. You
 # can link multiple libraries, such as libraries you define in this
