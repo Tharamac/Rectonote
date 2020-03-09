@@ -10,10 +10,11 @@
     <Button
         android:id="@+id/btnNewIdea"
         style="@style/Widget.AppCompat.Button.Borderless.Colored"
+
         android:layout_width="105dp"
         android:layout_height="104dp"
         android:background="#706060"
-
+        android:onClick="addIdea"
         android:text="+"
         android:textSize="65sp"
         app:layout_constraintBottom_toBottomOf="parent"

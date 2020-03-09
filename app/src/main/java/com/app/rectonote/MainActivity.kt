@@ -13,17 +13,17 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        findViewById<Button>(R.id.btnNewIdea).setOnClickListener(addIdea)
+
         // Example of a call to a native method
         //sample_text.text = stringFromJNI()
     }
 
-    private val addIdea = View.OnClickListener(){
-        fun onClick(view: View) {
-            val intent = Intent(this, AddNewIdea::class.java).apply {}
-            startActivity(intent)
-        }
+
+    fun addIdea(view: View) {
+        val intent = Intent(this, AddNewIdea::class.java)
+        startActivity(intent)
     }
+
 
     /**
      * A native method that is implemented by the 'native-lib' native library,
