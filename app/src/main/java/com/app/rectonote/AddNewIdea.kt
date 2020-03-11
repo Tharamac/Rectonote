@@ -40,20 +40,21 @@ class AddNewIdea : AppCompatActivity() {
     private var centisecs = 0
 
 
-    private var permissionToRecordAccepted = false
+
     private var requiredPermissions: Array<String> = arrayOf(
         Manifest.permission.RECORD_AUDIO,
         Manifest.permission.READ_EXTERNAL_STORAGE,
         Manifest.permission.WRITE_EXTERNAL_STORAGE
     )
-
+    //check if android have permission
     fun hasPermissions(context: Context, permissions: Array<String>): Boolean = permissions.all {
         ActivityCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED
     }
+    /*
     fun checkDeniedPermission(context: Context, permissions: Array<String>): List<String> = permissions.filterNot {
         ActivityCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED
     }
-
+    */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_new_idea)
@@ -219,30 +220,23 @@ class AddNewIdea : AppCompatActivity() {
             recorder!!.release()
             recorder = null
             recordingThread = null
-           /*
+
             val f1 = File("/sdcard/voice16bit.pcm") // The location of your PCM file
             val f2 = File("/sdcard/voice16bit.wav") // The location where you want your WAV file
             try {
                 rawToWave(f1, f2)
             } catch (e: IOException) {
                 e.printStackTrace()
-            }*/
+            }
         }
     }
-/*
+
     @Throws(IOException::class)
     private fun rawToWave(rawFile: File, waveFile: File) {
-        val rawData = ByteArray(rawFile.length());
-        var input: DataInputStream? = null
+        val rawData = rawFile.readBytes();
+        var output:DataOutputStream ?= null
         try {
-            input = DataInputStream(FileInputStream(rawFile))
-            input.read(rawData)
-        } finally {
-            input?.close()
-        }
-        var output: DataOutputStream? = null
-        try {
-            output = DataOutputStream(FileOutputStream(waveFile))
+            output = DataOutputStream(waveFile.outputStream())
             // WAVE header
             // see http://ccrma.stanford.edu/courses/422/projects/WaveFormat/
             writeString(output, "RIFF") // chunk id
@@ -265,35 +259,12 @@ class AddNewIdea : AppCompatActivity() {
             for (s in shorts) {
                 bytes.putShort(s)
             }
-            output.write(fullyReadFileToBytes(rawFile))
+            output.write(rawFile.readBytes())
         } finally {
             output?.close()
         }
     }
 
-    @Throws(IOException::class)
-    fun fullyReadFileToBytes(f: File): ByteArray? {
-        val size = f.length() as Int
-        val bytes = ByteArray(size)
-        val tmpBuff = ByteArray(size)
-        val fis = FileInputStream(f)
-        try {
-            var read: Int = fis.read(bytes, 0, size)
-            if (read < size) {
-                var remain = size - read
-                while (remain > 0) {
-                    read = fis.read(tmpBuff, 0, remain)
-                    System.arraycopy(tmpBuff, 0, bytes, size - remain, read)
-                    remain -= read
-                }
-            }
-        } catch (e: IOException) {
-            throw e
-        } finally {
-            fis.close()
-        }
-        return bytes
-    }
 
     @Throws(IOException::class)
     private fun writeInt(output: DataOutputStream?, value: Int) {
@@ -315,6 +286,6 @@ class AddNewIdea : AppCompatActivity() {
             output?.write(element.toInt())
         }
     }
-*/
+
 
 }
