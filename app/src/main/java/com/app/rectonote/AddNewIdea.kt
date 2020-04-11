@@ -1,6 +1,7 @@
 package com.app.rectonote
 
 import android.Manifest
+import android.app.AlertDialog
 import android.content.Context
 import android.content.pm.PackageManager
 import android.media.AudioFormat
@@ -66,13 +67,19 @@ class AddNewIdea : AppCompatActivity() {
         btnRecord.setOnClickListener(pressPlay)
         btnStop.setOnClickListener(pressStop)
         startTimer()
-        println(filesDir)
-
         if (!hasPermissions(this, requiredPermissions)) {
                 ActivityCompat.requestPermissions(this, requiredPermissions, PERMISSION_ALL)
         }
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Remember")
+        builder.setMessage("1. Try to record on environment as quiet as possible to perform best result.\n\n" +
+                "2. Please leave silent at least one seconds to let the app record your environment.")
+        builder.setPositiveButton("OK"){ _, _ ->
+            // Do something when user press the positive button
+        }
+        val dialog: AlertDialog = builder.create()
+        dialog.show()
     }
-
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<String>,
@@ -117,7 +124,7 @@ class AddNewIdea : AppCompatActivity() {
         running = false;
         stopRecording()
     }
-
+    //this function start a stopwatch
     private fun startTimer(){
         val handler = Handler()
         println("Start")
@@ -186,8 +193,7 @@ class AddNewIdea : AppCompatActivity() {
     }
     private fun writeAudioDataToFile() {
         val filePath = "/sdcard/voice16bit.pcm"
-        // val filePath = "${Environment.getDataDirectory()}/voice16bit.pcm"
-        println(filePath)
+        // val filePath = "${Environment.getDataDirectory()}/voice16bit.pcm
         var sData = ShortArray(bufferElements2Rec)
 
         var outputStream: FileOutputStream ?= null
