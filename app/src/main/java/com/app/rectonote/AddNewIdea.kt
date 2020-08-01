@@ -10,9 +10,7 @@ import android.media.MediaRecorder
 import android.os.Bundle
 import android.os.Handler
 import android.view.View
-import android.widget.Button
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import java.io.*
@@ -79,7 +77,21 @@ class AddNewIdea : AppCompatActivity() {
         }
         val dialog: AlertDialog = builder.create()
         dialog.show()
+
     }
+
+    companion object {
+        /*
+         * We use a static class initializer to allow the native code to cache some
+         * field offsets. This native function looks up and caches interesting
+         * class/field/method IDs. Throws on failure.
+         */
+        init {
+
+        }
+    }
+    private external fun dsp(mode: Char)
+
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<String>,
@@ -233,6 +245,14 @@ class AddNewIdea : AppCompatActivity() {
                 rawToWave(f1, f2)
             } catch (e: IOException) {
                 e.printStackTrace()
+            }
+            val modeSelector  = findViewById<RadioGroup>(R.id.convertMode)
+            val selectedID = modeSelector.checkedRadioButtonId;
+            val mode =  findViewById<RadioButton>(selectedID)
+            if(mode.text == "Voice to Melody"){
+                dsp('m');
+            }else if (mode.text == "Voice to Chord"){
+                dsp('c');
             }
         }
     }

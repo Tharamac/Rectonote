@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#424242"
     tools:context=".AddNewIdea">
 
     <Button
@@ -38,23 +39,59 @@
         android:id="@+id/txtTimer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:fontFamily="@font/josefin_sans_semibold"
         android:text="0.00.00"
+        android:textColor="#D5FF00"
         android:textSize="85dp"
         app:layout_constraintBottom_toTopOf="@+id/btnRecord"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txtStatus"
-        app:layout_constraintVertical_bias="0.172" />
+        app:layout_constraintVertical_bias="0.177" />
 
     <TextView
         android:id="@+id/txtStatus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:fontFamily="@font/josefin_sans_semibold"
         android:text="@string/mic_ready"
+        android:textColor="#D5FF00"
         android:textSize="30dp"
         app:layout_constraintBottom_toTopOf="@+id/btnRecord"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.411" />
+
+    <RadioGroup
+        android:id="@+id/convertMode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="75dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@+id/btnRecord"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtTimer">
+
+        <RadioButton
+            android:id="@+id/radbtnMelody"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:buttonTint="#D5FF00"
+            android:checked="true"
+            android:fontFamily="@font/josefin_sans_semibold"
+            android:text="Voice to Melody"
+            android:textColor="#D5FF00" />
+
+        <RadioButton
+            android:id="@+id/radbtnChord"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:buttonTint="#D5FF00"
+            android:fontFamily="@font/josefin_sans_semibold"
+            android:text="Voice to Chord"
+            android:textColor="#D5FF00" />
+    </RadioGroup>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
