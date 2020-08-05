@@ -2,30 +2,27 @@ package com.app.rectonote
 
 import android.content.Context
 import androidx.room.*
+import java.util.*
 
 @Entity(tableName = "projects")
 data class ProjectEntity(
     @PrimaryKey(autoGenerate = true)
-    val project_id: Int,
+    val projectId: Int,
     @ColumnInfo(name = "project_name")
     val name: String,
     @ColumnInfo(name = "project_tempo")
     val tempo: Int,
     @ColumnInfo(name = "project_key")
     val key: Int, // 0 = key C to 11 = key B
-    var num_of_tracks : Int
+    @ColumnInfo(name = "date_modified")
+    var dateModified: Date
+
 )
 
-@Entity(tableName = "draft_tracks",
-        foreignKeys = arrayOf(ForeignKey(entity = ProjectEntity::class,
-            parentColumns = arrayOf("project_id"),
-            childColumns = arrayOf("project_id"),
-            onDelete = ForeignKey.CASCADE,
-            onUpdate = ForeignKey.CASCADE
-            )))
+@Entity(tableName = "draft_tracks")
 data class DraftTracksEntity(
     @PrimaryKey(autoGenerate = true)
-    val tracks_id: Int,
+    val tracksId: Int,
     @ColumnInfo(name = "tracks_name")
     val name: String,
     @ColumnInfo(name = "tracks_tempo")
@@ -33,9 +30,21 @@ data class DraftTracksEntity(
     @ColumnInfo(name = "tracks_key")
     val key: Int, // 0 = key C to 11 = key B
     @ColumnInfo(name = "project_id")
-    val project_id: Int,
+    val projectId: Int,
     @ColumnInfo(name = "tracks_number")
-    var track_no: Int
+    var trackNo: Int,
+    @ColumnInfo(name = "date_modified")
+    var dateModified: Date
+)
+
+data class DraftTracksInProject(
+    @Embedded val project: ProjectEntity,
+    var numOfTracks : Int,
+    @Relation(
+        parentColumn = "projectId",
+        entityColumn = "project_id"
+    )
+    val tracks : List<DraftTracksEntity>
 )
 
 @Dao
@@ -47,7 +56,20 @@ interface ProjectDao{
 interface DraftTracksDao{
 
 }
+class DateConverters {
+    @TypeConverter
+    fun fromTimestamp(value: Long?): Date? {
+        return value?.let { Date(it) }
+    }
+
+    @TypeConverter
+    fun dateToTimestamp(date: Date?): Long? {
+        return date?.time?.toLong()
+    }
+}
+
 @Database(entities = arrayOf(ProjectEntity::class, DraftTracksEntity::class), version = 1)
+@TypeConverters(DateConverters::class)
 abstract class projectsDatabase : RoomDatabase(){
     abstract fun projectDAO() : ProjectDao
     abstract fun drafttracksDAO() : DraftTracksDao
