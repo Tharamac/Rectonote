@@ -49,7 +49,11 @@ data class DraftTracksInProject(
 
 @Dao
 interface ProjectDao{
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun newProject(vararg project: ProjectEntity)
 
+    @Query("SELECT * FROM projects ORDER BY date_modified DESC")
+    suspend fun loadAllProjects(): Array<ProjectEntity>
 }
 
 @Dao
@@ -70,15 +74,15 @@ class DateConverters {
 
 @Database(entities = arrayOf(ProjectEntity::class, DraftTracksEntity::class), version = 1)
 @TypeConverters(DateConverters::class)
-abstract class projectsDatabase : RoomDatabase(){
+abstract class ProjectsDatabase : RoomDatabase(){
     abstract fun projectDAO() : ProjectDao
     abstract fun drafttracksDAO() : DraftTracksDao
 
     companion object{
-        private var INSTANCE: projectsDatabase ?= null
-        fun getInstance(context: Context): projectsDatabase{
+        private var INSTANCE: ProjectsDatabase ?= null
+        fun getInstance(context: Context): ProjectsDatabase{
             if(INSTANCE == null)
-                INSTANCE = Room.databaseBuilder(context, projectsDatabase::class.java, "projectsDatabase.db").build()
+                INSTANCE = Room.databaseBuilder(context, ProjectsDatabase::class.java, "projectsDatabase.db").build()
             return INSTANCE!!
         }
     }

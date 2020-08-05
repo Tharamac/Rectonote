@@ -9,10 +9,12 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
+    lateinit var projectsDatabase: ProjectsDatabase
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
+        projectsDatabase = ProjectsDatabase.getInstance(applicationContext);
 
         // Example of a call to a native method
         //sample_text.text = stringFromJNI()
