@@ -6,11 +6,23 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.coroutines.runBlocking
+import java.util.*
+
+enum class Key {
+    C, Db, D, Eb, E, F, Gb, G, Ab, A, Bb, B
+  //C, C#, D, D#, E, F, F#, G, G#, A, A#, B
+}
 
 class MainActivity : AppCompatActivity() {
 
     lateinit var projectsDatabase: ProjectsDatabase
-
+    var p1 = ProjectEntity(
+        name = "1",
+        tempo = 125,
+        dateModified = Date(),
+        key = Key.D
+    )
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -19,7 +31,6 @@ class MainActivity : AppCompatActivity() {
         // Example of a call to a native method
         //sample_text.text = stringFromJNI()
     }
-
 
     fun addIdea(view: View) {
         val intent = Intent(this, AddNewIdea::class.java)

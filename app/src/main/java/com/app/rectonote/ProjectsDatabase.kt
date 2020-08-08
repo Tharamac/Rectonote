@@ -4,16 +4,17 @@ import android.content.Context
 import androidx.room.*
 import java.util.*
 
+
 @Entity(tableName = "projects")
 data class ProjectEntity(
     @PrimaryKey(autoGenerate = true)
-    val projectId: Int,
+    val projectId: Int? = null,
     @ColumnInfo(name = "project_name")
     val name: String,
     @ColumnInfo(name = "project_tempo")
     val tempo: Int,
     @ColumnInfo(name = "project_key")
-    val key: Int, // 0 = key C to 11 = key B
+    val key: Key, // 0 = key C to 11 = key B
     @ColumnInfo(name = "date_modified")
     var dateModified: Date
 
@@ -22,13 +23,13 @@ data class ProjectEntity(
 @Entity(tableName = "draft_tracks")
 data class DraftTracksEntity(
     @PrimaryKey(autoGenerate = true)
-    val tracksId: Int,
+    val tracksId: Int? = null,
     @ColumnInfo(name = "tracks_name")
     val name: String,
     @ColumnInfo(name = "tracks_tempo")
     val tempo: Int,
     @ColumnInfo(name = "tracks_key")
-    val key: Int, // 0 = key C to 11 = key B
+    val key: Key, // 0 = key C to 11 = key B
     @ColumnInfo(name = "project_id")
     val projectId: Int,
     @ColumnInfo(name = "tracks_number")
