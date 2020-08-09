@@ -8,7 +8,7 @@ import java.util.*
 
 
 @Database(entities = arrayOf(ProjectEntity::class, DraftTrackEntity::class), version = 1)
-@TypeConverters(DateConverters::class)
+@TypeConverters(DateConverters::class, KeyConverters::class)
 abstract class ProjectsDatabase : RoomDatabase(){
     abstract fun projectDAO() : ProjectDao
     abstract fun drafttracksDAO() : DraftTrackDao

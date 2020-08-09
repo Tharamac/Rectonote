@@ -63,6 +63,7 @@ dependencies {
     implementation 'androidx.navigation:navigation-ui-ktx:2.0.0'
     implementation 'com.google.android.material:material:1.0.0'
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0"
+    implementation 'androidx.recyclerview:recyclerview:1.0.0'
     kapt "androidx.room:room-compiler:$room_version" // For Kotlin use kapt instead of annotationProcessor
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
