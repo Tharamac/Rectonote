@@ -5,20 +5,12 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import com.app.rectonote.database.Key
 import com.app.rectonote.database.ProjectDatabaseViewModel
 import com.app.rectonote.database.ProjectEntity
 import com.app.rectonote.database.ProjectsDatabase
 import java.util.*
 
-enum class Key {
-    C, Db, D, Eb, E, F, Gb, G, Ab, A, Bb, B;
-
-    //C, C#, D, D#, E, F, F#, G, G#, A, A#, B
-    companion object{
-        fun fromInt(value: Int) = Key.values().first { it.ordinal == value }
-    }
-
-}
 
 
 class MainActivity : AppCompatActivity() {
@@ -29,7 +21,7 @@ class MainActivity : AppCompatActivity() {
         name = "1",
         tempo = 125,
         dateModified = Date(),
-        key = Key.D
+        key = Key.D.label
     )
     lateinit var dbView: ProjectDatabaseViewModel
 

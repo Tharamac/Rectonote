@@ -3,7 +3,7 @@ package com.app.rectonote.database
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.app.rectonote.Key
+
 import java.util.*
 
 @Entity(tableName = "projects")
@@ -15,7 +15,7 @@ data class ProjectEntity(
     @ColumnInfo(name = "project_tempo")
     val tempo: Int,
     @ColumnInfo(name = "project_key")
-    val key: Key, // 0 = key C to 11 = key B
+    val key: String,
     @ColumnInfo(name = "date_modified")
     var dateModified: Date
 
