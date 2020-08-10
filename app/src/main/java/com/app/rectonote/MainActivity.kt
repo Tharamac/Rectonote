@@ -23,29 +23,32 @@ enum class Key {
 
 class MainActivity : AppCompatActivity() {
 
-    //lateinit var projectsDatabase: ProjectsDatabase
+    lateinit var projectsDatabase: ProjectsDatabase
+
     var p1 = ProjectEntity(
         name = "1",
         tempo = 125,
         dateModified = Date(),
         key = Key.D
     )
-    //lateinit val dbView: ProjectDatabaseViewModel
+    lateinit var dbView: ProjectDatabaseViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        val projectsDatabase = ProjectsDatabase.getInstance(applicationContext);
-        val dbView = ProjectDatabaseViewModel(projectsDatabase.projectDAO())
-        dbView.newProjects(p1)
-        dbView.loadAllProjects().observe(this, androidx.lifecycle.Observer {
-            Log.d("DB", it.toString())
-        })
+        projectsDatabase = ProjectsDatabase.getInstance(applicationContext);
+        dbView = ProjectDatabaseViewModel(projectsDatabase.projectDAO())
+
+
         // Example of a call to a native method
         //sample_text.text = stringFromJNI()
     }
 
     fun addIdea(view: View) {
+       // dbView.newProjects(p1)
+        dbView.loadAllProjects().observe(this, androidx.lifecycle.Observer {
+            Log.d("DB", it[0].toString())
+        })
         val intent = Intent(this, AddNewIdea::class.java)
         startActivity(intent)
     }

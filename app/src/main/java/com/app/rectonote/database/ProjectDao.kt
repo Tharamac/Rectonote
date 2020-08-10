@@ -8,7 +8,7 @@ interface ProjectDao{
     suspend fun newProject(vararg project: ProjectEntity)
 
     @Query("SELECT * FROM projects ORDER BY date_modified DESC")
-    suspend fun loadAllProjects(): Array<ProjectEntity>
+    suspend fun loadAllProjects(): List<ProjectEntity>
 
     @Delete
     suspend fun deleteProject(project: ProjectEntity)

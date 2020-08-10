@@ -9,8 +9,8 @@ class ProjectDatabaseViewModel(
 ) : ViewModel(){
 
 
-    fun loadAllProjects(): LiveData<Array<ProjectEntity>> {
-        val result = MutableLiveData<Array<ProjectEntity>>()
+    fun loadAllProjects(): LiveData<List<ProjectEntity>> {
+        val result = MutableLiveData<List<ProjectEntity>>()
         viewModelScope.launch {
             val repo = database.loadAllProjects()
             result.postValue(repo)
