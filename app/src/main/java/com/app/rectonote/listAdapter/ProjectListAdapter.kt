@@ -5,15 +5,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.app.rectonote.R
 import com.app.rectonote.database.ProjectEntity
 
-class projectListAdapter(
+class ProjectListAdapter(
     private val projectDataset : List<ProjectEntity>
-) : RecyclerView.Adapter<projectListAdapter.projectViewHolder>(){
+) : RecyclerView.Adapter<ProjectListAdapter.projectViewHolder>(){
 
     class projectViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
         val projectName = itemView.findViewById<TextView>(R.id.project_name)
