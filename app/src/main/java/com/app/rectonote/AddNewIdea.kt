@@ -19,18 +19,24 @@ import java.nio.ByteOrder
 import java.util.*
 
 
-private const val LOG_TAG = "AudioRecordTest"
-private const val PERMISSION_ALL = 1
+
 class AddNewIdea : AppCompatActivity() {
     //constant
     private val REC_SAMPLERATE:Int = 44100
     private val REC_CHANNELS = AudioFormat.CHANNEL_IN_MONO
     private val REC_AUDIO_ENCODING = AudioFormat.ENCODING_PCM_16BIT
+    private val LOG_TAG = "AudioRecordTest"
+    private val PERMISSION_ALL = 1
 
     private lateinit var btnRecord:Button
     private lateinit var btnStop:Button
     private lateinit var txtStatus:TextView
     private lateinit var txtTimer:TextView
+
+    private lateinit var dialog: AlertDialog
+    private lateinit var builder: AlertDialog.Builder
+
+
 
     private var isRecording = false
     private var recorder:AudioRecord? = null
@@ -68,16 +74,25 @@ class AddNewIdea : AppCompatActivity() {
         if (!hasPermissions(this, requiredPermissions)) {
                 ActivityCompat.requestPermissions(this, requiredPermissions, PERMISSION_ALL)
         }
-        val builder = AlertDialog.Builder(this)
+        showDialog()
+        builder = AlertDialog.Builder(this)
+
+
+
+    }
+    override fun onPause() {
+        super.onPause()
+        dialog.dismiss()
+    }
+    fun showDialog(){
+        builder = AlertDialog.Builder(this)
         builder.setTitle("Remember")
-        builder.setMessage("1. Try to record on environment as quiet as possible to perform best result.\n\n" +
-                "2. Please leave silent at least one seconds to let the app record your environment.")
+        builder.setMessage("1. Try to record on environment as quiet as possible to perform best result.\n\n" + "2. Please leave silence at least one seconds to let the app record your environment.")
         builder.setPositiveButton("OK"){ _, _ ->
             // Do something when user press the positive button
         }
-        val dialog: AlertDialog = builder.create()
+        dialog = builder.create()
         dialog.show()
-
     }
 
     companion object {
@@ -92,6 +107,8 @@ class AddNewIdea : AppCompatActivity() {
     }
     private external fun dsp(mode: Char)
 
+
+
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<String>,
@@ -103,6 +120,7 @@ class AddNewIdea : AppCompatActivity() {
           PERMISSION_ALL -> {
                if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
                    // permission was granted, yay! Do the
+
                    // contacts-related task you need to do.
                } else {
                    Toast.makeText(this,"Permission Denied",Toast.LENGTH_LONG).show()

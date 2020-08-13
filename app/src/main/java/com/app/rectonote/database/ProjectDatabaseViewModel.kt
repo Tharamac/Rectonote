@@ -18,8 +18,11 @@ class ProjectDatabaseViewModel(
         return result
     }
 
-    fun newProjects(project: ProjectEntity) = viewModelScope.launch {
-        database.newProject(project)
+    fun newProjects(vararg project: ProjectEntity) = viewModelScope.launch {
+        project.forEach {
+           database.newProject(it)
+       }
+
     }
 
     fun deleteProject(project: ProjectEntity) = viewModelScope.launch {

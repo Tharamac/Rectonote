@@ -26,12 +26,18 @@ class ProjectListFragment : Fragment() {
         dateModified = Date(),
         key = Key.D.label
     )
+    var p2 = ProjectEntity(
+        name = "Tomorrow",
+        tempo = 75,
+        dateModified = Date(),
+        key = Key.Abm.label
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         projectsDatabase = ProjectsDatabase.getInstance(activity!!.applicationContext); //??
         dbView = ProjectDatabaseViewModel(projectsDatabase.projectDAO())
-        dbView.newProjects(p1)
+        //dbView.newProjects(p1, p2)
 
     }
 

@@ -3,6 +3,7 @@ package com.app.rectonote.database
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import java.io.Serializable
 
 import java.util.*
 
@@ -19,4 +20,4 @@ data class ProjectEntity(
     @ColumnInfo(name = "date_modified")
     var dateModified: Date
 
-)
+): Serializable
