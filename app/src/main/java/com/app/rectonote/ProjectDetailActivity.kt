@@ -25,6 +25,7 @@ class ProjectDetailActivity : AppCompatActivity() {
             projectTempo.text = projectData.tempo.toString()
             projectKey.text = projectData.key
         }
+
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)

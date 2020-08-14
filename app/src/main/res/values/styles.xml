@@ -33,20 +33,21 @@
         <item name="colorControlNormal">@color/colorPrimary</item>
     </style>
 
-<!--    <style name="MyApp.ActionBarStyle" parent="@style/Widget.AppCompat.Light.ActionBar">-->
-<!--        <item name="elevation">0dp</item>-->
-<!--        &lt;!&ndash; style for actionBar title &ndash;&gt;-->
-<!--        <item name="titleTextStyle">@style/ActionBarTitleText</item>-->
-<!--     -->
-<!--        &lt;!&ndash; style for actionBar subtitle &ndash;&gt;-->
-<!--        <item name="subtitleTextStyle">@style/ActionBarSubtitleText</item>-->
+    <!--    <style name="MyApp.ActionBarStyle" parent="@style/Widget.AppCompat.Light.ActionBar">-->
+    <!--        <item name="elevation">0dp</item>-->
+    <!--        &lt;!&ndash; style for actionBar title &ndash;&gt;-->
+    <!--        <item name="titleTextStyle">@style/ActionBarTitleText</item>-->
+    <!--     -->
+    <!--        &lt;!&ndash; style for actionBar subtitle &ndash;&gt;-->
+    <!--        <item name="subtitleTextStyle">@style/ActionBarSubtitleText</item>-->
 
-<!--        &lt;!&ndash;-->
-<!--        the actionBarTheme doesn't use the colorControlNormal attribute-->
-<!--        <item name="colorControlNormal">@color/my_awesome_color</item>-->
-<!--         &ndash;&gt;-->
-<!--    </style>-->
+    <!--        &lt;!&ndash;-->
+    <!--        the actionBarTheme doesn't use the colorControlNormal attribute-->
+    <!--        <item name="colorControlNormal">@color/my_awesome_color</item>-->
+    <!--         &ndash;&gt;-->
+    <!--    </style>-->
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
     <style name="spinnerItemStyle" parent="android:Widget.TextView.SpinnerItem">
         <item name="fontFamily">@font/josefin_sans_bold</item>
         <item name="android:textSize">10pt</item>
@@ -61,4 +62,13 @@
         <item name="android:textAlignment">center</item>
         <item name="android:textColor">@color/colorPrimary</item>
     </style>
+
+    <style name="rectoNoteTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="rectoNoteTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="rectoNoteTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 </resources>

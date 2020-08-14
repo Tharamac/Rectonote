@@ -26,124 +26,234 @@
             android:layout_height="wrap_content" />
     </androidx.appcompat.widget.Toolbar>
 
-    <LinearLayout
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-
-
-        android:paddingTop="10dp"
-        android:paddingHorizontal="20dp">
-
-        <include layout="@layout/track_item"></include>
-
-        <EditText
-            android:layout_marginTop="20dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text=""
-            android:hint="Track Name"
-            android:textColorHint="#787878"
-            android:textSize="12pt"
-            android:textColor="@android:color/white">
-        </EditText>
-
-        <TextView
-            android:layout_marginTop="15dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text = "Track Data"
-            android:textAlignment="center"
-            android:textSize="10pt"
-            android:textColor="#dddddd"></TextView>
-<!--        <View-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="1dp"-->
-<!--            android:background="#dddddd" />-->
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_marginHorizontal="10dp"
-            android:gravity="center"
-            >
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+
+
+            android:paddingHorizontal="20dp"
+            android:paddingTop="10dp">
+
+            <include layout="@layout/item_track"></include>
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:hint="Track Name"
+                android:inputType="text"
+                android:maxLines="1"
+                android:text=""
+                android:textColor="@android:color/white"
+                android:textColorHint="#787878"
+                android:textSize="12pt"></EditText>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:text="Track Data"
+                android:textAlignment="center"
+                android:textColor="#dddddd"
+                android:textSize="9pt"></TextView>
+            <!--        <View-->
+            <!--            android:layout_width="match_parent"-->
+            <!--            android:layout_height="1dp"-->
+            <!--            android:background="#dddddd" />-->
+
             <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
 
-                android:background="@drawable/rectangle2"
-                android:gravity="center"
-                android:layout_marginHorizontal="5dp"
-                android:paddingVertical="5dp"
-                >
-                <TextView
-                    android:id = "@+id/project_tempo"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/josefin_sans_bold"
-                    android:textStyle="bold"
-                    android:text = "128"
-                    android:textFontWeight="1000"
-                    android:textAlignment="center"
-                    android:textSize ="18pt"
-
-                    android:textColor="@color/colorPrimary"
-                    >
-                </TextView>
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/josefin_sans_bold"
-                    android:textStyle="bold"
-                    android:textAlignment="center"
-                    android:textSize="8pt"
-                    android:textColor="@android:color/white"
-                    android:text = "beats per minute"></TextView>
-
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:orientation="vertical"
-
-                android:layout_marginHorizontal="5dp"
-                android:paddingVertical="5dp"
-                android:background="@drawable/rectangle2"
                 android:gravity="center">
-                <TextView
-                    android:id = "@+id/project_key"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/josefin_sans_bold"
-                    android:textStyle="bold"
-                    android:text = "C#m"
-                    android:textFontWeight="1000"
-                    android:textAlignment="center"
-                    android:textSize ="18pt"
-                    android:textColor="@color/colorPrimary"
-                    >
-                </TextView>
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/josefin_sans_bold"
-                    android:textStyle="bold"
-                    android:textAlignment="center"
-                    android:textSize="8pt"
-                    android:textColor="@android:color/white"
-                    android:text = "key"
-                    ></TextView>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginRight="5dp"
+                    android:layout_weight="1"
+
+                    android:background="@drawable/rectangle2"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:paddingVertical="3dp">
+
+                    <TextView
+                        android:id="@+id/project_tempo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/josefin_sans_bold"
+                        android:text="128"
+                        android:textAlignment="center"
+                        android:textColor="@color/colorPrimary"
+                        android:textFontWeight="1000"
+                        android:textSize="16pt"
+
+                        android:textStyle="bold"></TextView>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/josefin_sans_bold"
+                        android:text="beats per minute"
+                        android:textAlignment="center"
+                        android:textColor="@android:color/white"
+                        android:textSize="8pt"
+                        android:textStyle="bold"></TextView>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/rectangle2"
+
+
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:paddingVertical="5dp">
+
+                    <TextView
+                        android:id="@+id/project_key"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/josefin_sans_bold"
+                        android:text="C#m"
+                        android:textAlignment="center"
+                        android:textColor="@color/colorPrimary"
+                        android:textFontWeight="1000"
+                        android:textSize="16pt"
+                        android:textStyle="bold"></TextView>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/josefin_sans_bold"
+                        android:text="key"
+                        android:textAlignment="center"
+                        android:textColor="@android:color/white"
+                        android:textSize="8pt"
+                        android:textStyle="bold"></TextView>
+
+                </LinearLayout>
+
 
             </LinearLayout>
 
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25dp">
 
+                <LinearLayout
+                    android:id="@+id/add_existing_proj"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/text_select_project"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+
+                        android:text="Select Project"
+                        android:textAlignment="center"
+                        android:textColor="#dddddd"
+                        android:textSize="9pt"></TextView>
+
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/btnProjectSelector"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        app:cardBackgroundColor="#D40085">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:id="@+id/project_selected"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="9"
+                                android:paddingVertical="15dp"
+                                android:text="Walking To The Room"
+                                android:textAlignment="center"
+                                android:textColor="@android:color/white"
+                                android:textSize="10pt"></TextView>
+
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_vertical|end"
+                                android:layout_marginEnd="15dp"
+
+                                android:background="@android:color/transparent"
+                                app:srcCompat="@drawable/ic_baseline_edit_24" />
+                        </LinearLayout>
+
+                    </androidx.cardview.widget.CardView>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/add_new_proj"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <!-- TODO: Update blank fragment layout -->
+                    <TextView
+                        android:id="@+id/text_add_new_project"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+
+                        android:text="New Project"
+                        android:textAlignment="center"
+                        android:textColor="#dddddd"
+                        android:textSize="9pt"></TextView>
+
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:hint="Project Name"
+                        android:inputType="text"
+                        android:maxLines="1"
+                        android:text=""
+                        android:textColor="@android:color/white"
+                        android:textColorHint="#787878"
+                        android:textSize="12pt"></EditText>
+
+
+                </LinearLayout>
+
+
+            </FrameLayout>
 
         </LinearLayout>
 
-    </LinearLayout>
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fabtn_confirm"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_gravity="end|bottom"
+            android:clickable="true"
+            android:focusable="true"
+            app:backgroundTint="#D5FF00"
+            android:layout_marginEnd ="45dp"
+            android:layout_marginBottom="50dp"
+            app:srcCompat="@drawable/ic_baseline_done_24" />
+    </FrameLayout>
 
 </LinearLayout>

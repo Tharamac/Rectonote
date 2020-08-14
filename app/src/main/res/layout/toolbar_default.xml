@@ -3,8 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="?attr/actionBarSize"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/colorPrimary"
-    android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+    android:background="@color/colorPrimaryDark"
+    android:theme="@style/RectoNote.ActionBarTheme"
     app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 
     <LinearLayout
@@ -13,12 +13,13 @@
         >
 
         <TextView
+            android:id="@+id/toolbar_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@font/josefin_sans_bold"
-            android:text="55555"
+            android:text=""
             android:textSize="12pt"
-            android:layout_gravity="center">
+            android:layout_gravity="center_vertical|center">
 
         </TextView>
 

@@ -20,24 +20,11 @@ class ProjectListFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     lateinit var dbView: ProjectDatabaseViewModel
     lateinit var projectsDatabase: ProjectsDatabase
-    var p1 = ProjectEntity(
-        name = "1",
-        tempo = 125,
-        dateModified = Date(),
-        key = Key.D.label
-    )
-    var p2 = ProjectEntity(
-        name = "Tomorrow",
-        tempo = 75,
-        dateModified = Date(),
-        key = Key.Abm.label
-    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        projectsDatabase = ProjectsDatabase.getInstance(activity!!.applicationContext); //??
+        projectsDatabase = ProjectsDatabase.getInstance(requireActivity().applicationContext); //??
         dbView = ProjectDatabaseViewModel(projectsDatabase.projectDAO())
-        //dbView.newProjects(p1, p2)
 
     }
 

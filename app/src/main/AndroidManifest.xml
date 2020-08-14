@@ -14,11 +14,16 @@
         android:screenOrientation="portrait"
         android:supportsRtl="true"
         android:theme="@style/rectoNoteTheme">
-        <activity android:name=".AddTrackToProjectActivity"
-            android:parentActivityName=".MainActivity"></activity>
-        <activity android:name=".ProjectDetailActivity"
-            android:screenOrientation="nosensor"
-            android:parentActivityName=".MainActivity"/>
+        <activity android:name=".ProjectSelectActivity"
+            android:parentActivityName=".AddTrackToProjectActivity"></activity>
+
+        <activity
+            android:name=".AddTrackToProjectActivity"
+            android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".ProjectDetailActivity"
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="nosensor" />
         <activity
             android:name=".AddNewIdea"
             android:label="Add New Idea"

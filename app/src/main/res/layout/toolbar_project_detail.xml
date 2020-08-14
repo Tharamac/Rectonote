@@ -20,7 +20,7 @@
             android:fontFamily="@font/josefin_sans_bold"
             android:textSize="12pt"
             android:textColor="@android:color/white"
-            android:layout_gravity="center"
+            android:layout_gravity="center_vertical|center"
             >
 
         </TextView>
