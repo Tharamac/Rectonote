@@ -9,4 +9,8 @@
         <item>reply</item>
         <item>reply_all</item>
     </string-array>
+    <string-array name="draft_track_option">
+        <item>Add to New Project</item>
+        <item>Add to Existing Project</item>
+    </string-array>
 </resources>

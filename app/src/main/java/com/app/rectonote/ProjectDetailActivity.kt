@@ -1,5 +1,8 @@
 package com.app.rectonote
 
+import android.graphics.ColorFilter
+import android.graphics.PorterDuff
+import android.graphics.PorterDuffColorFilter
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -23,5 +26,8 @@ class ProjectDetailActivity : AppCompatActivity() {
             projectKey.text = projectData.key
         }
         setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
     }
+
 }

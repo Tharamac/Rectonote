@@ -6,4 +6,5 @@
     <color name="colorAccent">#617500</color>
     <color name="textColorPrimary">#D5FF00</color>
     <color name="windowBackground">#424242</color>
+    <color name="trackBaseColor">#590044</color>
 </resources>

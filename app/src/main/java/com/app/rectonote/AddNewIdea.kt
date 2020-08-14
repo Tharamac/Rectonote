@@ -3,6 +3,7 @@ package com.app.rectonote
 import android.Manifest
 import android.app.AlertDialog
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.media.AudioFormat
 import android.media.AudioRecord
@@ -32,6 +33,7 @@ class AddNewIdea : AppCompatActivity() {
     private lateinit var btnStop:Button
     private lateinit var txtStatus:TextView
     private lateinit var txtTimer:TextView
+    private lateinit var btnContinue: Button
 
     private lateinit var dialog: AlertDialog
     private lateinit var builder: AlertDialog.Builder
@@ -68,6 +70,8 @@ class AddNewIdea : AppCompatActivity() {
         txtStatus = findViewById<TextView>(R.id.txtStatus)
         txtTimer = findViewById<TextView>(R.id.txtTimer)
         txtStatus.text = "Mic Ready"
+        btnContinue = findViewById(R.id.btnContinue)
+        btnContinue.setOnClickListener(pressContinue)
         btnRecord.setOnClickListener(pressPlay)
         btnStop.setOnClickListener(pressStop)
         startTimer()
@@ -154,6 +158,12 @@ class AddNewIdea : AppCompatActivity() {
         running = false;
         stopRecording()
     }
+
+    private val pressContinue = View.OnClickListener{
+        val intent = Intent(this, AddTrackToProjectActivity::class.java)
+        startActivity(intent)
+    }
+
     //this function start a stopwatch
     private fun startTimer(){
         val handler = Handler()

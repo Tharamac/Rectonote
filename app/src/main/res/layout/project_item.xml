@@ -12,7 +12,6 @@
         android:layout_gravity="center"
         android:layout_marginHorizontal="12dp"
         android:layout_marginTop = "12dp"
-
         card_view:cardBackgroundColor="#BE0423"
         card_view:cardCornerRadius="8dp">
 

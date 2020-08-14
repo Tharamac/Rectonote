@@ -42,6 +42,7 @@
         android:fontFamily="@font/josefin_sans_semibold"
         android:text="0.00.00"
         android:textColor="#D5FF00"
+        android:textFontWeight="1000"
         android:textSize="85dp"
         app:layout_constraintBottom_toTopOf="@+id/btnRecord"
         app:layout_constraintEnd_toEndOf="parent"
@@ -53,7 +54,7 @@
         android:id="@+id/txtStatus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/josefin_sans_semibold"
+        android:fontFamily="@font/josefin_sans_bold"
         android:text="@string/mic_ready"
         android:textColor="#D5FF00"
         android:textSize="30dp"
@@ -93,5 +94,18 @@
             android:text="Voice to Chord"
             android:textColor="#D5FF00" />
     </RadioGroup>
+
+    <Button
+        android:id="@+id/btnContinue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp"
+        android:text="Continue"
+        android:textSize="15pt"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnRecord"
+        app:layout_constraintVertical_bias="0.0" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

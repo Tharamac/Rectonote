@@ -1,6 +1,7 @@
 <resources>
 
     <style name="rectoNoteTheme" parent="MyMaterialTheme.Base">
+        <item name="fontFamily">@font/josefin_sans_bold</item>
 
     </style>
 
@@ -27,6 +28,37 @@
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    <style name="RectoNote.ActionBarTheme" parent="@style/ThemeOverlay.AppCompat.ActionBar">
+        <!-- THIS is where you can color the arrow! -->
+        <item name="colorControlNormal">@color/colorPrimary</item>
+    </style>
 
+<!--    <style name="MyApp.ActionBarStyle" parent="@style/Widget.AppCompat.Light.ActionBar">-->
+<!--        <item name="elevation">0dp</item>-->
+<!--        &lt;!&ndash; style for actionBar title &ndash;&gt;-->
+<!--        <item name="titleTextStyle">@style/ActionBarTitleText</item>-->
+<!--     -->
+<!--        &lt;!&ndash; style for actionBar subtitle &ndash;&gt;-->
+<!--        <item name="subtitleTextStyle">@style/ActionBarSubtitleText</item>-->
+
+<!--        &lt;!&ndash;-->
+<!--        the actionBarTheme doesn't use the colorControlNormal attribute-->
+<!--        <item name="colorControlNormal">@color/my_awesome_color</item>-->
+<!--         &ndash;&gt;-->
+<!--    </style>-->
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    <style name="spinnerItemStyle" parent="android:Widget.TextView.SpinnerItem">
+        <item name="fontFamily">@font/josefin_sans_bold</item>
+        <item name="android:textSize">10pt</item>
+        <item name="android:textColor">@color/colorPrimary</item>
+    </style>
+
+    <style name="spinnerDropDownItemStyle" parent="android:TextAppearance.Widget.TextView.SpinnerItem">
+        <item name="fontFamily">@font/josefin_sans_bold</item>
+        <item name="android:background">@color/colorPrimaryDark</item>
+        <item name="android:textSize">10pt</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:textColor">@color/colorPrimary</item>
+    </style>
 </resources>
