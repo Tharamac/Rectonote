@@ -42,11 +42,13 @@
             <include layout="@layout/item_track"></include>
 
             <EditText
+                android:id="@+id/new_track_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:hint="Track Name"
                 android:inputType="text"
+                android:freezesText="true"
                 android:maxLines="1"
                 android:text=""
                 android:textColor="@android:color/white"
@@ -186,11 +188,11 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="9"
-                                android:paddingVertical="15dp"
+                                android:paddingVertical="12dp"
                                 android:text="Walking To The Room"
                                 android:textAlignment="center"
                                 android:textColor="@android:color/white"
-                                android:textSize="10pt"></TextView>
+                                android:textSize="25sp"></TextView>
 
                             <ImageView
                                 android:layout_width="wrap_content"
@@ -223,18 +225,48 @@
                         android:textColor="#dddddd"
                         android:textSize="9pt"></TextView>
 
-                    <EditText
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:hint="Project Name"
-                        android:inputType="text"
-                        android:maxLines="1"
-                        android:text=""
-                        android:textColor="@android:color/white"
-                        android:textColorHint="#787878"
-                        android:textSize="12pt"></EditText>
+                        android:orientation="horizontal">
 
+                        <EditText
+                            android:id="@+id/new_project_input"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="2"
+                            android:layout_marginTop="5dp"
+                            android:hint="Project Name"
+                            android:inputType="text"
+                            android:maxLines="1"
+                            android:text=""
+                            android:freezesText="true"
+                            android:textColor="@android:color/white"
+                            android:textColorHint="#787878"
+                            android:textSize="12pt"></EditText>
+
+<!--                        <Button-->
+<!--                            android:id="@+id/button"-->
+<!--                            style="@style/Widget.AppCompat.Button"-->
+<!--                            android:layout_width="wrap_content"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:layout_weight="1"-->
+<!--                            android:backgroundTint="#2196F3" />-->
+
+
+                    </LinearLayout>
+
+<!--                        <TextView-->
+<!--                            android:layout_width="wrap_content"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:text="color"-->
+<!--                            android:textColor="@android:color/white"-->
+<!--                            android:layout_gravity="end"-->
+<!--                            android:layout_marginEnd="15dp">-->
+
+<!--                        </TextView>-->
+
+"
 
                 </LinearLayout>
 

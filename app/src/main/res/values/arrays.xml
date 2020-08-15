@@ -13,4 +13,15 @@
         <item>Add to New Project</item>
         <item>Add to Existing Project</item>
     </string-array>
+<string-array name="project_color">
+    <item name="project_color_pink">#DF008C</item>
+    <item name="project_color_blue">#0079d6</item>
+    <item name="project_color_teal">#01706c</item>
+    <item name="project_color_green">#007A41</item>
+    <item name="project_color_orange">#FF7600</item>
+    <item name="project_color_purple">#842E9A</item>
+    <item name="project_color_red">#BE0423</item>
+    <item name="project_color_lighter_gray">#707070</item>
+</string-array>
+
 </resources>

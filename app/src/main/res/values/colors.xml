@@ -7,4 +7,14 @@
     <color name="textColorPrimary">#D5FF00</color>
     <color name="windowBackground">#424242</color>
     <color name="trackBaseColor">#590044</color>
+
+<!--    Project Color -->
+    <color name="project_color_pink">#DF008C</color>
+    <color name="project_color_blue">#0079d6</color>
+    <color name="project_color_teal">#01706c</color>
+    <color name="project_color_green">#007A41</color>
+    <color name="project_color_orange">#FF7600</color>
+    <color name="project_color_purple">#842E9A</color>
+    <color name="project_color_red">#BE0423</color>
+    <color name="project_color_lighter_gray">#707070</color>
 </resources>

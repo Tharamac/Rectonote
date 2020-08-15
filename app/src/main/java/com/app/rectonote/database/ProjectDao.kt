@@ -10,6 +10,9 @@ interface ProjectDao{
     @Query("SELECT * FROM projects ORDER BY date_modified DESC")
     suspend fun loadAllProjects(): List<ProjectEntity>
 
+    @Query("SELECT project_name FROM projects")
+    suspend fun getNames():List<String>
+
     @Delete
     suspend fun deleteProject(project: ProjectEntity)
 }

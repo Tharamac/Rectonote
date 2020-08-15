@@ -18,6 +18,7 @@ data class ProjectEntity(
     @ColumnInfo(name = "project_key")
     val key: String,
     @ColumnInfo(name = "date_modified")
-    var dateModified: Date
+    var dateModified: Date,
+    var color: String
 
 ): Serializable

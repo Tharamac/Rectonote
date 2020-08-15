@@ -19,7 +19,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/josefin_sans_bold"
             android:textSize="12pt"
-            android:textColor="@android:color/white"
+            android:textColor="@color/colorPrimary"
             android:layout_gravity="center_vertical|center"
             >
 

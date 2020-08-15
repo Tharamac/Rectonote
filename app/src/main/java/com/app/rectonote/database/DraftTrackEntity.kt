@@ -22,5 +22,6 @@ data class DraftTrackEntity(
     @ColumnInfo(name = "tracks_number")
     var trackNo: Int,
     @ColumnInfo(name = "date_modified")
-    var dateModified: Date
+    var dateModified: Date,
+    var color: String
 )

@@ -1,32 +1,36 @@
 package com.app.rectonote.database
 
-enum class Key(val label: String) {
-    C("C major"),
-    Db("C# major"),
-    D("D major"),
-    Eb("D# major"),
-    E("E major"),
-    F("F major"),
-    Gb("F# major"),
-    G("G major"),
-    Ab("G# major"),
-    A("A major"),
-    Bb("A# major"),
-    B("B major"),
-    Cm("C minor"),
-    Dbm("C# minor"),
-    Dm("D minor"),
-    Ebm("D# minor"),
-    Em("E minor"),
-    Fm("F minor"),
-    Gbm("F# minor"),
-    Gm("G minor"),
-    Abm("G# minor"),
-    Am("A minor"),
-    Bbm("A# minor"),
-    Bm("B minor");
+enum class Key(val label: String, val reduced: String) {
+    C("C major"   ,"C"),
+    Db("C# major" ,"C#"),
+    D("D major"   ,"D"),
+    Eb("D# major" ,"D#"),
+    E("E major"   ,"E"),
+    F("F major"   ,"F"),
+    Gb("F# major" ,"F#"),
+    G("G major"   ,"G"),
+    Ab("G# major" ,"G#"),
+    A("A major"   ,"A"),
+    Bb("A# major" ,"A#"),
+    B("B major"   ,"B"),
+    Cm("C minor"  ,"Cm"),
+    Dbm("C# minor","C#m"),
+    Dm("D minor"  ,"Dm"),
+    Ebm("D# minor","D#m"),
+    Em("E minor"  ,"Em"),
+    Fm("F minor"  ,"Fm"),
+    Gbm("F# minor","F#m"),
+    Gm("G minor"  ,"Gm"),
+    Abm("G# minor","G#m"),
+    Am("A minor"  ,"Am"),
+    Bbm("A# minor","A#m"),
+    Bm("B minor"  ,"Bm");
     //C, C#, D, D#, E, F, F#, G, G#, A, A#, B
     companion object{
+        fun reduceKey(label: String): String{
+            val key = Key.values().find{it.label == label}
+            return key!!.reduced
+        }
 
     }
 

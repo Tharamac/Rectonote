@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
+import com.app.rectonote.database.Key
 import com.app.rectonote.database.ProjectEntity
 
 class ProjectDetailActivity : AppCompatActivity() {
@@ -23,7 +24,7 @@ class ProjectDetailActivity : AppCompatActivity() {
         if (projectData != null) {
             toolbarTitle.text = projectData.name
             projectTempo.text = projectData.tempo.toString()
-            projectKey.text = projectData.key
+            projectKey.text = Key.reduceKey(projectData.key)
         }
 
         setSupportActionBar(toolbar)
