@@ -1,7 +1,9 @@
 package com.app.rectonote.listAdapter
 
 import android.app.Activity
+import android.app.Activity.RESULT_OK
 import android.content.Intent
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,12 +11,14 @@ import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.app.rectonote.AddTrackToProjectActivity
+import com.app.rectonote.ProjectSelectActivity
 import com.app.rectonote.R
 import com.app.rectonote.database.ProjectEntity
 
 
 class ProjectSelectAdapter(
-    private val projectDataset : List<ProjectEntity>
+    private val projectDataset : List<ProjectEntity>,
+    private val activity: ProjectSelectActivity
 ) : RecyclerView.Adapter<ProjectSelectAdapter.ProjectViewHolder>(){
 
     class ProjectViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
@@ -34,13 +38,15 @@ class ProjectSelectAdapter(
         var project = projectDataset[position]
         holder.projectName.text = project.name
         holder.projectData.text = "${project.tempo} bpm\n${project.key}"
+        holder.projectCard.setCardBackgroundColor(Color.parseColor(project.color))
         // holder.projectKey.text = project.key
         holder.projectCard.setOnClickListener{ _ ->
-            val intent = Intent(holder.context, AddTrackToProjectActivity::class.java)
+            val intent = Intent()
             intent.putExtra("project", project)
-            (holder.context as Activity).startActivityForResult(intent, 0)
-            holder.context.finish()
-
+            activity.apply{
+                setResult(RESULT_OK,intent)
+                finish()
+            }
         }
     }
 

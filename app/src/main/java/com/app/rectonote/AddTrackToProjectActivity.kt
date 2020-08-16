@@ -1,5 +1,6 @@
 package com.app.rectonote
 
+import android.app.Activity
 import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Color
@@ -21,11 +22,11 @@ class AddTrackToProjectActivity : AppCompatActivity() {
     val color: Array<String> = arrayOf<String>("#DF008C","#0079d6", "#01706c","#007A41","#FF7600","#842E9A","#BE0423","#707070")
     private lateinit var projectsDatabase:ProjectsDatabase
     private lateinit var dbViewModel: ProjectDatabaseViewModel
+    private var projectData: ProjectEntity? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_track_to_project)
-        val projectData = intent.getSerializableExtra("project") as ProjectEntity?
         projectsDatabase = ProjectsDatabase.getInstance(applicationContext)
         dbViewModel = ProjectDatabaseViewModel(projectsDatabase.projectDAO())
         val toolbar = findViewById<Toolbar>(R.id.toolbar_add_track)
@@ -68,9 +69,9 @@ class AddTrackToProjectActivity : AppCompatActivity() {
                     //add existing
                     if(projectData != null) {
                         confirmDialog.apply{
-                            setMessage("Are you sure want to add this track to \"${projectData.name}\" project?")
+                            setMessage("Are you sure want to add this track to \"${projectData!!.name}\" project?")
                             setPositiveButton("Yes", DialogInterface.OnClickListener { _, _ ->
-                                addToExistingProject(trackNameInput,projectData)
+                                addToExistingProject(trackNameInput, projectData!!)
                             })
                             setNegativeButton("No", DialogInterface.OnClickListener { _, _ -> })
                         }
@@ -87,15 +88,15 @@ class AddTrackToProjectActivity : AppCompatActivity() {
         addTrackOptions.adapter = optionsAdapter
         setSupportActionBar(toolbar)
         val selectButton = findViewById<TextView>(R.id.project_selected)
-        selectButton.text = projectData?.name ?: "<Tap to select project>"
+        selectButton.text = "<Tap to select project>"
         val projectCard = findViewById<CardView>(R.id.btn_project_selector)
-        projectCard.setCardBackgroundColor(Color.parseColor(projectData?.color ?: "#777777"))
+        projectCard.setCardBackgroundColor(Color.parseColor( "#777777"))
         if((callingActivity?.className ?: "null") == ProjectSelectActivity::class.qualifiedName){
             addTrackOptions.setSelection(optionsAdapter.getPosition("Add to Existing Project"))
         }
         projectCard.setOnClickListener { _ ->
             val intent = Intent(this, ProjectSelectActivity::class.java)
-            startActivity(intent)
+            startActivityForResult(intent,1)
         }
         addTrackOptions.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
             val addToNew = findViewById<LinearLayout>(R.id.add_new_proj)
@@ -127,6 +128,20 @@ class AddTrackToProjectActivity : AppCompatActivity() {
         supportActionBar?.setDisplayShowHomeEnabled(true)
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if(requestCode == 1){
+            if (resultCode == Activity.RESULT_OK){
+                val addTrackOptions = findViewById<Spinner>(R.id.add_track_options_spinner)
+                addTrackOptions.setSelection(1);
+                projectData = data?.getSerializableExtra("project") as ProjectEntity
+                val selectButton = findViewById<TextView>(R.id.project_selected)
+                selectButton.text = projectData?.name
+                val projectCard = findViewById<CardView>(R.id.btn_project_selector)
+                projectCard.setCardBackgroundColor(Color.parseColor(projectData?.color))
+            }
+        }
+    }
 
     private fun addToNewProject(trackName: String, projectName: String){
         val trackTempo = 128

@@ -34,7 +34,7 @@ class ProjectSelectActivity : AppCompatActivity() {
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = LinearLayoutManager(this)
         dbView.loadAllProjects().observe(this, androidx.lifecycle.Observer {
-            recyclerView.adapter = ProjectSelectAdapter(it)
+            recyclerView.adapter = ProjectSelectAdapter(it, this)
         })
 
     }
