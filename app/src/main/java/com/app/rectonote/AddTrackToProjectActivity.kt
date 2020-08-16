@@ -2,28 +2,19 @@ package com.app.rectonote
 
 import android.content.DialogInterface
 import android.content.Intent
+import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
 import androidx.cardview.widget.CardView
-import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
-import com.app.rectonote.database.Key
-import com.app.rectonote.database.ProjectDatabaseViewModel
-import com.app.rectonote.database.ProjectEntity
-import com.app.rectonote.database.ProjectsDatabase
+import com.app.rectonote.database.*
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import kotlinx.android.synthetic.main.item_project.*
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import java.util.*
-import kotlin.math.absoluteValue
 
 class AddTrackToProjectActivity : AppCompatActivity() {
 
@@ -38,9 +29,9 @@ class AddTrackToProjectActivity : AppCompatActivity() {
         projectsDatabase = ProjectsDatabase.getInstance(applicationContext)
         dbViewModel = ProjectDatabaseViewModel(projectsDatabase.projectDAO())
         val toolbar = findViewById<Toolbar>(R.id.toolbar_add_track)
+        findViewById<TextView>(R.id.track_name).text = "Play Processed Track"
         val addTrackOptions = findViewById<Spinner>(R.id.add_track_options_spinner)
         val optionsAdapter = ArrayAdapter<String>(this,R.layout.item_add_to_project_spinner,resources.getStringArray(R.array.draft_track_option))
-        val projectSelector = findViewById<CardView>(R.id.btnProjectSelector)
         val btnConfirm = findViewById<FloatingActionButton>(R.id.fabtn_confirm)
         btnConfirm.setOnClickListener { _ ->
             val choice = findViewById<Spinner>(R.id.add_track_options_spinner).selectedItemPosition
@@ -93,15 +84,16 @@ class AddTrackToProjectActivity : AppCompatActivity() {
             dialog.show()
         }
 
-
-
         addTrackOptions.adapter = optionsAdapter
         setSupportActionBar(toolbar)
-        findViewById<TextView>(R.id.project_selected).text = projectData?.name ?: "<Tap to select project>"
+        val selectButton = findViewById<TextView>(R.id.project_selected)
+        selectButton.text = projectData?.name ?: "<Tap to select project>"
+        val projectCard = findViewById<CardView>(R.id.btn_project_selector)
+        projectCard.setCardBackgroundColor(Color.parseColor(projectData?.color ?: "#777777"))
         if((callingActivity?.className ?: "null") == ProjectSelectActivity::class.qualifiedName){
             addTrackOptions.setSelection(optionsAdapter.getPosition("Add to Existing Project"))
         }
-        projectSelector.setOnClickListener { _ ->
+        projectCard.setOnClickListener { _ ->
             val intent = Intent(this, ProjectSelectActivity::class.java)
             startActivity(intent)
         }
@@ -137,22 +129,82 @@ class AddTrackToProjectActivity : AppCompatActivity() {
 
 
     private fun addToNewProject(trackName: String, projectName: String){
+        val trackTempo = 128
+        val trackKey = Key.D
         val newProject = ProjectEntity(
             name = projectName,
-            tempo = 128,
-            key = Key.D.label,
+            tempo = trackTempo,            //dummy param
+            key = trackKey.label,      //dummy param
             dateModified = Date(),
             color = color.random()
         )
-        Log.d("NEW",newProject.toString())
+        var targetProjectId: Int = -1
+        runBlocking {
+            projectsDatabase.projectDAO().newProject(newProject)
+            targetProjectId = projectsDatabase.projectDAO().getIdFromProject(projectName)[0]
+        }
+        val newTrack = DraftTrackEntity(
+            name = trackName,
+            tempo = trackTempo,
+            type = "Melody",
+            key = trackKey.label,
+            dateModified = Date(),
+            color = "#590044",
+            projectId = targetProjectId
+        )
+        runBlocking {
+            projectsDatabase.drafttracksDAO().newDraftTrack(newTrack)
+        }
+        finish()
 
     }
 
     private fun addToExistingProject(trackName: String,project: ProjectEntity){
+        val newTrack = project.projectId?.let {
+            DraftTrackEntity(
+                name = trackName,
+                tempo = project.tempo,
+                type = "Melody",
+                key = project.key,
+                dateModified = Date(),
+                color = "#590044",
+                projectId = it
+            )
+        }
+        runBlocking {
+            if (newTrack != null) {
+                projectsDatabase.drafttracksDAO().newDraftTrack(newTrack)
+            }
+        }
+        finish()
         Log.d("EXIST" , project.toString())
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
+        val projectData = intent.getSerializableExtra("project") as ProjectEntity?
+        val projectName = projectData?.name ?: "<Tap to select project>"
+        val projectColor = projectData?.color ?: "#777777"
+        outState.putString("trackNameSaved",findViewById<EditText>(R.id.new_track_input).text.toString())
+        outState.putString("projectNameSaved", findViewById<EditText>(R.id.new_project_input).text.toString())
+        outState.putString("projectSelectedName", projectName)
+        outState.putString("projectSelectedColor", projectColor)
+        super.onSaveInstanceState(outState)
+
+    }
+
+    override fun onBackPressed() {
+        val builder = AlertDialog.Builder(this)
+        builder.apply {
+            setMessage("Are you want discard this track")
+            setPositiveButton("Yes"){ _, _ ->
+                super.onBackPressed()
+            }
+            setNegativeButton("No"){_,_->{
+
+            }}
+        }
+        val dialog = builder.create()
+        dialog.show()
 
     }
 

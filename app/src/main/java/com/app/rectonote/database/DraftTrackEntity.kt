@@ -17,10 +17,10 @@ data class DraftTrackEntity(
     val tempo: Int,
     @ColumnInfo(name = "tracks_key")
     val key: String, // 0 = key C to 11 = key B
+    @ColumnInfo(name = "type")
+    val type: String,
     @ColumnInfo(name = "project_id")
     val projectId: Int,
-    @ColumnInfo(name = "tracks_number")
-    var trackNo: Int,
     @ColumnInfo(name = "date_modified")
     var dateModified: Date,
     var color: String

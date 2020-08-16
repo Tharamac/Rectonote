@@ -92,6 +92,28 @@
         </LinearLayout>
 
 
-
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:text="Draft Tracks"
+        android:textAlignment="center"
+        android:textColor="#dddddd"
+        android:textSize="9pt"></TextView>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/tracks_list_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="15dp"
+        android:paddingHorizontal="15dp"
+        android:scrollbars="vertical">
+
+    </androidx.recyclerview.widget.RecyclerView>
+
+
+
 </LinearLayout>

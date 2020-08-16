@@ -172,7 +172,7 @@
                         android:textSize="9pt"></TextView>
 
                     <androidx.cardview.widget.CardView
-                        android:id="@+id/btnProjectSelector"
+                        android:id="@+id/btn_project_selector"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"

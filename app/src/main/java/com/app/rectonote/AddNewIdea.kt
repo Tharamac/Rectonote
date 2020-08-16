@@ -155,13 +155,14 @@ class AddNewIdea : AppCompatActivity() {
         btnRecord.visibility = View.VISIBLE
         btnStop.isEnabled = false
         btnStop.visibility = View.INVISIBLE
-        running = false;
+        running = false
         stopRecording()
     }
 
     private val pressContinue = View.OnClickListener{
         val intent = Intent(this, AddTrackToProjectActivity::class.java)
         startActivity(intent)
+        finish()
     }
 
     //this function start a stopwatch
@@ -213,7 +214,7 @@ class AddNewIdea : AppCompatActivity() {
             )
             .setBufferSizeInBytes(bufferElements2Rec*bytesPerElement)
             .build()
-        println(recorder);
+        println(recorder)
         recorder!!.startRecording()
         isRecording = true
         recordingThread = Thread(Runnable { writeAudioDataToFile() }, "AudioRecorder Thread")
@@ -240,7 +241,7 @@ class AddNewIdea : AppCompatActivity() {
         try{
             outputStream = FileOutputStream(filePath)
         }catch (e: FileNotFoundException){
-            e.printStackTrace();
+            e.printStackTrace()
         }
         while (isRecording) { // gets the voice output from microphone to byte format
             recorder!!.read(sData, 0, bufferElements2Rec)
@@ -275,19 +276,19 @@ class AddNewIdea : AppCompatActivity() {
                 e.printStackTrace()
             }
             val modeSelector  = findViewById<RadioGroup>(R.id.convertMode)
-            val selectedID = modeSelector.checkedRadioButtonId;
+            val selectedID = modeSelector.checkedRadioButtonId
             val mode =  findViewById<RadioButton>(selectedID)
             if(mode.text == "Voice to Melody"){
-                dsp('m');
+                dsp('m')
             }else if (mode.text == "Voice to Chord"){
-                dsp('c');
+                dsp('c')
             }
         }
     }
 
     @Throws(IOException::class)
     private fun rawToWave(rawFile: File, waveFile: File) {
-        val rawData = rawFile.readBytes();
+        val rawData = rawFile.readBytes()
         var output:DataOutputStream ?= null
         try {
             output = DataOutputStream(waveFile.outputStream())

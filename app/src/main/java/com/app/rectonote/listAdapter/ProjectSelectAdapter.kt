@@ -15,22 +15,22 @@ import com.app.rectonote.database.ProjectEntity
 
 class ProjectSelectAdapter(
     private val projectDataset : List<ProjectEntity>
-) : RecyclerView.Adapter<ProjectSelectAdapter.projectViewHolder>(){
+) : RecyclerView.Adapter<ProjectSelectAdapter.ProjectViewHolder>(){
 
-    class projectViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
+    class ProjectViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
         val context = itemView.context
         val projectName = itemView.findViewById<TextView>(R.id.project_name)
         val projectData = itemView.findViewById<TextView>(R.id.project_data)
         val projectCard = itemView.findViewById<CardView>(R.id.project_card)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): projectViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProjectViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_project,parent,false)
-        return projectViewHolder(view)
+        return ProjectViewHolder(view)
         //grab layout
     }
 
-    override fun onBindViewHolder(holder: projectViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ProjectViewHolder, position: Int) {
         var project = projectDataset[position]
         holder.projectName.text = project.name
         holder.projectData.text = "${project.tempo} bpm\n${project.key}"
@@ -39,6 +39,7 @@ class ProjectSelectAdapter(
             val intent = Intent(holder.context, AddTrackToProjectActivity::class.java)
             intent.putExtra("project", project)
             (holder.context as Activity).startActivityForResult(intent, 0)
+            holder.context.finish()
 
         }
     }

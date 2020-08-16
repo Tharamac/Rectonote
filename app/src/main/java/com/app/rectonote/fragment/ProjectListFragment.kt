@@ -23,7 +23,7 @@ class ProjectListFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        projectsDatabase = ProjectsDatabase.getInstance(requireActivity().applicationContext); //??
+        projectsDatabase = ProjectsDatabase.getInstance(requireActivity().applicationContext) //??
         dbView = ProjectDatabaseViewModel(projectsDatabase.projectDAO())
 
     }
@@ -43,7 +43,5 @@ class ProjectListFragment : Fragment() {
         return view
     }
 
-    companion object {
-
-    }
+    companion object
 }

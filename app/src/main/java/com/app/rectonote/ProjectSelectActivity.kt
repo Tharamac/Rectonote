@@ -22,7 +22,7 @@ class ProjectSelectActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_project_select)
-        projectsDatabase = ProjectsDatabase.getInstance(applicationContext); //??
+        projectsDatabase = ProjectsDatabase.getInstance(applicationContext) //??
         dbView = ProjectDatabaseViewModel(projectsDatabase.projectDAO())
         val toolbar = findViewById<Toolbar>(R.id.toolbar_project_select)
         val toolbarTitle = findViewById<TextView>(R.id.toolbar_title)
