@@ -21,7 +21,7 @@ import java.util.*
 
 
 
-class AddNewIdea : AppCompatActivity() {
+class RecordingActivity : AppCompatActivity() {
     //constant
     private val REC_SAMPLERATE:Int = 44100
     private val REC_CHANNELS = AudioFormat.CHANNEL_IN_MONO
@@ -90,7 +90,7 @@ class AddNewIdea : AppCompatActivity() {
     }
     fun showDialog(){
         builder = AlertDialog.Builder(this)
-        builder.setTitle("Remember")
+        builder.setTitle("Note :")
         builder.setMessage("1. Try to record on environment as quiet as possible to perform best result.\n\n" + "2. Please leave silence at least one seconds to let the app record your environment.")
         builder.setPositiveButton("OK"){ _, _ ->
             // Do something when user press the positive button

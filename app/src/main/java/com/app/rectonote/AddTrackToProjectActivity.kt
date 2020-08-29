@@ -210,7 +210,7 @@ class AddTrackToProjectActivity : AppCompatActivity() {
     override fun onBackPressed() {
         val builder = AlertDialog.Builder(this)
         builder.apply {
-            setMessage("Are you want discard this track")
+            setMessage("Are you want discard this track?")
             setPositiveButton("Yes"){ _, _ ->
                 super.onBackPressed()
             }

@@ -25,7 +25,7 @@
             android:parentActivityName=".MainActivity"
             android:screenOrientation="nosensor" />
         <activity
-            android:name=".AddNewIdea"
+            android:name=".RecordingActivity"
             android:label="Add New Idea"
             android:parentActivityName=".MainActivity"
             android:screenOrientation="nosensor">

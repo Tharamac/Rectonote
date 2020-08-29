@@ -7,7 +7,7 @@ import java.util.*
 
 
 
-@Database(entities = arrayOf(ProjectEntity::class, DraftTrackEntity::class), version = 1)
+@Database(entities = [ProjectEntity::class, DraftTrackEntity::class], version = 1)
 @TypeConverters(DateConverters::class)
 abstract class ProjectsDatabase : RoomDatabase(){
     abstract fun projectDAO() : ProjectDao

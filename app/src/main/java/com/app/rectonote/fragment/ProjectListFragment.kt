@@ -37,11 +37,23 @@ class ProjectListFragment : Fragment() {
         recyclerView = view.findViewById(R.id.project_view_list)
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = LinearLayoutManager(view.context)
-        dbView.loadAllProjects().observe(viewLifecycleOwner, androidx.lifecycle.Observer {
-            recyclerView.adapter = ProjectListAdapter(it)
-        })
         return view
     }
 
-    companion object
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        dbView.loadAllProjects().observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+            recyclerView.adapter = ProjectListAdapter(it)
+            (recyclerView.adapter as ProjectListAdapter).notifyDataSetChanged()
+        })
+        //update recyclerview
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+
+    }
+
+
 }

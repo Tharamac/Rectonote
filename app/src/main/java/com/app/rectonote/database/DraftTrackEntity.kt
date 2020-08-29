@@ -2,12 +2,21 @@ package com.app.rectonote.database
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 
 import java.util.*
 
 
-@Entity(tableName = "draft_tracks")
+@Entity(
+    tableName = "draft_tracks",
+    foreignKeys = [ForeignKey(
+        entity = ProjectEntity::class,
+        parentColumns = arrayOf("projectId"),
+        childColumns = arrayOf("project_id"),
+        onDelete = ForeignKey.CASCADE
+    )]
+)
 data class DraftTrackEntity(
     @PrimaryKey(autoGenerate = true)
     val tracksId: Int? = null,

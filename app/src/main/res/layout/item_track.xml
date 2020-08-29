@@ -20,6 +20,7 @@
         app:srcCompat="@drawable/group_344" />
 
     <androidx.cardview.widget.CardView
+        android:layout_marginLeft="45px"
         android:id="@+id/track_card"
         android:layout_width="match_parent"
         android:layout_height="50dp"
