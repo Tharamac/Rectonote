@@ -108,6 +108,5 @@ class DraftTracksAdapter(
     }
 
 
-
     override fun getItemCount() = draftTrackDataSet.size
 }

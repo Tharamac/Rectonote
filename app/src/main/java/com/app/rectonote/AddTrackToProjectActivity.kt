@@ -19,8 +19,17 @@ import java.util.*
 
 class AddTrackToProjectActivity : AppCompatActivity() {
 
-    val color: Array<String> = arrayOf<String>("#DF008C","#0079d6", "#01706c","#007A41","#FF7600","#842E9A","#BE0423","#707070")
-    private lateinit var projectsDatabase:ProjectsDatabase
+    val color: Array<String> = arrayOf<String>(
+        "#DF008C",
+        "#0079d6",
+        "#01706c",
+        "#007A41",
+        "#FF7600",
+        "#842E9A",
+        "#BE0423",
+        "#707070"
+    )
+    private lateinit var projectsDatabase: ProjectsDatabase
     private lateinit var dbViewModel: ProjectDatabaseViewModel
     private var projectData: ProjectEntity? = null
 
@@ -32,24 +41,38 @@ class AddTrackToProjectActivity : AppCompatActivity() {
         val toolbar = findViewById<Toolbar>(R.id.toolbar_add_track)
         findViewById<TextView>(R.id.track_name).text = "Play Processed Track"
         val addTrackOptions = findViewById<Spinner>(R.id.add_track_options_spinner)
-        val optionsAdapter = ArrayAdapter<String>(this,R.layout.item_add_to_project_spinner,resources.getStringArray(R.array.draft_track_option))
         val btnConfirm = findViewById<FloatingActionButton>(R.id.fabtn_confirm)
         btnConfirm.setOnClickListener(confirmAddTrack)
-
+        val projectCard = findViewById<CardView>(R.id.btn_project_selector)
+        val optionsAdapter = ArrayAdapter<String>(
+            this,
+            R.layout.item_add_to_project_spinner,
+            resources.getStringArray(R.array.draft_track_option)
+        )
         addTrackOptions.adapter = optionsAdapter
         setSupportActionBar(toolbar)
+//        if ((callingActivity?.className ?: "null") == ProjectSelectActivity::class.qualifiedName) {
+//            addTrackOptions.setSelection(optionsAdapter.getPosition("Add to Existing Project"))
+//        }
+        val projectsFormProjectDetail = intent.getStringExtra("projectFromProjectDetail")
         val selectButton = findViewById<TextView>(R.id.project_selected)
-        selectButton.text = "<Tap to select project>"
-        val projectCard = findViewById<CardView>(R.id.btn_project_selector)
-        projectCard.setCardBackgroundColor(Color.parseColor( "#777777"))
-        if((callingActivity?.className ?: "null") == ProjectSelectActivity::class.qualifiedName){
-            addTrackOptions.setSelection(optionsAdapter.getPosition("Add to Existing Project"))
+        if (projectsFormProjectDetail != null) {
+            addTrackOptions.setSelection(1)
+            projectData = runBlocking {
+                projectsDatabase.projectDAO().getProjectFromName(projectsFormProjectDetail)
+            }[0]
+            selectButton.text = projectsFormProjectDetail
+            projectCard.setBackgroundColor(Color.parseColor(projectData!!.color))
+        } else {
+            selectButton.text = "<Tap to select project>"
+            projectCard.setCardBackgroundColor(Color.parseColor("#777777"))
         }
+
         projectCard.setOnClickListener { _ ->
             val intent = Intent(this, ProjectSelectActivity::class.java)
-            startActivityForResult(intent,1)
+            startActivityForResult(intent, 1)
         }
-        addTrackOptions.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
+        addTrackOptions.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             val addToNew = findViewById<LinearLayout>(R.id.add_new_proj)
             val addExisting = findViewById<LinearLayout>(R.id.add_existing_proj)
             override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -62,21 +85,36 @@ class AddTrackToProjectActivity : AppCompatActivity() {
                 position: Int,
                 id: Long
             ) {
-               if(position == 0){
-                   addToNew.visibility = View.VISIBLE
-                   addToNew.isEnabled = true
-                   addExisting.visibility = View.INVISIBLE
-                   addExisting.isEnabled = false
-               }else if(position == 1){
-                   addExisting.visibility = View.VISIBLE
-                   addExisting.isEnabled = true
-                   addToNew.visibility = View.INVISIBLE
-                   addToNew.isEnabled = false
-               }
+                if (position == 0) {
+                    addToNew.visibility = View.VISIBLE
+                    addToNew.isEnabled = true
+                    addExisting.visibility = View.INVISIBLE
+                    addExisting.isEnabled = false
+                } else if (position == 1) {
+                    addExisting.visibility = View.VISIBLE
+                    addExisting.isEnabled = true
+                    addToNew.visibility = View.INVISIBLE
+                    addToNew.isEnabled = false
+                }
             }
         }
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        val addTrackOptions = findViewById<Spinner>(R.id.add_track_options_spinner)
+        if (requestCode == 1) {
+            if (resultCode == Activity.RESULT_OK) {
+                addTrackOptions.setSelection(1)
+                projectData = data?.getSerializableExtra("project") as ProjectEntity
+                val selectButton = findViewById<TextView>(R.id.project_selected)
+                selectButton.text = projectData?.name
+                val projectCard = findViewById<CardView>(R.id.btn_project_selector)
+                projectCard.setCardBackgroundColor(Color.parseColor(projectData?.color))
+            }
+        }
     }
 
     private val confirmAddTrack = View.OnClickListener {
@@ -148,22 +186,7 @@ class AddTrackToProjectActivity : AppCompatActivity() {
         dialog.show()
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == 1) {
-            if (resultCode == Activity.RESULT_OK) {
-                val addTrackOptions = findViewById<Spinner>(R.id.add_track_options_spinner)
-                addTrackOptions.setSelection(1)
-                projectData = data?.getSerializableExtra("project") as ProjectEntity
-                val selectButton = findViewById<TextView>(R.id.project_selected)
-                selectButton.text = projectData?.name
-                val projectCard = findViewById<CardView>(R.id.btn_project_selector)
-                projectCard.setCardBackgroundColor(Color.parseColor(projectData?.color))
-            }
-        }
-    }
-
-    private fun addToNewProject(trackName: String, projectName: String){
+    private fun addToNewProject(trackName: String, projectName: String) {
         val trackTempo = 128
         val trackKey = Key.D
         val newProject = ProjectEntity(
@@ -194,7 +217,7 @@ class AddTrackToProjectActivity : AppCompatActivity() {
 
     }
 
-    private fun addToExistingProject(trackName: String,project: ProjectEntity){
+    private fun addToExistingProject(trackName: String, project: ProjectEntity) {
         val newTrack = project.projectId?.let {
             DraftTrackEntity(
                 name = trackName,
@@ -212,7 +235,7 @@ class AddTrackToProjectActivity : AppCompatActivity() {
             }
         }
         finish()
-        Log.d("EXIST" , project.toString())
+        Log.d("EXIST", project.toString())
     }
 
 
@@ -220,12 +243,14 @@ class AddTrackToProjectActivity : AppCompatActivity() {
         val builder = AlertDialog.Builder(this)
         builder.apply {
             setMessage("Are you want discard this track?")
-            setPositiveButton("Yes"){ _, _ ->
+            setPositiveButton("Yes") { _, _ ->
                 super.onBackPressed()
             }
-            setNegativeButton("No"){_,_->{
+            setNegativeButton("No") { _, _ ->
+                {
 
-            }}
+                }
+            }
         }
         val dialog = builder.create()
         dialog.show()

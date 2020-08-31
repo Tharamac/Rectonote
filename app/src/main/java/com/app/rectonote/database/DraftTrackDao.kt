@@ -3,7 +3,7 @@ package com.app.rectonote.database
 import androidx.room.*
 
 @Dao
-interface DraftTrackDao{
+interface DraftTrackDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun newDraftTrack(track: DraftTrackEntity)
 

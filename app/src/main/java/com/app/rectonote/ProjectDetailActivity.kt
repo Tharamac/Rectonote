@@ -114,17 +114,17 @@ class ProjectDetailActivity : AppCompatActivity() {
             dialog.show()
             true
         }
-        else ->{
+        else -> {
             super.onOptionsItemSelected(item)
         }
     }
 
-    private fun deleteProject(){
+    private fun deleteProject() {
         val projectDatabase = ProjectsDatabase.getInstance(applicationContext)
         val projectData = intent.getSerializableExtra("project") as? ProjectEntity
         if (projectData != null) {
             runBlocking {
-               projectDatabase.projectDAO().deleteProject(projectData)
+                projectDatabase.projectDAO().deleteProject(projectData)
             }
         }
         finish()

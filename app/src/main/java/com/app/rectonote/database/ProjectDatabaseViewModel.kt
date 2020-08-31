@@ -1,11 +1,14 @@
 package com.app.rectonote.database
 
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 
 class ProjectDatabaseViewModel(
     private val projectDao: ProjectDao
-) : ViewModel(){
+) : ViewModel() {
 
     //Project DAO
     fun loadAllProjects(): LiveData<List<ProjectEntity>> {
@@ -19,8 +22,8 @@ class ProjectDatabaseViewModel(
 
     fun newProjects(vararg project: ProjectEntity) = viewModelScope.launch {
         project.forEach {
-           projectDao.newProject(it)
-       }
+            projectDao.newProject(it)
+        }
 
     }
 
@@ -28,7 +31,7 @@ class ProjectDatabaseViewModel(
         projectDao.deleteProject(project)
     }
 
-    fun getNames() : MutableLiveData<List<String>>{
+    fun getNames(): MutableLiveData<List<String>> {
         val result = MutableLiveData<List<String>>()
         viewModelScope.launch {
             val repo = projectDao.getNames()

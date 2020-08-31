@@ -31,7 +31,7 @@ class ProjectListFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        val view =  inflater.inflate(R.layout.fragment_project_list, container, false)
+        val view = inflater.inflate(R.layout.fragment_project_list, container, false)
         recyclerView = view.findViewById(R.id.project_view_list)
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = LinearLayoutManager(view.context)

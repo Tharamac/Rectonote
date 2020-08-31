@@ -22,16 +22,16 @@ import java.util.*
 
 class RecordingActivity : AppCompatActivity() {
     //constant
-    private val REC_SAMPLERATE:Int = 44100
+    private val REC_SAMPLERATE: Int = 44100
     private val REC_CHANNELS = AudioFormat.CHANNEL_IN_MONO
     private val REC_AUDIO_ENCODING = AudioFormat.ENCODING_PCM_16BIT
     private val LOG_TAG = "AudioRecordTest"
     private val PERMISSION_ALL = 1
 
-    private lateinit var btnRecord:Button
-    private lateinit var btnStop:Button
-    private lateinit var txtStatus:TextView
-    private lateinit var txtTimer:TextView
+    private lateinit var btnRecord: Button
+    private lateinit var btnStop: Button
+    private lateinit var txtStatus: TextView
+    private lateinit var txtTimer: TextView
     private lateinit var btnContinue: Button
     private lateinit var modeSelector: RadioGroup
 
@@ -39,13 +39,11 @@ class RecordingActivity : AppCompatActivity() {
     private lateinit var builder: AlertDialog.Builder
 
 
-
     private var isRecording = false
-    private var recorder:AudioRecord? = null
+    private var recorder: AudioRecord? = null
     private var recordingThread: Thread? = null
     private var running = false
     private var centisecs = 0
-
 
 
     private var requiredPermissions: Array<String> = arrayOf(
@@ -53,10 +51,12 @@ class RecordingActivity : AppCompatActivity() {
         Manifest.permission.READ_EXTERNAL_STORAGE,
         Manifest.permission.WRITE_EXTERNAL_STORAGE
     )
+
     //check if android have permission
     fun hasPermissions(context: Context, permissions: Array<String>): Boolean = permissions.all {
         ActivityCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED
     }
+
     /*
     fun checkDeniedPermission(context: Context, permissions: Array<String>): List<String> = permissions.filterNot {
         ActivityCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED
@@ -121,8 +121,8 @@ class RecordingActivity : AppCompatActivity() {
 
         }
     }
-    private external fun dsp(mode: Char)
 
+    private external fun dsp(mode: Char)
 
 
     override fun onRequestPermissionsResult(
@@ -132,20 +132,20 @@ class RecordingActivity : AppCompatActivity() {
     ) {
         println(requestCode)
         println(grantResults[1])
-       when(requestCode){
-          PERMISSION_ALL -> {
-               if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                   // permission was granted, yay! Do the
+        when (requestCode) {
+            PERMISSION_ALL -> {
+                if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                    // permission was granted, yay! Do the
 
-                   // contacts-related task you need to do.
-               } else {
-                   Toast.makeText(this,"Permission Denied",Toast.LENGTH_LONG).show()
-                   finish()
-               }
-               return
-           }
+                    // contacts-related task you need to do.
+                } else {
+                    Toast.makeText(this, "Permission Denied", Toast.LENGTH_LONG).show()
+                    finish()
+                }
+                return
+            }
 
-       }
+        }
 
     }
 
@@ -178,7 +178,7 @@ class RecordingActivity : AppCompatActivity() {
 
         val intent = Intent(this, AddTrackToProjectActivity::class.java)
         if (projectNameFormProjectDetail != null) {
-            intent.putExtra("project", projectNameFormProjectDetail)
+            intent.putExtra("projectFromProjectDetail", projectNameFormProjectDetail)
         }
         startActivity(intent)
         finish()
@@ -212,9 +212,9 @@ class RecordingActivity : AppCompatActivity() {
     }
 
 
-    private fun recording(){
+    private fun recording() {
 
-       var  bufferSizeInBytes = AudioRecord.getMinBufferSize(
+        var bufferSizeInBytes = AudioRecord.getMinBufferSize(
             REC_SAMPLERATE,
             REC_CHANNELS,
             REC_AUDIO_ENCODING
@@ -257,15 +257,16 @@ class RecordingActivity : AppCompatActivity() {
         }
         return bytes
     }
+
     private fun writeAudioDataToFile() {
         val filePath = "/sdcard/voice16bit.pcm"
         // val filePath = "${Environment.getDataDirectory()}/voice16bit.pcm
         var sData = ShortArray(bufferElements2Rec)
 
-        var outputStream: FileOutputStream ?= null
-        try{
+        var outputStream: FileOutputStream? = null
+        try {
             outputStream = FileOutputStream(filePath)
-        }catch (e: FileNotFoundException){
+        } catch (e: FileNotFoundException) {
             e.printStackTrace()
         }
         while (isRecording) { // gets the voice output from microphone to byte format
@@ -285,6 +286,7 @@ class RecordingActivity : AppCompatActivity() {
             e.printStackTrace()
         }
     }
+
     private fun stopRecording() { // stops the recording activity
         if (recorder != null) {
             isRecording = false
@@ -302,10 +304,10 @@ class RecordingActivity : AppCompatActivity() {
             }
             txtStatus.text = "Record Complete"
             val selectedID = modeSelector.checkedRadioButtonId
-            val mode =  findViewById<RadioButton>(selectedID)
-            if(mode.text == "Voice to Melody"){
+            val mode = findViewById<RadioButton>(selectedID)
+            if (mode.text == "Voice to Melody") {
                 dsp('m')
-            }else if (mode.text == "Voice to Chord"){
+            } else if (mode.text == "Voice to Chord") {
                 dsp('c')
             }
         }
@@ -314,7 +316,7 @@ class RecordingActivity : AppCompatActivity() {
     @Throws(IOException::class)
     private fun rawToWave(rawFile: File, waveFile: File) {
         val rawData = rawFile.readBytes()
-        var output:DataOutputStream ?= null
+        var output: DataOutputStream? = null
         try {
             output = DataOutputStream(waveFile.outputStream())
             // WAVE header

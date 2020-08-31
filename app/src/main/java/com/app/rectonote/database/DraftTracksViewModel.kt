@@ -7,9 +7,8 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 
 class DraftTracksViewModel(
-    private val tracksDao:DraftTrackDao
-) : ViewModel(){
-
+    private val tracksDao: DraftTrackDao
+) : ViewModel() {
 
 
     //Tracks DAO

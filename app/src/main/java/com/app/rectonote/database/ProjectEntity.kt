@@ -21,4 +21,4 @@ data class ProjectEntity(
     var dateModified: Date,
     var color: String
 
-): Serializable
+) : Serializable

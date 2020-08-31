@@ -13,10 +13,10 @@ import com.app.rectonote.R
 import com.app.rectonote.database.ProjectEntity
 
 open class ProjectListAdapter(
-    private val projectDataset : List<ProjectEntity>
-) : RecyclerView.Adapter<ProjectListAdapter.ProjectViewHolder>(){
+    private val projectDataset: List<ProjectEntity>
+) : RecyclerView.Adapter<ProjectListAdapter.ProjectViewHolder>() {
 
-    class ProjectViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
+    class ProjectViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val context = itemView.context!!
         val projectName = itemView.findViewById<TextView>(R.id.project_name)!!
         val projectData = itemView.findViewById<TextView>(R.id.project_data)!!
@@ -24,7 +24,7 @@ open class ProjectListAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProjectViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_project,parent,false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_project, parent, false)
         return ProjectViewHolder(view)
         //grab layout
     }
@@ -33,9 +33,9 @@ open class ProjectListAdapter(
         var project = projectDataset[position]
         holder.projectName.text = project.name
         holder.projectData.text = "${project.tempo} bpm\n${project.key}"
-       // holder.projectKey.text = project.key
+        // holder.projectKey.text = project.key
         holder.projectCard.setCardBackgroundColor(Color.parseColor(project.color))
-        holder.projectCard.setOnClickListener{ _ ->
+        holder.projectCard.setOnClickListener { _ ->
             val intent = Intent(holder.context, ProjectDetailActivity::class.java)
             intent.putExtra("project", project)
             holder.context.startActivity(intent)

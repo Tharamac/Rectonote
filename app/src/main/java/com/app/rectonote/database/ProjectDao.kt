@@ -3,7 +3,7 @@ package com.app.rectonote.database
 import androidx.room.*
 
 @Dao
-interface ProjectDao{
+interface ProjectDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun newProject(vararg project: ProjectEntity)
 
@@ -11,10 +11,13 @@ interface ProjectDao{
     suspend fun loadAllProjects(): List<ProjectEntity>
 
     @Query("SELECT project_name FROM projects")
-    suspend fun getNames():List<String>
+    suspend fun getNames(): List<String>
 
     @Query("SELECT projectId FROM projects WHERE project_name = :projectName")
-    suspend fun getIdFromProject(projectName:String) : List<Int>
+    suspend fun getIdFromProject(projectName: String): List<Int>
+
+    @Query("SELECT * FROM projects WHERE project_name = :projectName")
+    suspend fun getProjectFromName(projectName: String): List<ProjectEntity>
 
     @Delete
     suspend fun deleteProject(project: ProjectEntity)
