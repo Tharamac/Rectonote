@@ -20,7 +20,6 @@ import java.nio.ByteOrder
 import java.util.*
 
 
-
 class RecordingActivity : AppCompatActivity() {
     //constant
     private val REC_SAMPLERATE:Int = 44100
@@ -34,6 +33,7 @@ class RecordingActivity : AppCompatActivity() {
     private lateinit var txtStatus:TextView
     private lateinit var txtTimer:TextView
     private lateinit var btnContinue: Button
+    private lateinit var modeSelector: RadioGroup
 
     private lateinit var dialog: AlertDialog
     private lateinit var builder: AlertDialog.Builder
@@ -69,30 +69,42 @@ class RecordingActivity : AppCompatActivity() {
         btnStop = findViewById<Button>(R.id.btnStop)
         txtStatus = findViewById<TextView>(R.id.txtStatus)
         txtTimer = findViewById<TextView>(R.id.txtTimer)
+        modeSelector = findViewById<RadioGroup>(R.id.convertMode)
         txtStatus.text = "Mic Ready"
+        //val projectNameFormProjectDetail = intent.getStringExtra("project")
+        //if(projectNameFormProjectDetail != null)
+        //findViewById<TextView>(R.id.txtSubStatus).text = "Record"
         btnContinue = findViewById(R.id.btnContinue)
         btnContinue.setOnClickListener(pressContinue)
         btnRecord.setOnClickListener(pressPlay)
         btnStop.setOnClickListener(pressStop)
         startTimer()
         if (!hasPermissions(this, requiredPermissions)) {
-                ActivityCompat.requestPermissions(this, requiredPermissions, PERMISSION_ALL)
+            ActivityCompat.requestPermissions(this, requiredPermissions, PERMISSION_ALL)
         }
-        showDialog()
-        builder = AlertDialog.Builder(this)
 
+        builder = AlertDialog.Builder(this)
+        btnContinue.isEnabled = false
+        btnContinue.visibility = View.INVISIBLE
 
 
     }
+
+    override fun onStart() {
+        super.onStart()
+        showDialog()
+    }
+
     override fun onPause() {
         super.onPause()
         dialog.dismiss()
     }
-    fun showDialog(){
+
+    private fun showDialog() {
         builder = AlertDialog.Builder(this)
         builder.setTitle("Note :")
         builder.setMessage("1. Try to record on environment as quiet as possible to perform best result.\n\n" + "2. Please leave silence at least one seconds to let the app record your environment.")
-        builder.setPositiveButton("OK"){ _, _ ->
+        builder.setPositiveButton("OK") { _, _ ->
             // Do something when user press the positive button
         }
         dialog = builder.create()
@@ -147,6 +159,7 @@ class RecordingActivity : AppCompatActivity() {
         btnStop.visibility = View.VISIBLE
         centisecs = 0
         running = true
+        modeSelector.visibility = View.INVISIBLE
         recording()
     }
 
@@ -155,30 +168,42 @@ class RecordingActivity : AppCompatActivity() {
         btnRecord.visibility = View.VISIBLE
         btnStop.isEnabled = false
         btnStop.visibility = View.INVISIBLE
+        btnContinue.isEnabled = true
+        btnContinue.visibility = View.VISIBLE
+
         running = false
         stopRecording()
-    }
+        Toast.makeText(this, "Recording Complete", Toast.LENGTH_SHORT).show()
+        val projectNameFormProjectDetail = intent.getStringExtra("project")
 
-    private val pressContinue = View.OnClickListener{
         val intent = Intent(this, AddTrackToProjectActivity::class.java)
+        if (projectNameFormProjectDetail != null) {
+            intent.putExtra("project", projectNameFormProjectDetail)
+        }
         startActivity(intent)
         finish()
     }
 
+    private val pressContinue = View.OnClickListener {
+
+    }
+
     //this function start a stopwatch
-    private fun startTimer(){
+    private fun startTimer() {
         val handler = Handler()
         println("Start")
-        handler.post(object : Runnable{
+        handler.post(object : Runnable {
             override fun run() {
                 var millisecs = centisecs % 10
                 var minutes = centisecs / 600
                 var secs = (centisecs / 10) % 600
-                var time = String.format(Locale.getDefault(),
-                    "%d:%02d:%d", minutes, secs, millisecs)
+                var time = String.format(
+                    Locale.getDefault(),
+                    "%d:%02d:%d", minutes, secs, millisecs
+                )
 
                 txtTimer.text = time
-                if(running) centisecs++
+                if (running) centisecs++
 
                 handler.postDelayed(this, 100)
             }
@@ -212,9 +237,9 @@ class RecordingActivity : AppCompatActivity() {
                     .setChannelMask(REC_CHANNELS)
                     .build()
             )
-            .setBufferSizeInBytes(bufferElements2Rec*bytesPerElement)
+            .setBufferSizeInBytes(bufferElements2Rec * bytesPerElement)
             .build()
-        println(recorder)
+        txtStatus.text = "Recording..."
         recorder!!.startRecording()
         isRecording = true
         recordingThread = Thread(Runnable { writeAudioDataToFile() }, "AudioRecorder Thread")
@@ -275,7 +300,7 @@ class RecordingActivity : AppCompatActivity() {
             } catch (e: IOException) {
                 e.printStackTrace()
             }
-            val modeSelector  = findViewById<RadioGroup>(R.id.convertMode)
+            txtStatus.text = "Record Complete"
             val selectedID = modeSelector.checkedRadioButtonId
             val mode =  findViewById<RadioButton>(selectedID)
             if(mode.text == "Voice to Melody"){

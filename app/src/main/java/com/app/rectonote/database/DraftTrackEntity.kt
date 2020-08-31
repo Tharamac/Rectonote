@@ -21,7 +21,7 @@ data class DraftTrackEntity(
     @PrimaryKey(autoGenerate = true)
     val tracksId: Int? = null,
     @ColumnInfo(name = "tracks_name")
-    val name: String,
+    var name: String,
     @ColumnInfo(name = "tracks_tempo")
     val tempo: Int,
     @ColumnInfo(name = "tracks_key")

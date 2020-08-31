@@ -1,19 +1,14 @@
 package com.app.rectonote
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.app.rectonote.database.ProjectDatabaseViewModel
-import com.app.rectonote.database.ProjectEntity
 import com.app.rectonote.database.ProjectsDatabase
-import com.app.rectonote.listAdapter.ProjectListAdapter
-import com.app.rectonote.listAdapter.ProjectSelectAdapter
-import java.security.interfaces.RSAMultiPrimePrivateCrtKey
+import com.app.rectonote.recyclerViewAdapter.ProjectSelectAdapter
 
 class ProjectSelectActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView

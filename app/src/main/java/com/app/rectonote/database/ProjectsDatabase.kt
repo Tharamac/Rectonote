@@ -1,11 +1,10 @@
 package com.app.rectonote.database
 
 import android.content.Context
-import androidx.room.*
-
-import java.util.*
-
-
+import androidx.room.Database
+import androidx.room.Room
+import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 
 @Database(entities = [ProjectEntity::class, DraftTrackEntity::class], version = 1)
 @TypeConverters(DateConverters::class)

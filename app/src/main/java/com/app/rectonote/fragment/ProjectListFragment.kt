@@ -1,25 +1,23 @@
 package com.app.rectonote.fragment
 
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.app.rectonote.R
-import com.app.rectonote.database.Key
 import com.app.rectonote.database.ProjectDatabaseViewModel
-import com.app.rectonote.database.ProjectEntity
 import com.app.rectonote.database.ProjectsDatabase
-import com.app.rectonote.listAdapter.ProjectListAdapter
-import java.util.*
+import com.app.rectonote.recyclerViewAdapter.ProjectListAdapter
+import kotlinx.coroutines.runBlocking
 
 class ProjectListFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     lateinit var dbView: ProjectDatabaseViewModel
     lateinit var projectsDatabase: ProjectsDatabase
+    lateinit var adapter: ProjectListAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,20 +38,13 @@ class ProjectListFragment : Fragment() {
         return view
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        dbView.loadAllProjects().observe(viewLifecycleOwner, androidx.lifecycle.Observer {
-            recyclerView.adapter = ProjectListAdapter(it)
-            (recyclerView.adapter as ProjectListAdapter).notifyDataSetChanged()
-        })
-        //update recyclerview
-    }
-
     override fun onResume() {
         super.onResume()
-
-
+        runBlocking {
+            adapter = ProjectListAdapter(projectsDatabase.projectDAO().loadAllProjects())
+            recyclerView.adapter = adapter
+        }
+        //recyclerView.adapter?.notifyDataSetChanged()
     }
-
 
 }

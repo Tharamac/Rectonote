@@ -4,12 +4,12 @@ import android.app.Activity
 import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Color
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.cardview.widget.CardView
 import com.app.rectonote.database.*
@@ -34,56 +34,7 @@ class AddTrackToProjectActivity : AppCompatActivity() {
         val addTrackOptions = findViewById<Spinner>(R.id.add_track_options_spinner)
         val optionsAdapter = ArrayAdapter<String>(this,R.layout.item_add_to_project_spinner,resources.getStringArray(R.array.draft_track_option))
         val btnConfirm = findViewById<FloatingActionButton>(R.id.fabtn_confirm)
-        btnConfirm.setOnClickListener { _ ->
-            val choice = findViewById<Spinner>(R.id.add_track_options_spinner).selectedItemPosition
-            val trackNameInput = findViewById<EditText>(R.id.new_track_input).text.toString()
-            if(trackNameInput.isBlank()) {
-                Toast.makeText(this,"Track name cannot be empty" , Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-            val confirmDialog = AlertDialog.Builder(this)
-            confirmDialog.setCancelable(false)
-
-            if(choice == 0){
-                //add new
-                val projectNameInput = findViewById<EditText>(R.id.new_project_input).text.toString()
-                if(projectNameInput.isBlank()){
-                    Toast.makeText(this,"Project name cannot be empty" , Toast.LENGTH_SHORT).show()
-                    return@setOnClickListener
-                }
-                val isNameExisted = runBlocking {
-                    projectsDatabase.projectDAO().getNames()
-                }.any { eachName -> eachName == projectNameInput }
-                if(isNameExisted){
-                    Toast.makeText(this,"\"${projectNameInput}\" existed.", Toast.LENGTH_LONG)
-                }else {
-                    confirmDialog.apply {
-                        setMessage("Are you sure want to add this track to a new project (${projectNameInput})?")
-                        setPositiveButton("Yes", DialogInterface.OnClickListener { _, _ ->
-                            addToNewProject(trackNameInput, projectNameInput)
-                        })
-                        setNegativeButton("No", DialogInterface.OnClickListener { _, _ -> })
-                    }
-                }
-            }else if(choice == 1) {
-                    //add existing
-                    if(projectData != null) {
-                        confirmDialog.apply{
-                            setMessage("Are you sure want to add this track to \"${projectData!!.name}\" project?")
-                            setPositiveButton("Yes", DialogInterface.OnClickListener { _, _ ->
-                                addToExistingProject(trackNameInput, projectData!!)
-                            })
-                            setNegativeButton("No", DialogInterface.OnClickListener { _, _ -> })
-                        }
-                    }else{
-                        Toast.makeText(this,"Project field cannot be blank " , Toast.LENGTH_SHORT).show()
-                        return@setOnClickListener
-                    }
-
-            }
-            val dialog = confirmDialog.create()
-            dialog.show()
-        }
+        btnConfirm.setOnClickListener(confirmAddTrack)
 
         addTrackOptions.adapter = optionsAdapter
         setSupportActionBar(toolbar)
@@ -128,12 +79,81 @@ class AddTrackToProjectActivity : AppCompatActivity() {
         supportActionBar?.setDisplayShowHomeEnabled(true)
     }
 
+    private val confirmAddTrack = View.OnClickListener {
+        val choice = findViewById<Spinner>(R.id.add_track_options_spinner).selectedItemPosition
+        val trackNameInput = findViewById<EditText>(R.id.new_track_input).text.toString()
+        if (trackNameInput.isBlank()) {
+            Toast.makeText(this, "Track name cannot be empty", Toast.LENGTH_SHORT).show()
+            return@OnClickListener
+        } else if (trackNameInput.containsSpecialCharacters()) {
+            Toast.makeText(this, "Invalid Name", Toast.LENGTH_SHORT).show()
+            return@OnClickListener
+        }
+        val confirmDialog = AlertDialog.Builder(this)
+        confirmDialog.setCancelable(false)
+
+        if (choice == 0) {
+            //add new
+            val projectNameInput = findViewById<EditText>(R.id.new_project_input).text.toString()
+            val isNameExisted = runBlocking {
+                projectsDatabase.projectDAO().getNames()
+            }.any { eachName -> eachName == projectNameInput }
+            if (projectNameInput.isBlank()) {
+                Toast.makeText(this, "Project name cannot be empty", Toast.LENGTH_SHORT).show()
+                return@OnClickListener
+            } else if (projectNameInput.containsSpecialCharacters()) {
+                Toast.makeText(this, "Project name invalid", Toast.LENGTH_SHORT).show()
+                return@OnClickListener
+            }
+
+            if (isNameExisted) {
+                Toast.makeText(this, "\"${projectNameInput}\" existed.", Toast.LENGTH_LONG)
+            } else {
+                confirmDialog.apply {
+                    setMessage("Are you sure want to add this track to a new project (${projectNameInput})?")
+                    setPositiveButton("Yes", DialogInterface.OnClickListener { _, _ ->
+                        addToNewProject(trackNameInput, projectNameInput)
+                    })
+                    setNegativeButton("No", DialogInterface.OnClickListener { _, _ -> })
+                }
+            }
+        } else if (choice == 1) {
+            //add existing
+            val isNameExisted = runBlocking {
+                projectsDatabase.drafttracksDAO().loadTrackNames()
+            }.any { eachName -> eachName == trackNameInput }
+            if (projectData != null) {
+                if (isNameExisted) {
+                    Toast.makeText(
+                        this,
+                        "\"${trackNameInput}\" existed in \"${projectData!!.name}\".",
+                        Toast.LENGTH_LONG
+                    )
+                } else {
+                    confirmDialog.apply {
+                        setMessage("Are you sure want to add this track to \"${projectData!!.name}\" project?")
+                        setPositiveButton("Yes", DialogInterface.OnClickListener { _, _ ->
+                            addToExistingProject(trackNameInput, projectData!!)
+                        })
+                        setNegativeButton("No", DialogInterface.OnClickListener { _, _ -> })
+                    }
+                }
+            } else {
+                Toast.makeText(this, "Project field cannot be blank ", Toast.LENGTH_SHORT).show()
+                return@OnClickListener
+            }
+
+        }
+        val dialog = confirmDialog.create()
+        dialog.show()
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if(requestCode == 1){
-            if (resultCode == Activity.RESULT_OK){
+        if (requestCode == 1) {
+            if (resultCode == Activity.RESULT_OK) {
                 val addTrackOptions = findViewById<Spinner>(R.id.add_track_options_spinner)
-                addTrackOptions.setSelection(1);
+                addTrackOptions.setSelection(1)
                 projectData = data?.getSerializableExtra("project") as ProjectEntity
                 val selectButton = findViewById<TextView>(R.id.project_selected)
                 selectButton.text = projectData?.name
@@ -195,17 +215,6 @@ class AddTrackToProjectActivity : AppCompatActivity() {
         Log.d("EXIST" , project.toString())
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        val projectData = intent.getSerializableExtra("project") as ProjectEntity?
-        val projectName = projectData?.name ?: "<Tap to select project>"
-        val projectColor = projectData?.color ?: "#777777"
-        outState.putString("trackNameSaved",findViewById<EditText>(R.id.new_track_input).text.toString())
-        outState.putString("projectNameSaved", findViewById<EditText>(R.id.new_project_input).text.toString())
-        outState.putString("projectSelectedName", projectName)
-        outState.putString("projectSelectedColor", projectColor)
-        super.onSaveInstanceState(outState)
-
-    }
 
     override fun onBackPressed() {
         val builder = AlertDialog.Builder(this)
