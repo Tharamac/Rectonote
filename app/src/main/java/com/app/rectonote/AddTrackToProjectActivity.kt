@@ -3,9 +3,9 @@ package com.app.rectonote
 import android.app.Activity
 import android.content.DialogInterface
 import android.content.Intent
+import android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
@@ -234,8 +234,10 @@ class AddTrackToProjectActivity : AppCompatActivity() {
                 projectsDatabase.drafttracksDAO().newDraftTrack(newTrack)
             }
         }
-        finish()
-        Log.d("EXIST", project.toString())
+        val backIntent = Intent(this, ProjectDetailActivity::class.java)
+        backIntent.putExtra("project", project)
+        backIntent.flags = FLAG_ACTIVITY_CLEAR_TOP
+        startActivity(backIntent)
     }
 
 
@@ -247,9 +249,6 @@ class AddTrackToProjectActivity : AppCompatActivity() {
                 super.onBackPressed()
             }
             setNegativeButton("No") { _, _ ->
-                {
-
-                }
             }
         }
         val dialog = builder.create()

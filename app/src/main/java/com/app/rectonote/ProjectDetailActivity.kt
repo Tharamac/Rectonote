@@ -16,7 +16,6 @@ import androidx.appcompat.widget.Toolbar
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.app.rectonote.database.DraftTracksViewModel
 import com.app.rectonote.database.Key
 import com.app.rectonote.database.ProjectEntity
 import com.app.rectonote.database.ProjectsDatabase
@@ -29,35 +28,22 @@ class ProjectDetailActivity : AppCompatActivity() {
     lateinit var projectDatabase: ProjectsDatabase
     lateinit var adapter: DraftTracksAdapter
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_project_detail)
         projectDatabase = ProjectsDatabase.getInstance(applicationContext)
-        val dbView = DraftTracksViewModel(projectDatabase.drafttracksDAO())
-        val projectData = intent.getSerializableExtra("project") as ProjectEntity?
-        val toolbar = findViewById<Toolbar>(R.id.toolbar_project_detail)
-        val toolbarTitle = findViewById<TextView>(R.id.project_detail_title)
-        val projectTempo = findViewById<TextView>(R.id.project_tempo)
-        val projectKey = findViewById<TextView>(R.id.project_key)
-        val newTrackBtn = findViewById<CardView>(R.id.add_track_to_project_button)
+
+
 
         recyclerView = findViewById<RecyclerView>(R.id.tracks_list_view)
         recyclerView.apply {
             setHasFixedSize(true)
             layoutManager = LinearLayoutManager(this@ProjectDetailActivity)
         }
-        if (projectData != null) {
-            toolbarTitle.text = projectData.name
-            projectTempo.text = projectData.tempo.toString()
-            projectKey.text = Key.reduceKey(projectData.key)
-//            projectData.projectId?.let { projectId ->
-//                dbView.loadTracksFromProject(projectId).observe(this, Observer {
-//                    recyclerView.adapter = DraftTracksAdapter(it)
-//                })
-//            }
+        val toolbar = findViewById<Toolbar>(R.id.toolbar_project_detail)
 
-        }
-        newTrackBtn.setOnClickListener(newTrackFormProjectDetail(projectData))
+
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
@@ -66,21 +52,27 @@ class ProjectDetailActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         val projectData = intent.getSerializableExtra("project") as ProjectEntity?
-
+        val toolbarTitle = findViewById<TextView>(R.id.project_detail_title)
+        val projectTempo = findViewById<TextView>(R.id.project_tempo)
+        val projectKey = findViewById<TextView>(R.id.project_key)
+        val newTrackBtn = findViewById<CardView>(R.id.add_track_to_project_button)
+        newTrackBtn.setOnClickListener(newTrackFormProjectDetail(projectData))
+        if (projectData != null) {
+            toolbarTitle.text = projectData.name
+            projectTempo.text = projectData.tempo.toString()
+            projectKey.text = Key.reduceKey(projectData.key)
+        }
         runBlocking {
             projectData?.projectId.let {
                 if (it != null) {
                     adapter = DraftTracksAdapter(
-                        projectDatabase.drafttracksDAO().loadTracksFromProject(
-                            it
-                        )
+                        projectDatabase.drafttracksDAO().loadTracksFromProject(it)
                     )
                 }
             }
             recyclerView.adapter = adapter
         }
         adapter.notifyDataSetChanged()
-
     }
 
     private fun newTrackFormProjectDetail(projectData: ProjectEntity?) = View.OnClickListener {
