@@ -39,7 +39,7 @@
         android:id="@+id/txtTimer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/josefin_sans_semibold"
+        android:fontFamily="@font/josefin_sans_thin"
         android:text="0.00.00"
         android:textColor="#D5FF00"
         android:textFontWeight="1000"

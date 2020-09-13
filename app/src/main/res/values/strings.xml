@@ -8,7 +8,6 @@
     <string name="second_fragment_label">Second Fragment</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>
-
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
     <!-- TODO: Remove or change this placeholder text -->
@@ -30,6 +29,8 @@
     </string>
     <string name="attachment_summary_off">Only download attachments when manually requested</string>
     <string name="title_activity_select_project">SelectProjectActivity</string>
+    <string name="waiting">Waiting</string>
+    <string name="_128_bpm">128 bpm</string>
 
 
 </resources>

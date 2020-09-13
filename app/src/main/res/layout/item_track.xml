@@ -10,14 +10,15 @@
         android:id="@+id/imageButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_weight="1"
+
+        android:adjustViewBounds="true"
         android:maxWidth="50dp"
         android:maxHeight="50dp"
-
-        android:scaleType="fitCenter"
-        android:adjustViewBounds="true"
-        android:layout_weight="1"
         android:background="@android:color/transparent"
-        app:srcCompat="@drawable/group_344" />
+        android:scaleType="fitCenter"
+        app:srcCompat="@drawable/ic_baseline_volume_off_24" />
 
     <androidx.cardview.widget.CardView
         android:layout_marginLeft="45px"

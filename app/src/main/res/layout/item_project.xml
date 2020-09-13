@@ -8,7 +8,7 @@
     <androidx.cardview.widget.CardView
         android:id="@+id/project_card"
         android:layout_width="match_parent"
-        android:layout_height="120dp"
+        android:layout_height="100dp"
         android:layout_gravity="center"
         android:layout_marginHorizontal="12dp"
         android:layout_marginTop = "12dp"
@@ -24,34 +24,38 @@
                 android:id="@+id/project_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
                 android:layout_marginHorizontal="16dp"
                 android:layout_marginVertical="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
                 android:fontFamily="@font/josefin_sans_bold"
-                android:text="Waiting"
+                android:text="@string/waiting"
                 android:textColor="@android:color/white"
+                android:textFontWeight="1000"
                 android:textSize="14pt"
-                android:textStyle="bold"
-                android:textFontWeight="1000"/>
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/project_data"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="126dp"
+                android:layout_height="42dp"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentBottom="true"
-                android:layout_marginStart="246dp"
-                android:layout_marginTop="66dp"
+                android:layout_marginStart="245dp"
+                android:layout_marginTop="42dp"
                 android:layout_marginEnd="16dp"
                 android:layout_marginBottom="16dp"
                 android:fontFamily="@font/josefin_sans_semibold_italic"
-                android:gravity="right"
-                android:text="128 bpm"
+                android:gravity="end"
+                android:text="@string/_128_bpm"
                 android:textColor="@android:color/white"
-                android:textSize="10pt"
-                android:textStyle="bold"
-                android:textFontWeight="1000"/>
+                android:textFontWeight="1000"
+                android:textSize="9pt"
+                android:textStyle="bold" />
 
         </RelativeLayout>
     </androidx.cardview.widget.CardView>
