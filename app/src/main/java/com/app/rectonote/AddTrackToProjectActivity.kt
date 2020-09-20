@@ -213,8 +213,9 @@ class AddTrackToProjectActivity : AppCompatActivity() {
         runBlocking {
             projectsDatabase.drafttracksDAO().newDraftTrack(newTrack)
         }
-        finish()
-
+        val backIntent = Intent(this, MainActivity::class.java)
+        backIntent.flags = FLAG_ACTIVITY_CLEAR_TOP
+        startActivity(backIntent)
     }
 
     private fun addToExistingProject(trackName: String, project: ProjectEntity) {

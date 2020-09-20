@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Rectonote</string>
+    <string name="app_name">RectoNote</string>
     <string name="stop">Stop</string>
     <string name="mic_ready">Mic Ready</string>
     <string name="title_activity_main2">Main2Activity</string>
@@ -31,6 +31,8 @@
     <string name="title_activity_select_project">SelectProjectActivity</string>
     <string name="waiting">Waiting</string>
     <string name="_128_bpm">128 bpm</string>
+    <string name="detail">DETAIL</string>
+    <string name="preview">PREVIEW</string>
 
 
 </resources>

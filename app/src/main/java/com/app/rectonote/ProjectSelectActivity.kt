@@ -1,6 +1,8 @@
 package com.app.rectonote
 
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuInflater
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -32,5 +34,12 @@ class ProjectSelectActivity : AppCompatActivity() {
             recyclerView.adapter = ProjectSelectAdapter(it, this)
         })
 
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        val inflater: MenuInflater = menuInflater
+        inflater.inflate(R.menu.menu_main, menu)
+        val searchItem = menu?.findItem(R.id.action_search)
+        return true
     }
 }

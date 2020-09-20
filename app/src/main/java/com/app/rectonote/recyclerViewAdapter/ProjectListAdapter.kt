@@ -5,6 +5,8 @@ import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Filter
+import android.widget.Filterable
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
@@ -13,8 +15,9 @@ import com.app.rectonote.R
 import com.app.rectonote.database.ProjectEntity
 
 open class ProjectListAdapter(
-    private val projectDataset: List<ProjectEntity>
-) : RecyclerView.Adapter<ProjectListAdapter.ProjectViewHolder>() {
+    private var projectDataset: MutableList<ProjectEntity>
+) : RecyclerView.Adapter<ProjectListAdapter.ProjectViewHolder>(), Filterable {
+    internal var filterListResult: List<ProjectEntity> = projectDataset
 
     class ProjectViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val context = itemView.context!!
@@ -43,4 +46,29 @@ open class ProjectListAdapter(
     }
 
     override fun getItemCount() = projectDataset.size
+    override fun getFilter(): Filter = object : Filter() {
+        override fun performFiltering(constraint: CharSequence?): FilterResults {
+            val charSearch = constraint.toString()
+            filterListResult = if (charSearch.isEmpty()) {
+                projectDataset
+            } else {
+                val resultList = ArrayList<ProjectEntity>()
+                projectDataset.forEach {
+                    if (it.name.toLowerCase().contains(charSearch.toLowerCase())) resultList.add(it)
+                }
+                resultList
+            }
+            val filterResult = FilterResults()
+            filterResult.values = filterListResult
+            return filterResult
+        }
+
+        override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
+            projectDataset = results!!.values as MutableList<ProjectEntity>
+
+        }
+
+    }
+
+
 }

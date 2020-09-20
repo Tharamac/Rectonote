@@ -68,6 +68,10 @@
         <item name="windowNoTitle">true</item>
     </style>
 
+    <style name="rectoNoteTheme.searchView" parent="Widget.AppCompat.SearchView">
+        <item name="android:textSize">12pt</item>
+    </style>
+
     <style name="rectoNoteTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="rectoNoteTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />

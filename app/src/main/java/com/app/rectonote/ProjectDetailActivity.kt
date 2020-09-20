@@ -1,86 +1,68 @@
 package com.app.rectonote
 
-import android.content.DialogInterface
-import android.content.Intent
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
-import android.view.View
-import android.widget.EditText
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.cardview.widget.CardView
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.app.rectonote.database.Key
+import androidx.viewpager2.widget.ViewPager2
 import com.app.rectonote.database.ProjectEntity
 import com.app.rectonote.database.ProjectsDatabase
-import com.app.rectonote.recyclerViewAdapter.DraftTracksAdapter
+import com.app.rectonote.fragment.ProjectDataFragment
+import com.app.rectonote.fragment.ProjectDetailTabAdapter
+import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.coroutines.runBlocking
 
 
 class ProjectDetailActivity : AppCompatActivity() {
-    lateinit var recyclerView: RecyclerView
-    lateinit var projectDatabase: ProjectsDatabase
-    lateinit var adapter: DraftTracksAdapter
-
-
+    private lateinit var viewPager2: ViewPager2
+    private val titles = arrayOf("DETAIL", "PREVIEW")
+    lateinit var fragment: ProjectDataFragment
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_project_detail)
-        projectDatabase = ProjectsDatabase.getInstance(applicationContext)
 
-
-
-        recyclerView = findViewById<RecyclerView>(R.id.tracks_list_view)
-        recyclerView.apply {
-            setHasFixedSize(true)
-            layoutManager = LinearLayoutManager(this@ProjectDetailActivity)
-        }
         val toolbar = findViewById<Toolbar>(R.id.toolbar_project_detail)
-
-
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
+
+
+//        fragment = ProjectDataFragment()
+//        transaction = supportFragmentManager.beginTransaction()
+//        transaction.add(R.id.project_detail,fragment)
+//        transaction.commit()
+
     }
 
     override fun onResume() {
         super.onResume()
         val projectData = intent.getSerializableExtra("project") as ProjectEntity?
-        val toolbarTitle = findViewById<TextView>(R.id.project_detail_title)
-        val projectTempo = findViewById<TextView>(R.id.project_tempo)
-        val projectKey = findViewById<TextView>(R.id.project_key)
-        val newTrackBtn = findViewById<CardView>(R.id.add_track_to_project_button)
-        newTrackBtn.setOnClickListener(newTrackFormProjectDetail(projectData))
+        viewPager2 = findViewById(R.id.detail_pager)
+        val tabLayout = findViewById<TabLayout>(R.id.tab_layout)
         if (projectData != null) {
+            val toolbarTitle = findViewById<TextView>(R.id.project_detail_title)
             toolbarTitle.text = projectData.name
-            projectTempo.text = projectData.tempo.toString()
-            projectKey.text = Key.reduceKey(projectData.key)
+            val adapter = ProjectDetailTabAdapter(this, projectData)
+            viewPager2.adapter = adapter
+            adapter.notifyDataSetChanged()
         }
-        runBlocking {
-            projectData?.projectId.let {
-                if (it != null) {
-                    adapter = DraftTracksAdapter(
-                        projectDatabase.drafttracksDAO().loadTracksFromProject(it)
-                    )
-                }
-            }
-            recyclerView.adapter = adapter
+        TabLayoutMediator(
+            tabLayout, viewPager2
+        ) { tab, position -> tab.text = titles[position] }.attach()
+        for (i: Int in 0..tabLayout.tabCount) {
+            val tv = LayoutInflater.from(this).inflate(R.layout.custom_text, null)
+            tabLayout.getTabAt(i)?.customView = tv
         }
-        adapter.notifyDataSetChanged()
+
     }
 
-    private fun newTrackFormProjectDetail(projectData: ProjectEntity?) = View.OnClickListener {
-        val intent = Intent(this, RecordingActivity::class.java)
-        intent.putExtra("project", projectData?.name)
-        startActivity(intent)
-    }
-
+    //toolbar menu
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         val inflater: MenuInflater = menuInflater
         inflater.inflate(R.menu.menu_project_detail, menu)
@@ -120,107 +102,6 @@ class ProjectDetailActivity : AppCompatActivity() {
             }
         }
         finish()
-    }
-
-    override fun onContextItemSelected(item: MenuItem): Boolean {
-        val position = item.groupId
-
-        return when (item.itemId) {
-            1 -> {
-                spawnDialogChangeName(position)
-
-
-                true
-            }
-            2 -> {
-                spawnDialogDeleteTrack(position)
-                true
-            }
-            else -> {
-                super.onContextItemSelected(item)
-            }
-        }
-    }
-
-    private fun spawnDialogChangeName(trackViewId: Int) {
-        val builder = AlertDialog.Builder(this)
-        val input = EditText(this)
-        builder.apply {
-            setTitle("Edit Name")
-            setView(input)
-            setPositiveButton("OK", DialogInterface.OnClickListener { _, _ ->
-                val changedName = input.text.toString()
-                val isNameExisted = runBlocking {
-                    projectDatabase.drafttracksDAO().loadTrackNames()
-                }.any { eachName -> eachName == changedName }
-                when {
-                    changedName.isEmpty() -> {
-                        Toast.makeText(
-                            this@ProjectDetailActivity,
-                            "Name cannot be empty",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        return@OnClickListener
-                    }
-                    isNameExisted -> {
-                        Toast.makeText(
-                            this@ProjectDetailActivity,
-                            "This name is existed on this project.",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        return@OnClickListener
-                    }
-                    changedName.containsSpecialCharacters() -> {
-                        Toast.makeText(
-                            this@ProjectDetailActivity,
-                            "Name Invalid",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        return@OnClickListener
-                    }
-                    else -> {
-                        changeTrackName(changedName, trackViewId)
-                    }
-                }
-
-
-            })
-            setNegativeButton("Cancel") { _, _ ->
-
-            }
-        }
-        builder.create().show()
-    }
-
-    private fun changeTrackName(changedName: String, trackViewId: Int) {
-        var trackData = adapter.getDatasetPosition(trackViewId)
-        trackData.name = changedName
-        runBlocking {
-            projectDatabase.drafttracksDAO().changeData(trackData)
-        }
-        recyclerView.adapter?.notifyDataSetChanged()
-    }
-
-    private fun spawnDialogDeleteTrack(trackViewId: Int) {
-        val builder = AlertDialog.Builder(this)
-        builder.apply {
-            setMessage("Are you sure want to delete a track?")
-            setPositiveButton("Yes", DialogInterface.OnClickListener { dialog, which ->
-                deleteTrack(trackViewId)
-            })
-            setNegativeButton("No", DialogInterface.OnClickListener { _, _ ->
-
-            })
-        }
-        builder.create().show()
-    }
-
-    private fun deleteTrack(trackViewId: Int) {
-        val trackData = adapter.getDatasetPosition(trackViewId)
-        runBlocking {
-            projectDatabase.drafttracksDAO().deleteTrack(trackData)
-        }
-        adapter.removeAt(trackViewId)
     }
 
 }
