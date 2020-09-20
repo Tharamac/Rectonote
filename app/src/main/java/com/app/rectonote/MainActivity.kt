@@ -10,9 +10,9 @@ import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.app.rectonote.adapter.ProjectListAdapter
 import com.app.rectonote.database.ProjectEntity
 import com.app.rectonote.database.ProjectsDatabase
-import com.app.rectonote.recyclerViewAdapter.ProjectListAdapter
 import kotlinx.coroutines.runBlocking
 
 

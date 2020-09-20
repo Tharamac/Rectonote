@@ -10,10 +10,10 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.viewpager2.widget.ViewPager2
+import com.app.rectonote.adapter.ProjectDetailTabAdapter
 import com.app.rectonote.database.ProjectEntity
 import com.app.rectonote.database.ProjectsDatabase
 import com.app.rectonote.fragment.ProjectDataFragment
-import com.app.rectonote.fragment.ProjectDetailTabAdapter
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.coroutines.runBlocking

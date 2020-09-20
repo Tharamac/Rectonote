@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
@@ -65,7 +66,7 @@ class AddTrackToProjectActivity : AppCompatActivity() {
             projectCard.setBackgroundColor(Color.parseColor(projectData!!.color))
         } else {
             selectButton.text = "<Tap to select project>"
-            projectCard.setCardBackgroundColor(Color.parseColor("#777777"))
+            projectCard.setBackgroundColor(Color.parseColor("#777777"))
         }
 
         projectCard.setOnClickListener { _ ->
@@ -75,9 +76,7 @@ class AddTrackToProjectActivity : AppCompatActivity() {
         addTrackOptions.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             val addToNew = findViewById<LinearLayout>(R.id.add_new_proj)
             val addExisting = findViewById<LinearLayout>(R.id.add_existing_proj)
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-                TODO("Not yet implemented")
-            }
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
 
             override fun onItemSelected(
                 parent: AdapterView<*>?,
@@ -112,7 +111,9 @@ class AddTrackToProjectActivity : AppCompatActivity() {
                 val selectButton = findViewById<TextView>(R.id.project_selected)
                 selectButton.text = projectData?.name
                 val projectCard = findViewById<CardView>(R.id.btn_project_selector)
-                projectCard.setCardBackgroundColor(Color.parseColor(projectData?.color))
+                Log.d("h", projectData!!.color)
+                projectCard.setBackgroundColor(Color.parseColor(projectData!!.color))
+                Log.d("h", projectCard.cardBackgroundColor.toString())
             }
         }
     }

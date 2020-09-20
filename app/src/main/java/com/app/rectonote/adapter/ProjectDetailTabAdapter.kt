@@ -1,9 +1,11 @@
-package com.app.rectonote.fragment
+package com.app.rectonote.adapter
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.app.rectonote.database.ProjectEntity
+import com.app.rectonote.fragment.PreviewTracksFragment
+import com.app.rectonote.fragment.ProjectDataFragment
 
 class ProjectDetailTabAdapter(fragmentActivity: FragmentActivity, project: ProjectEntity) :
     FragmentStateAdapter(fragmentActivity) {

@@ -1,4 +1,4 @@
-package com.app.rectonote.recyclerViewAdapter
+package com.app.rectonote.adapter
 
 import android.content.Intent
 import android.graphics.Color
