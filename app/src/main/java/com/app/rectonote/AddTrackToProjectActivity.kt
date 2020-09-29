@@ -99,6 +99,24 @@ class AddTrackToProjectActivity : AppCompatActivity() {
         }
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
+
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        return super.onSupportNavigateUp()
+        val builder = AlertDialog.Builder(this)
+        builder.apply {
+            setMessage("Are you want discard this track?")
+            setPositiveButton("Yes") { _, _ ->
+                super.onBackPressed()
+            }
+            setNegativeButton("No") { _, _ ->
+            }
+        }
+        val dialog = builder.create()
+        dialog.show()
+
+        finish()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

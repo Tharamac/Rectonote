@@ -53,9 +53,10 @@ class RecordingActivity : AppCompatActivity() {
     )
 
     //check if android have permission
-    fun hasPermissions(context: Context, permissions: Array<String>): Boolean = permissions.all {
-        ActivityCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED
-    }
+    private fun hasPermissions(context: Context, permissions: Array<String>): Boolean =
+        permissions.all {
+            ActivityCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED
+        }
 
     /*
     fun checkDeniedPermission(context: Context, permissions: Array<String>): List<String> = permissions.filterNot {
@@ -306,9 +307,9 @@ class RecordingActivity : AppCompatActivity() {
             val selectedID = modeSelector.checkedRadioButtonId
             val mode = findViewById<RadioButton>(selectedID)
             if (mode.text == "Voice to Melody") {
-                dsp('m')
+
             } else if (mode.text == "Voice to Chord") {
-                dsp('c')
+
             }
         }
     }

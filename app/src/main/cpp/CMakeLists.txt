@@ -9,17 +9,32 @@ cmake_minimum_required(VERSION 3.4.1)
 # or SHARED, and provides the relative paths to its source code.
 # You can define multiple libraries, and CMake builds them for you.
 # Gradle automatically packages shared libraries with your APK.
+set(
+        PATH_TO_FFTW
+        CACHE STRING ""
+)
+
+set(OBOE_DIR ~/oboe)
+include_directories(
+        ${OBOE_DIR}/include
+        ${PATH_TO_FFTW}
+        src/main/cpp/includes
+)
+
 
 add_library( # Sets the name of the library.
-             native-lib
+        native-lib
 
 
+        # Sets the library as a shared library.
+        SHARED
 
-             # Sets the library as a shared library.
-             SHARED
+        # Provides a relative path to your source file(s).
 
-             # Provides a relative path to your source file(s).
-             native-lib.cpp
+        RawAudio.cpp
+        native-lib.cpp
+        dsp.cpp
+        VoiceActivityDetection.cpp
         )
 
 # Searches for a specified prebuilt library and stores the path as a
@@ -27,8 +42,7 @@ add_library( # Sets the name of the library.
 # default, you only need to specify the name of the public NDK library
 # you want to add. CMake verifies that the library exists before
 # completing its build.
-set(OBOE_DIR ~/oboe)
-include_directories (${OBOE_DIR}/include)
+
 
 find_library( # Sets the name of the path variable.
               log-lib
@@ -36,7 +50,6 @@ find_library( # Sets the name of the path variable.
               # Specifies the name of the NDK library that
               # you want CMake to locate.
               log
-
               oboe
             )
 
@@ -45,8 +58,9 @@ find_library( # Sets the name of the path variable.
 # build script, prebuilt third-party libraries, or system libraries.
 
 target_link_libraries( # Specifies the target library.
-                       native-lib
 
-                       # Links the target library to the log library
-                       # included in the NDK.
-                       ${log-lib} )
+
+        native-lib
+        ${PATH_TO_FFTW}/libfftw3-3.a   # Links the target library to the log library
+        # included in the NDK.
+        ${log-lib})

@@ -54,7 +54,7 @@
         android:id="@+id/txtStatus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/josefin_sans_bold"
+        android:fontFamily="@font/josefin_sans_semibold_italic"
         android:text="@string/mic_ready"
         android:textColor="#D5FF00"
         android:textSize="30dp"
