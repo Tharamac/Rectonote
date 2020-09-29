@@ -18,6 +18,8 @@ VoiceActivityDetection::VoiceActivityDetection(
     frameSize(frame_size),
     Fs(Fs) {
     realSpectrum.resize(fftRealSize);
+    spectrum = (fftw_complex *) fftw_malloc(sizeof(fftw_complex) * (fftSize));
+
 }
 
 VoiceActivityDetection::~VoiceActivityDetection() {

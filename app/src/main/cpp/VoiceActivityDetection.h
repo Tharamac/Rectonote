@@ -5,10 +5,9 @@
 #ifndef RECTONOTE_VOICEACTIVITYDETECTION_H
 #define RECTONOTE_VOICEACTIVITYDETECTION_H
 
-#include <fstream>
 #include <vector>
 #include <iostream>
-#include <array>
+
 #include <cmath>
 #include <fftw3.h>
 #include <cstdlib>
@@ -39,13 +38,9 @@ private:
     std::vector<bool> vadResult;
 
     double shortTermEnergy(double *frame);
-
     double zcr(double *frame);
-
     double findPeakFreq(std::vector<double> &real_spectrum);
-
     double calcSpectralFlatness(std::vector<double> &real_spectrum);
-
     double geometricMean(std::vector<double> const &data);
 
 public:
@@ -54,11 +49,8 @@ public:
                            const int FFT_size,
                            const int Fs
     );
-
     ~VoiceActivityDetection();
-
     void calculateFeatures();
-
     void startDecision(
             const double energyThresh,
             const double sfmThresh,
@@ -66,7 +58,6 @@ public:
             const double freqUpperBound,
             const double zcrThresh
     );
-
     std::vector<bool> getResult();
 };
 
