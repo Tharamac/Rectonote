@@ -18,7 +18,7 @@ set(OBOE_DIR ~/oboe)
 include_directories(
         ${OBOE_DIR}/include
         ${PATH_TO_FFTW}
-        src/main/cpp/includes
+        src/main/cpp/
 )
 
 
@@ -31,10 +31,17 @@ add_library( # Sets the name of the library.
 
         # Provides a relative path to your source file(s).
 
-        RawAudio.cpp
         native-lib.cpp
+        RawAudio.cpp
         dsp.cpp
         VoiceActivityDetection.cpp
+        PitchDetection.cpp
+        NoteUnit.cpp
+        Note.cpp
+        Melody.cpp
+        Chord.cpp
+        ChordProgression.cpp
+
         )
 
 # Searches for a specified prebuilt library and stores the path as a

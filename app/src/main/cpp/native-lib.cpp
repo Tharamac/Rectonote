@@ -9,9 +9,9 @@
 #define IMAG 1
 #define C3 130.81278265
 
-#include "includes/RawAudio.h"
-#include "includes/dsp.h"
-#include "includes/VoiceActivityDetection.h"
+#include "RawAudio.h"
+#include "dsp.h"
+#include "VoiceActivityDetection.h"
 
 
 extern "C" {
