@@ -3,7 +3,7 @@
 //
 
 
-#include "includes/dsp.h"
+#include "dsp.h"
 
 void hannWindow(const std::vector<double> &data, double *output, int point_start, int window_size) {
     //all this function argument are in sampling point
@@ -14,5 +14,9 @@ void hannWindow(const std::vector<double> &data, double *output, int point_start
 
 int noteShift(double freq, double base_freq) {
     return round(12 * log2(freq / base_freq));
+}
+
+double fftBinToFreq(unsigned int binIdx, size_t fftSize, unsigned int Fs) {
+    return (double) 0.5 * binIdx * Fs / fftSize;
 }
 

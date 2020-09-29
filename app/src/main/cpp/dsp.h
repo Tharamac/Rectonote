@@ -12,4 +12,8 @@
 
 void hannWindow(const std::vector<double> &data, double *output, int point_start, int window_size);
 
+int noteShift(double freq, double base_freq);
+
+double fftBinToFreq(unsigned int binIdx, size_t fftSize, unsigned int Fs);
+
 #endif //RECTONOTE_DSP_H
