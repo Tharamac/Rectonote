@@ -9,7 +9,7 @@
 #include <iostream>
 
 #include <cmath>
-#include <fftw3.h>
+#include "fftw3.h"
 #include <cstdlib>
 
 #define REAL 0

@@ -123,7 +123,7 @@ class RecordingActivity : AppCompatActivity() {
         }
     }
 
-    private external fun dsp(mode: Char)
+
 
 
     override fun onRequestPermissionsResult(

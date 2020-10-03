@@ -33,6 +33,7 @@ class AddTrackToProjectActivity : AppCompatActivity() {
     private lateinit var projectsDatabase: ProjectsDatabase
     private lateinit var dbViewModel: ProjectDatabaseViewModel
     private var projectData: ProjectEntity? = null
+    private external fun debug();
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,6 +46,7 @@ class AddTrackToProjectActivity : AppCompatActivity() {
         val btnConfirm = findViewById<FloatingActionButton>(R.id.fabtn_confirm)
         btnConfirm.setOnClickListener(confirmAddTrack)
         val projectCard = findViewById<CardView>(R.id.btn_project_selector)
+        debug();
         val optionsAdapter = ArrayAdapter<String>(
             this,
             R.layout.item_add_to_project_spinner,
@@ -103,7 +105,7 @@ class AddTrackToProjectActivity : AppCompatActivity() {
     }
 
     override fun onSupportNavigateUp(): Boolean {
-        return super.onSupportNavigateUp()
+
         val builder = AlertDialog.Builder(this)
         builder.apply {
             setMessage("Are you want discard this track?")
@@ -115,8 +117,8 @@ class AddTrackToProjectActivity : AppCompatActivity() {
         }
         val dialog = builder.create()
         dialog.show()
+        return super.onSupportNavigateUp()
 
-        finish()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

@@ -9,40 +9,26 @@ cmake_minimum_required(VERSION 3.4.1)
 # or SHARED, and provides the relative paths to its source code.
 # You can define multiple libraries, and CMake builds them for you.
 # Gradle automatically packages shared libraries with your APK.
-set(
-        PATH_TO_FFTW
-        CACHE STRING ""
-)
 
-set(OBOE_DIR ~/oboe)
+
+
+file(GLOB SOURCES "*.cpp")
 include_directories(
-        ${OBOE_DIR}/include
-        ${PATH_TO_FFTW}
+
+        fftw3lib/includes/
         src/main/cpp/
 )
-
-
 add_library( # Sets the name of the library.
         native-lib
-
-
-        # Sets the library as a shared library.
         SHARED
-
-        # Provides a relative path to your source file(s).
-
         native-lib.cpp
         RawAudio.cpp
-        dsp.cpp
-        VoiceActivityDetection.cpp
         PitchDetection.cpp
-        NoteUnit.cpp
-        Note.cpp
-        Melody.cpp
-        Chord.cpp
-        ChordProgression.cpp
-
+        VoiceActivityDetection.cpp
+        dsp.cpp
         )
+add_library(fftw3 STATIC IMPORTED)
+set_target_properties(fftw3 PROPERTIES IMPORTED_LOCATION fftw3lib/libfftw3-3.a)
 
 # Searches for a specified prebuilt library and stores the path as a
 # variable. Because CMake includes system libraries in the search path by
@@ -57,17 +43,21 @@ find_library( # Sets the name of the path variable.
               # Specifies the name of the NDK library that
               # you want CMake to locate.
               log
-              oboe
             )
 
 # Specifies libraries CMake should link to your target library. You
 # can link multiple libraries, such as libraries you define in this
 # build script, prebuilt third-party libraries, or system libraries.
+include_directories(src/main/cpp/fftw3lib/includes/)
+target_link_libraries( # Specifies the target library.
+        native-lib
+        fftw3
+        ${log-lib}
+        )
 
 target_link_libraries( # Specifies the target library.
-
-
         native-lib
-        ${PATH_TO_FFTW}/libfftw3-3.a   # Links the target library to the log library
-        # included in the NDK.
-        ${log-lib})
+        fftw3
+    #   ${PROJECT_SOURCE_DIR}/fftw3lib/libfftw3-3.a
+
+        )

@@ -2,7 +2,7 @@
 // Created by TharaMac on 9/28/2020.
 //
 
-#include "includes/RawAudio.h"
+#include "RawAudio.h"
 
 RawAudio::RawAudio(const char *path) {
     std::ifstream pcm;

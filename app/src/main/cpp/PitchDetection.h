@@ -7,7 +7,7 @@
 
 #include <vector>
 #include <iostream>
-#include <fftw3.h>
+#include "fftw3.h"
 
 #define REAL 0
 #define IMAG 1
