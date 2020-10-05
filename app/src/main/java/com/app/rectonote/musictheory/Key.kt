@@ -1,4 +1,4 @@
-package com.app.rectonote.database
+package com.app.rectonote.musictheory
 
 enum class Key(val label: String, val reduced: String) {
     C("C major", "C"),
