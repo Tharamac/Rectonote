@@ -11,11 +11,11 @@ cmake_minimum_required(VERSION 3.4.1)
 # Gradle automatically packages shared libraries with your APK.
 
 
+message(${ANDROID_ABI})
 
-file(GLOB SOURCES "*.cpp")
 include_directories(
 
-        fftw3lib/includes/
+
         src/main/cpp/
 )
 add_library( # Sets the name of the library.
@@ -27,8 +27,12 @@ add_library( # Sets the name of the library.
         VoiceActivityDetection.cpp
         dsp.cpp
         )
-add_library(fftw3 STATIC IMPORTED)
-set_target_properties(fftw3 PROPERTIES IMPORTED_LOCATION fftw3lib/libfftw3-3.a)
+add_library(
+        fftw3
+        STATIC
+        IMPORTED)
+
+set_target_properties(fftw3 PROPERTIES IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/fftw3lib/lib/${ANDROID_ABI}/libfftw3.a)
 
 # Searches for a specified prebuilt library and stores the path as a
 # variable. Because CMake includes system libraries in the search path by
@@ -36,28 +40,20 @@ set_target_properties(fftw3 PROPERTIES IMPORTED_LOCATION fftw3lib/libfftw3-3.a)
 # you want to add. CMake verifies that the library exists before
 # completing its build.
 
-
+include_directories(fftw3lib/includes/)
 find_library( # Sets the name of the path variable.
-              log-lib
+        log-lib
 
-              # Specifies the name of the NDK library that
-              # you want CMake to locate.
-              log
-            )
+        log
+        )
 
 # Specifies libraries CMake should link to your target library. You
 # can link multiple libraries, such as libraries you define in this
 # build script, prebuilt third-party libraries, or system libraries.
-include_directories(src/main/cpp/fftw3lib/includes/)
+
 target_link_libraries( # Specifies the target library.
         native-lib
-        fftw3
         ${log-lib}
-        )
-
-target_link_libraries( # Specifies the target library.
-        native-lib
         fftw3
-    #   ${PROJECT_SOURCE_DIR}/fftw3lib/libfftw3-3.a
-
         )
+

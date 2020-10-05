@@ -10,6 +10,7 @@ import android.media.AudioRecord
 import android.media.MediaRecorder
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
@@ -47,9 +48,9 @@ class RecordingActivity : AppCompatActivity() {
 
 
     private var requiredPermissions: Array<String> = arrayOf(
-        Manifest.permission.RECORD_AUDIO,
-        Manifest.permission.READ_EXTERNAL_STORAGE,
-        Manifest.permission.WRITE_EXTERNAL_STORAGE
+        Manifest.permission.RECORD_AUDIO
+        //Manifest.permission.READ_EXTERNAL_STORAGE,
+        //Manifest.permission.WRITE_EXTERNAL_STORAGE
     )
 
     //check if android have permission
@@ -65,18 +66,13 @@ class RecordingActivity : AppCompatActivity() {
     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_add_new_idea)
+        setContentView(R.layout.activity_recording)
         btnRecord = findViewById<Button>(R.id.btnRecord)
         btnStop = findViewById<Button>(R.id.btnStop)
         txtStatus = findViewById<TextView>(R.id.txtStatus)
         txtTimer = findViewById<TextView>(R.id.txtTimer)
         modeSelector = findViewById<RadioGroup>(R.id.convertMode)
         txtStatus.text = "Mic Ready"
-        //val projectNameFormProjectDetail = intent.getStringExtra("project")
-        //if(projectNameFormProjectDetail != null)
-        //findViewById<TextView>(R.id.txtSubStatus).text = "Record"
-        btnContinue = findViewById(R.id.btnContinue)
-        btnContinue.setOnClickListener(pressContinue)
         btnRecord.setOnClickListener(pressPlay)
         btnStop.setOnClickListener(pressStop)
         startTimer()
@@ -87,8 +83,6 @@ class RecordingActivity : AppCompatActivity() {
         builder = AlertDialog.Builder(this)
         btnContinue.isEnabled = false
         btnContinue.visibility = View.INVISIBLE
-
-
     }
 
     override fun onStart() {
@@ -112,20 +106,6 @@ class RecordingActivity : AppCompatActivity() {
         dialog.show()
     }
 
-    companion object {
-        /*
-         * We use a static class initializer to allow the native code to cache some
-         * field offsets. This native function looks up and caches interesting
-         * class/field/method IDs. Throws on failure.
-         */
-        init {
-
-        }
-    }
-
-
-
-
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<String>,
@@ -136,11 +116,9 @@ class RecordingActivity : AppCompatActivity() {
         when (requestCode) {
             PERMISSION_ALL -> {
                 if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    // permission was granted, yay! Do the
-
-                    // contacts-related task you need to do.
+                    // permission was granted, yay! Do the contacts-related task you need to do.
                 } else {
-                    Toast.makeText(this, "Permission Denied", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this, "Recording Permission Required", Toast.LENGTH_SHORT).show()
                     finish()
                 }
                 return
@@ -177,16 +155,18 @@ class RecordingActivity : AppCompatActivity() {
         Toast.makeText(this, "Recording Complete", Toast.LENGTH_SHORT).show()
         val projectNameFormProjectDetail = intent.getStringExtra("project")
 
+        txtStatus.text = "Record Complete"
+        val selectedID = modeSelector.checkedRadioButtonId
+        val mode = findViewById<RadioButton>(selectedID)
+
+
         val intent = Intent(this, AddTrackToProjectActivity::class.java)
         if (projectNameFormProjectDetail != null) {
             intent.putExtra("projectFromProjectDetail", projectNameFormProjectDetail)
         }
+        intent.putExtra("convert_mode", mode.text)
         startActivity(intent)
         finish()
-    }
-
-    private val pressContinue = View.OnClickListener {
-
     }
 
     //this function start a stopwatch
@@ -202,10 +182,8 @@ class RecordingActivity : AppCompatActivity() {
                     Locale.getDefault(),
                     "%d:%02d:%d", minutes, secs, millisecs
                 )
-
                 txtTimer.text = time
                 if (running) centisecs++
-
                 handler.postDelayed(this, 100)
             }
         })
@@ -243,7 +221,7 @@ class RecordingActivity : AppCompatActivity() {
         txtStatus.text = "Recording..."
         recorder!!.startRecording()
         isRecording = true
-        recordingThread = Thread(Runnable { writeAudioDataToFile() }, "AudioRecorder Thread")
+        recordingThread = Thread({ writeAudioDataToFile() }, "AudioRecorder Thread")
         recordingThread!!.start()
 
     }
@@ -260,10 +238,10 @@ class RecordingActivity : AppCompatActivity() {
     }
 
     private fun writeAudioDataToFile() {
-        val filePath = "/sdcard/voice16bit.pcm"
-        // val filePath = "${Environment.getDataDirectory()}/voice16bit.pcm
+        //val filePath = filesDir + "/voice16bit.pcm"
+        val filePath = "${filesDir}/voice16bit.pcm"
         var sData = ShortArray(bufferElements2Rec)
-
+        Log.i("file_dir", filePath)
         var outputStream: FileOutputStream? = null
         try {
             outputStream = FileOutputStream(filePath)
@@ -295,24 +273,19 @@ class RecordingActivity : AppCompatActivity() {
             recorder!!.release()
             recorder = null
             recordingThread = null
-
+            /*
             val f1 = File("/sdcard/voice16bit.pcm") // The location of your PCM file
             val f2 = File("/sdcard/voice16bit.wav") // The location where you want your WAV file
             try {
                 rawToWave(f1, f2)
             } catch (e: IOException) {
                 e.printStackTrace()
-            }
-            txtStatus.text = "Record Complete"
-            val selectedID = modeSelector.checkedRadioButtonId
-            val mode = findViewById<RadioButton>(selectedID)
-            if (mode.text == "Voice to Melody") {
+            }*/
 
-            } else if (mode.text == "Voice to Chord") {
-
-            }
         }
     }
+
+
 
     @Throws(IOException::class)
     private fun rawToWave(rawFile: File, waveFile: File) {

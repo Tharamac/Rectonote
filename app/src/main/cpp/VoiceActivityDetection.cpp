@@ -4,7 +4,7 @@
 
 
 #include "VoiceActivityDetection.h"
-#include "dsp.h"
+
 
 VoiceActivityDetection::VoiceActivityDetection(
         std::vector<double> &audio_sample,
@@ -137,4 +137,12 @@ void VoiceActivityDetection::startDecision(
 
 std::vector<bool> VoiceActivityDetection::getResult() {
     return vadResult;
+}
+
+std::string VoiceActivityDetection::getStringResult() {
+    std::string out = "num of frame = " + std::to_string(numOfFrame) + "\nVadResult = ";
+    for (size_t i = 0; i < vadResult.size(); ++i) {
+        out += std::to_string(vadResult[i]);
+    }
+    return out;
 }

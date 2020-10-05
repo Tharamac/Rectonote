@@ -7,9 +7,11 @@
 
 #include <vector>
 #include <iostream>
+#include <string>
 
 #include <cmath>
 #include "fftw3.h"
+#include "dsp.h"
 #include <cstdlib>
 
 #define REAL 0
@@ -58,7 +60,10 @@ public:
             const double freqUpperBound,
             const double zcrThresh
     );
+
     std::vector<bool> getResult();
+
+    std::string getStringResult();
 };
 
 

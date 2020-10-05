@@ -14,6 +14,7 @@ class RawAudio {
 private:
     char *byteData;
     int sampleSize;
+    std::string status;
 public:
     std::vector<short> shortData;
     std::vector<double> doubleData;
@@ -23,6 +24,9 @@ public:
     ~RawAudio();
 
     int getSampleSize();
+
+    std::string toString();
+
 };
 
 

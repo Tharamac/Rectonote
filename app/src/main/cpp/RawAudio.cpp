@@ -14,7 +14,8 @@ RawAudio::RawAudio(const char *path) {
         byteData = new char[size];
         pcm.read(byteData, size);
         pcm.close();
-    } else std::cout << "Unable to open file" << std::endl;
+        status = "Read file complete";
+    } else status = "Unable to open file";
     sampleSize = size / 2;
     shortData.resize(sampleSize);
     doubleData.resize(sampleSize);
@@ -26,6 +27,10 @@ RawAudio::RawAudio(const char *path) {
 
 int RawAudio::getSampleSize() {
     return sampleSize;
+}
+
+std::string RawAudio::toString() {
+    return status;
 }
 
 RawAudio::~RawAudio() {

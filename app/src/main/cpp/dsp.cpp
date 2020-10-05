@@ -20,3 +20,4 @@ double fftBinToFreq(unsigned int binIdx, size_t fftSize, unsigned int Fs) {
     return (double) 0.5 * binIdx * Fs / fftSize;
 }
 
+

@@ -13,9 +13,13 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.cardview.widget.CardView
-import com.app.rectonote.database.*
+import com.app.rectonote.database.DraftTrackEntity
+import com.app.rectonote.database.ProjectDatabaseViewModel
+import com.app.rectonote.database.ProjectEntity
+import com.app.rectonote.database.ProjectsDatabase
+import com.app.rectonote.musictheory.Key
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 import java.util.*
 
 class AddTrackToProjectActivity : AppCompatActivity() {
@@ -33,7 +37,12 @@ class AddTrackToProjectActivity : AppCompatActivity() {
     private lateinit var projectsDatabase: ProjectsDatabase
     private lateinit var dbViewModel: ProjectDatabaseViewModel
     private var projectData: ProjectEntity? = null
-    private external fun debug();
+    private external fun debug(): String
+    private external suspend fun startConvert(
+        fs: Int,
+        audioPath: String,
+        convertMode: String
+    ): String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,7 +55,7 @@ class AddTrackToProjectActivity : AppCompatActivity() {
         val btnConfirm = findViewById<FloatingActionButton>(R.id.fabtn_confirm)
         btnConfirm.setOnClickListener(confirmAddTrack)
         val projectCard = findViewById<CardView>(R.id.btn_project_selector)
-        debug();
+        Log.d("Jeelo", debug())
         val optionsAdapter = ArrayAdapter<String>(
             this,
             R.layout.item_add_to_project_spinner,
@@ -101,24 +110,28 @@ class AddTrackToProjectActivity : AppCompatActivity() {
         }
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
-
+        val cppScope = CoroutineScope(Dispatchers.Default)
+        val mode = intent.getStringExtra("convert_mode")
+        cppScope.launch {
+            val cppOut = cppScope.async {
+                startConvert(44100, "${filesDir}/voice16bit.pcm", mode)
+            }
+            Log.i("CPPOUT", cppOut.await())
+        }
     }
 
     override fun onSupportNavigateUp(): Boolean {
-
         val builder = AlertDialog.Builder(this)
         builder.apply {
             setMessage("Are you want discard this track?")
             setPositiveButton("Yes") { _, _ ->
-                super.onBackPressed()
+                super.onSupportNavigateUp()
             }
-            setNegativeButton("No") { _, _ ->
-            }
+            setNegativeButton("No") { _, _ -> }
         }
         val dialog = builder.create()
         dialog.show()
-        return super.onSupportNavigateUp()
-
+        return true
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -212,8 +225,8 @@ class AddTrackToProjectActivity : AppCompatActivity() {
         val trackKey = Key.D
         val newProject = ProjectEntity(
             name = projectName,
-            tempo = trackTempo,            //dummy param
-            key = trackKey.label,      //dummy param
+            tempo = trackTempo,
+            key = trackKey.label,
             dateModified = Date(),
             color = color.random()
         )

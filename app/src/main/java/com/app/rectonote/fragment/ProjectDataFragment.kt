@@ -22,9 +22,9 @@ import com.app.rectonote.RecordingActivity
 import com.app.rectonote.adapter.DraftTracksAdapter
 import com.app.rectonote.adapter.ProjectDetailTabAdapter
 import com.app.rectonote.containsSpecialCharacters
-import com.app.rectonote.database.Key
 import com.app.rectonote.database.ProjectEntity
 import com.app.rectonote.database.ProjectsDatabase
+import com.app.rectonote.musictheory.Key
 import com.google.android.material.tabs.TabLayout
 import kotlinx.coroutines.runBlocking
 
