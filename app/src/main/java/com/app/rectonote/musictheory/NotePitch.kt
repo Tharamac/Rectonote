@@ -1,6 +1,6 @@
 package com.app.rectonote.musictheory
 
-enum class NotePitch(val pitchNum: Byte, val pitchName: String) {
+enum class NotePitch(val pitchNum: Int, val pitchName: String) {
     C(0, "C"),
     Db(1, "C#"),
     D(2, "D"),
@@ -13,5 +13,11 @@ enum class NotePitch(val pitchNum: Byte, val pitchName: String) {
     A(9, "A"),
     Bb(10, "A#"),
     B(11, "B"),
-    REST(-1, "rest")
+    REST(-1, "rest");
+
+    companion object {
+        fun intToNotePitch(pitchNum: Int): NotePitch {
+            return NotePitch.values().find { it.pitchNum == pitchNum } ?: REST
+        }
+    }
 }
