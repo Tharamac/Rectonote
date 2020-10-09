@@ -13,7 +13,7 @@ enum class NotePitch(val pitchNum: Int, val pitchName: String) {
     A(9, "A"),
     Bb(10, "A#"),
     B(11, "B"),
-    REST(-1, "rest");
+    REST(-1, "-");
 
     companion object {
         fun intToNotePitch(pitchNum: Int): NotePitch {

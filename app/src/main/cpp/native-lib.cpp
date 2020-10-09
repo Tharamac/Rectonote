@@ -18,7 +18,7 @@ std::string console_out = "";
 jintArray packResult(JNIEnv *env, std::vector<int> offset);
 
 extern "C"
-JNIEXPORT jstring JNICALL Java_com_app_rectonote_AddTrackToProjectActivity_startConvert(
+JNIEXPORT jintArray JNICALL Java_com_app_rectonote_AddTrackToProjectActivity_startConvert(
         JNIEnv *javaEnvironment,
         jobject __unused obj,
         jint Fs,
@@ -34,10 +34,10 @@ JNIEXPORT jstring JNICALL Java_com_app_rectonote_AddTrackToProjectActivity_start
     PitchDetection pitchDetection(audio_input.doubleData, 0.04, 4096, Fs);
     pitchDetection.startDetection();
     pitchDetection.implementVad(voiceActivityDetection.getResult());
-    packResult(javaEnvironment, pitchDetection.getNoteOffsetResult());
+    jintArray result = packResult(javaEnvironment, pitchDetection.getNoteOffsetResult());
     console_out = audio_input.toString() + " Mode:" + convert_mode + "\n" + vad_result;
     javaEnvironment->ReleaseStringUTFChars(audioPath, path);
-    return javaEnvironment->NewStringUTF(console_out.c_str());
+    return result;
 }
 
 extern "C"

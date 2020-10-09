@@ -33,7 +33,6 @@ class RecordingActivity : AppCompatActivity() {
     private lateinit var btnStop: Button
     private lateinit var txtStatus: TextView
     private lateinit var txtTimer: TextView
-    private lateinit var btnContinue: Button
     private lateinit var modeSelector: RadioGroup
 
     private lateinit var dialog: AlertDialog
@@ -81,8 +80,7 @@ class RecordingActivity : AppCompatActivity() {
         }
 
         builder = AlertDialog.Builder(this)
-        btnContinue.isEnabled = false
-        btnContinue.visibility = View.INVISIBLE
+
     }
 
     override fun onStart() {
@@ -111,8 +109,6 @@ class RecordingActivity : AppCompatActivity() {
         permissions: Array<String>,
         grantResults: IntArray
     ) {
-        println(requestCode)
-        println(grantResults[1])
         when (requestCode) {
             PERMISSION_ALL -> {
                 if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
@@ -147,8 +143,6 @@ class RecordingActivity : AppCompatActivity() {
         btnRecord.visibility = View.VISIBLE
         btnStop.isEnabled = false
         btnStop.visibility = View.INVISIBLE
-        btnContinue.isEnabled = true
-        btnContinue.visibility = View.VISIBLE
 
         running = false
         stopRecording()

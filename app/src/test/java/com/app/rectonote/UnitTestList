@@ -1,0 +1,13 @@
+My Unit Test Function/Method/Class
+
+No dependency
+    fun String.containsSpecialCharacters()
+    fun Melody.updateSequence()
+    fun NoteUnit.plusAssign()
+    fun NoteUnit.equals()
+    fun NoteUnit.transformNotes()
+
+Depedency
+    fun Melody.cleanTrack()  //cuz equal sign
+    fun Melody.generateTrack()
+    fun Melody.calcKey()

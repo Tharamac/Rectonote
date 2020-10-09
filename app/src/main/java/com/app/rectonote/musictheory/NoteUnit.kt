@@ -1,26 +1,17 @@
 package com.app.rectonote.musictheory
 
-class NoteUnit {
-    var pitch: NotePitch = NotePitch.REST
-    var octave = -1
-
-    constructor(pitch: NotePitch, octave: Int) {
-        this.pitch = pitch
-        this.octave = octave
-    }
-
-    constructor(offset: Int, refNote: NoteUnit) {
-        this.pitch = refNote.pitch
-        this.octave = refNote.octave
-        this.plus(offset)
+open class NoteUnit(var pitch: NotePitch, open var octave: Int) {
+    constructor(offset: Int, refNote: NoteUnit) : this(refNote.pitch, refNote.octave) {
+        this.plusAssign(offset)
     }
 
     //unit test this
-    operator fun plus(offset: Int): NoteUnit {
+    operator fun plusAssign(offset: Int) {
         val octaveChange = this.octave + (offset / 12)
         val pitchShift: Int = (this.pitch.pitchNum + (offset % 12)) % 12
         val pitchChange = NotePitch.intToNotePitch(pitchShift)
-        return NoteUnit(pitchChange, octaveChange)
+        this.octave = octaveChange
+        this.pitch = pitchChange
     }
 
     operator fun minus(b: NoteUnit): Int {
@@ -39,15 +30,15 @@ class NoteUnit {
     }
 
     fun transpose(octave: Int) {
-        this.plus(octave * 12)
+        this.plusAssign(octave * 12)
     }
 
     override fun toString(): String {
-        return "${this.pitch.pitchName}$octave"
+        return "${this.pitch.pitchName}${if (this.octave != -1) octave else ""}"
     }
 
     companion object {
-        fun transformNotes(offsetArray: Array<Int>, refNote: NoteUnit): Array<NoteUnit> =
+        fun transformNotes(offsetArray: IntArray, refNote: NoteUnit): Array<NoteUnit> =
             Array<NoteUnit>(offsetArray.size) { i ->
                 if (offsetArray[i] == -1)
                     NoteUnit(NotePitch.REST, -1)

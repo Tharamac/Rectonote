@@ -18,8 +18,14 @@ import com.app.rectonote.database.ProjectDatabaseViewModel
 import com.app.rectonote.database.ProjectEntity
 import com.app.rectonote.database.ProjectsDatabase
 import com.app.rectonote.musictheory.Key
+import com.app.rectonote.musictheory.Melody
+import com.app.rectonote.musictheory.NotePitch
+import com.app.rectonote.musictheory.NoteUnit
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import java.util.*
 
 class AddTrackToProjectActivity : AppCompatActivity() {
@@ -42,7 +48,7 @@ class AddTrackToProjectActivity : AppCompatActivity() {
         fs: Int,
         audioPath: String,
         convertMode: String
-    ): String
+    ): IntArray
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -110,14 +116,26 @@ class AddTrackToProjectActivity : AppCompatActivity() {
         }
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
+
+        audioConvert()
+
+
+    }
+
+    private fun audioConvert() {
         val cppScope = CoroutineScope(Dispatchers.Default)
         val mode = intent.getStringExtra("convert_mode")
-        cppScope.launch {
-            val cppOut = cppScope.async {
+        val cppOut = runBlocking {
+            withContext(cppScope.coroutineContext) {
                 startConvert(44100, "${filesDir}/voice16bit.pcm", mode)
             }
-            Log.i("CPPOUT", cppOut.await())
         }
+        var detectedNoteResult = NoteUnit.transformNotes(cppOut, NoteUnit(NotePitch.C, 3))
+        Log.i("NOTEOUT", detectedNoteResult.contentToString())
+        var melody = Melody(detectedNoteResult)
+        melody.generateTrack()
+        melody.calcKey()
+        Log.i("NOTEOUT", melody.toString())
     }
 
     override fun onSupportNavigateUp(): Boolean {
