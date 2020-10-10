@@ -11,7 +11,7 @@ open class Melody(private val rawNotes: Array<Note>) {
     var lengthInFrame: Int = 0
     var trackDuration: Double = 0.00
     var frameStart = -1
-    lateinit var pitchProfile: Array<Int>
+    var pitchProfile: Array<Int>
     private var melody = ArrayList<Note>()
 
     init {
