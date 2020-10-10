@@ -185,5 +185,148 @@ class ContainsSpecialCharTest {
         }
     }
 
+    @Test
+    @Throws(Exception::class)
+    fun testDollarSign() {
+        val testStr = "$\\A"
+        assertTrue {
+            testStr.containsSpecialCharacters()
+        }
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun testTilde() {
+        val testStr = "~A"
+        assertTrue {
+            testStr.containsSpecialCharacters()
+        }
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun testGraveAccent() {
+        val testStr = "`A"
+        assertTrue {
+            testStr.containsSpecialCharacters()
+        }
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun testEqualSign() {
+        val testStr = "=A"
+        assertTrue {
+            testStr.containsSpecialCharacters()
+        }
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun testColon() {
+        val testStr = "A:"
+        assertTrue {
+            testStr.containsSpecialCharacters()
+        }
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun testSemiColon() {
+        val testStr = "A;"
+        assertTrue {
+            testStr.containsSpecialCharacters()
+        }
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun testComma() {
+        val testStr = "A,"
+        assertTrue {
+            testStr.containsSpecialCharacters()
+        }
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun testPeriod() {
+        val testStr = "A."
+        assertFalse {
+            testStr.containsSpecialCharacters()
+        }
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun testVerticalLine() {
+        val testStr = "A|"
+        assertTrue {
+            testStr.containsSpecialCharacters()
+        }
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun testPercentSign() {
+        val testStr = "A%"
+        assertTrue {
+            testStr.containsSpecialCharacters()
+        }
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun testLessThan() {
+        val testStr = "A<"
+        assertTrue {
+            testStr.containsSpecialCharacters()
+        }
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun testMoreThan() {
+        val testStr = "A>"
+        assertTrue {
+            testStr.containsSpecialCharacters()
+        }
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun testCompoundSample() {
+        val testStr = "A{|<"
+        assertTrue {
+            testStr.containsSpecialCharacters()
+        }
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun testSingleQuote() {
+        val testStr = "A\'"
+        assertTrue {
+            testStr.containsSpecialCharacters()
+        }
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun testDoubleQuote() {
+        val testStr = "A\""
+        assertTrue {
+            testStr.containsSpecialCharacters()
+        }
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun testAll() {
+        val testStr = "!$%^&*\\\\+|@~=`{}\\[\\]:\";'<>?,\\/"
+        assertTrue {
+            testStr.containsSpecialCharacters()
+        }
+    }
 
 }

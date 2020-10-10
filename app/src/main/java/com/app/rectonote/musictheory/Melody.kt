@@ -1,13 +1,38 @@
 package com.app.rectonote.musictheory
 
+import android.util.Log
 import com.app.rectonote.correlationCoefficient
 import com.app.rectonote.leftShift
 import kotlin.math.abs
 
-class Melody(private val rawNotes: Array<NoteUnit>) : TrackSequence(rawNotes) {
-    var melody = ArrayList<Note>()
-    override fun generateTrack() {
+open class Melody(private val rawNotes: Array<Note>) {
+    var key: Key? = null
+    var tempo: Int = 0
+    var lengthInFrame: Int = 0
+    var trackDuration: Double = 0.00
+    var frameStart = -1
+    lateinit var pitchProfile: Array<Int>
+    private var melody = ArrayList<Note>()
+
+    init {
         initTrack()
+        generateTrack()
+        cleanTrack()
+        pitchProfile = calcPitchProfile()
+        calcKey()
+    }
+
+    fun initTrack() {
+        var i = 0
+        while (rawNotes[i].pitch == NotePitch.REST && i < rawNotes.size) i++
+        frameStart = i
+        if (frameStart == rawNotes.size) {
+            Log.w("ZERO NOTE FOUND", "There are not any notes found.")
+
+        }
+    }
+
+    open fun generateTrack() {
         melody.add(Note(rawNotes[frameStart].pitch, rawNotes[frameStart].octave))
         rawNotes.drop(frameStart + 1).forEach {
             if (it == melody.last()) {
@@ -17,10 +42,9 @@ class Melody(private val rawNotes: Array<NoteUnit>) : TrackSequence(rawNotes) {
                 updateSequence()
             }
         }
-        // cleanTrack
     }
 
-    override fun updateSequence() {
+    open fun updateSequence() {
         val latestCompleteNote = melody[melody.lastIndex - 1]
         if (latestCompleteNote.lengthInFrame < 3) {
             if (abs(melody.last() - latestCompleteNote) > 1 || abs(melody.last() - latestCompleteNote) != 12) {
@@ -36,7 +60,7 @@ class Melody(private val rawNotes: Array<NoteUnit>) : TrackSequence(rawNotes) {
     }
 
     //Unit Test This
-    override fun cleanTrack() {
+    open fun cleanTrack() {
         if (melody.first().pitch == NotePitch.REST) {
             melody.removeAt(0)
         }
@@ -52,7 +76,7 @@ class Melody(private val rawNotes: Array<NoteUnit>) : TrackSequence(rawNotes) {
         }
     }
 
-    override fun calcPitchProfile(): Array<Int> {
+    open fun calcPitchProfile(): Array<Int> {
         var pitchProfile = Array<Int>(12) { 0 }
         melody.forEach {
             if (it.pitch != NotePitch.REST)
@@ -61,7 +85,7 @@ class Melody(private val rawNotes: Array<NoteUnit>) : TrackSequence(rawNotes) {
         return pitchProfile
     }
 
-    override fun calcKey() {
+    fun calcKey() {
         val majorProfile =
             doubleArrayOf(6.35, 2.23, 3.48, 2.33, 4.38, 4.09, 2.52, 5.19, 2.39, 3.66, 2.29, 2.88)
         val minorProfile =
@@ -85,11 +109,11 @@ class Melody(private val rawNotes: Array<NoteUnit>) : TrackSequence(rawNotes) {
         }
     }
 
-    override fun calcDurations() {
+    open fun calcDurations() {
         TODO("Not yet implemented")
     }
 
-    override fun calcTempo() {
+    open fun calcTempo() {
         TODO("Not yet implemented")
     }
 
