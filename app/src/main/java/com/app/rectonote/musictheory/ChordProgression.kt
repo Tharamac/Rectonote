@@ -1,6 +1,9 @@
 package com.app.rectonote.musictheory
 
 import kotlin.math.abs
+import kotlin.math.pow
+import kotlin.math.roundToInt
+import kotlin.math.sqrt
 
 class ChordProgression(private val rawNotes: Array<Note>) : Melody(rawNotes) {
 
@@ -70,11 +73,24 @@ class ChordProgression(private val rawNotes: Array<Note>) : Melody(rawNotes) {
 
 
     override fun calcDurations() {
-        TODO("Not yet implemented")
+        val minFrame = chordProgression.minByOrNull { it.lengthInFrame }?.lengthInFrame ?: -1
+        //lowest unit of note duration is a sixteenth note, so that duration 1 is a sixteenth note
+        //a scale variable is use to scale whole duration in order to keep tempo between around 60 - 180 bpm
+        val scale = minFrame / 13
+        chordProgression.forEach {
+            it.duration =
+                (it.lengthInFrame.toDouble() / minFrame).roundToInt() * (2.00.pow(scale).toInt())
+        }
+        //possible least duration is 1 2 4 8 and so on...
     }
 
-    override fun calcTempo() {
-        TODO("Not yet implemented")
+    override fun calcTempo(frameSize: Double) {
+        val minFrame = chordProgression.minByOrNull { it.lengthInFrame }!!
+        val minDuration = minFrame.duration
+        val minLength = minFrame.lengthInFrame
+        val blackNoteFrameLength = minLength * 2.00.pow(3.0 - sqrt(minDuration.toFloat()))
+        val blackNoteInSecond = (blackNoteFrameLength * frameSize * 0.5) + (frameSize * 0.5)
+        tempo = (60 / blackNoteInSecond).roundToInt()
     }
 
     override fun toString(): String {

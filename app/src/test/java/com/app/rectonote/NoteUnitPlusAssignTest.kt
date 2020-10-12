@@ -1,18 +1,18 @@
 package com.app.rectonote
 
+import com.app.rectonote.musictheory.Note
 import com.app.rectonote.musictheory.NotePitch
-import com.app.rectonote.musictheory.NoteUnit
 import org.junit.Test
+import kotlin.test.assertTrue
 
 class NoteUnitPlusAssignTest {
     @Test
     @Throws(Exception::class)
-    fun testNoteUnitSameBoth() {
-        val note = NoteUnit(NotePitch.C, 3)
-        note += 15
-        val expected = NoteUnit
-//        assertTrue{
-//
-//        }
+    fun testPlusPitch() {
+        val result = Note(NotePitch.C, 3)
+        result += 5
+        assertTrue {
+            result.pitch == NotePitch.F && result.octave == 3
+        }
     }
 }

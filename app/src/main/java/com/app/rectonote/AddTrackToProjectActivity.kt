@@ -1,5 +1,6 @@
 package com.app.rectonote
 
+
 import android.app.Activity
 import android.content.DialogInterface
 import android.content.Intent
@@ -19,8 +20,8 @@ import com.app.rectonote.database.ProjectEntity
 import com.app.rectonote.database.ProjectsDatabase
 import com.app.rectonote.musictheory.Key
 import com.app.rectonote.musictheory.Melody
+import com.app.rectonote.musictheory.Note
 import com.app.rectonote.musictheory.NotePitch
-import com.app.rectonote.musictheory.NoteUnit
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -130,7 +131,7 @@ class AddTrackToProjectActivity : AppCompatActivity() {
                 startConvert(44100, "${filesDir}/voice16bit.pcm", mode)
             }
         }
-        var detectedNoteResult = NoteUnit.transformNotes(cppOut, NoteUnit(NotePitch.C, 3))
+        var detectedNoteResult = Note.transformNotes(cppOut, Note(NotePitch.C, 3))
         Log.i("NOTEOUT", detectedNoteResult.contentToString())
         var melody = Melody(detectedNoteResult)
         melody.generateTrack()

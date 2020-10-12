@@ -6,8 +6,10 @@ No dependency
     fun NoteUnit.plusAssign()
     fun NoteUnit.equals()
     fun NoteUnit.transformNotes()
+    fun Melody.calcDuration()
+    fun Melody.calcTempo(frameSize : Double)
 
-Depedency
+Dependency
     fun Melody.cleanTrack()  //cuz equal sign
     fun Melody.generateTrack()
-    fun Melody.calcKey()
+    fun AddTrackToProject()
