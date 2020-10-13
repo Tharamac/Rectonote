@@ -39,7 +39,7 @@
             android:paddingHorizontal="20dp"
             android:paddingTop="10dp">
 
-            <include layout="@layout/item_track"></include>
+            <include layout="@layout/item_track" />
 
             <EditText
                 android:id="@+id/new_track_input"
@@ -53,16 +53,17 @@
                 android:text=""
                 android:textColor="@android:color/white"
                 android:textColorHint="#787878"
+                android:autofillHints="Track 1"
                 android:textSize="12pt"></EditText>
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
-                android:text="Track Data"
+                android:text="@string/track_data"
                 android:textAlignment="center"
                 android:textColor="#dddddd"
-                android:textSize="9pt"></TextView>
+                android:textSize="9pt" />
             <!--        <View-->
             <!--            android:layout_width="match_parent"-->
             <!--            android:layout_height="1dp"-->
@@ -78,9 +79,12 @@
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_marginRight="5dp"
+                    android:layout_marginEnd="5dp"
                     android:layout_weight="1"
-
+                    android:shadowColor="@android:color/black"
+                    android:shadowDx="10"
+                    android:shadowDy="10"
+                    android:shadowRadius="35"
                     android:background="@drawable/rectangle2"
                     android:gravity="center"
                     android:orientation="vertical"
@@ -91,34 +95,37 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/josefin_sans_bold"
-                        android:text="128"
+                        android:text="@string/wait"
                         android:textAlignment="center"
                         android:textColor="@color/colorPrimary"
                         android:textFontWeight="1000"
-                        android:textSize="16pt"
 
-                        android:textStyle="bold"></TextView>
+                        android:textSize="16pt"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/josefin_sans_bold"
-                        android:text="beats per minute"
+                        android:text="@string/beats_per_minute"
                         android:textAlignment="center"
                         android:textColor="@android:color/white"
                         android:textSize="8pt"
-                        android:textStyle="bold"></TextView>
+                        android:textStyle="bold" />
 
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_marginLeft="5dp"
+                    android:layout_marginStart="5dp"
                     android:layout_weight="1"
                     android:background="@drawable/rectangle2"
 
-
+                    android:shadowColor="@android:color/black"
+                    android:shadowDx="10"
+                    android:shadowDy="10"
+                    android:shadowRadius="35"
                     android:gravity="center"
                     android:orientation="vertical"
                     android:paddingVertical="5dp">
@@ -128,22 +135,22 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/josefin_sans_bold"
-                        android:text="C#m"
+                        android:text="@string/wait"
                         android:textAlignment="center"
                         android:textColor="@color/colorPrimary"
                         android:textFontWeight="1000"
                         android:textSize="16pt"
-                        android:textStyle="bold"></TextView>
+                        android:textStyle="bold" />
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/josefin_sans_bold"
-                        android:text="key"
+                        android:text="@string/key"
                         android:textAlignment="center"
                         android:textColor="@android:color/white"
                         android:textSize="8pt"
-                        android:textStyle="bold"></TextView>
+                        android:textStyle="bold" />
 
                 </LinearLayout>
 

@@ -24,12 +24,12 @@ private:
     const size_t samplePerFrame;
     const size_t fftSize;
     const size_t fftRealSize;
-    double *framePortion;
+    double *framePortion{};
     const size_t Fs;
-    int numOfFrame;
+    int numOfFrame{};
     std::vector<double> &audioSample;
     fftw_complex *spectrum;
-    fftw_plan plan;
+    fftw_plan plan{};
     std::vector<double> realSpectrum;
 
     std::vector<double> frameEnergy;

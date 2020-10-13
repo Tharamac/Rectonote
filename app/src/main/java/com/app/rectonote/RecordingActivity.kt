@@ -9,16 +9,18 @@ import android.media.AudioFormat
 import android.media.AudioRecord
 import android.media.MediaRecorder
 import android.os.Bundle
-import android.os.Handler
+import android.os.CountDownTimer
+import android.os.SystemClock
 import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
+import androidx.core.content.res.ResourcesCompat
 import java.io.*
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
-import java.util.*
 
 
 class RecordingActivity : AppCompatActivity() {
@@ -29,20 +31,20 @@ class RecordingActivity : AppCompatActivity() {
     private val LOG_TAG = "AudioRecordTest"
     private val PERMISSION_ALL = 1
 
-    private lateinit var btnRecord: Button
-    private lateinit var btnStop: Button
     private lateinit var txtStatus: TextView
-    private lateinit var txtTimer: TextView
+    private lateinit var txtTimer: Chronometer
     private lateinit var modeSelector: RadioGroup
+    private lateinit var recordButton: ImageButton
 
     private lateinit var dialog: AlertDialog
     private lateinit var builder: AlertDialog.Builder
 
-
+    private var isWorking = false
     private var isRecording = false
     private var recorder: AudioRecord? = null
     private var recordingThread: Thread? = null
     private var running = false
+    private var countdown = false
     private var centisecs = 0
 
 
@@ -63,23 +65,40 @@ class RecordingActivity : AppCompatActivity() {
         ActivityCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED
     }
     */
+    private var startCountdown = 3
+    private var isCountDown = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_recording)
-        btnRecord = findViewById<Button>(R.id.btnRecord)
-        btnStop = findViewById<Button>(R.id.btnStop)
         txtStatus = findViewById<TextView>(R.id.txtStatus)
-        txtTimer = findViewById<TextView>(R.id.txtTimer)
+        txtTimer = findViewById<Chronometer>(R.id.txtTimer)
         modeSelector = findViewById<RadioGroup>(R.id.convertMode)
+        recordButton = findViewById(R.id.recordingControl)
         txtStatus.text = "Mic Ready"
-        btnRecord.setOnClickListener(pressPlay)
-        btnStop.setOnClickListener(pressStop)
-        startTimer()
+        recordButton.setOnClickListener(record)
+        setSupportActionBar(findViewById<Toolbar>(R.id.toolbar))
+        //startTimer()
         if (!hasPermissions(this, requiredPermissions)) {
             ActivityCompat.requestPermissions(this, requiredPermissions, PERMISSION_ALL)
         }
-
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
+        supportActionBar?.title = ""
         builder = AlertDialog.Builder(this)
+        txtTimer.typeface = ResourcesCompat.getFont(this, R.font.josefin_sans_bold)
+        txtTimer.base = SystemClock.elapsedRealtime()
+
+        txtTimer.setOnChronometerTickListener {
+            if (isCountDown) {
+                if (startCountdown in 1..3) {
+                    txtStatus.text = "Start Recording in $startCountdown"
+                    startCountdown--
+                } else {
+
+                }
+            }
+
+        }
 
     }
 
@@ -124,66 +143,99 @@ class RecordingActivity : AppCompatActivity() {
 
     }
 
+
+    private val record = View.OnClickListener {
+        if (!isWorking) {
+            recording()
+            var c = 3
+            object : CountDownTimer(2400, 800) {
+                override fun onTick(millisUntilFinished: Long) {
+                    txtStatus.text = "Start Recording in ${c--}"
+                }
+
+                override fun onFinish() {
+                    txtStatus.text = "Recording..."
+                    txtTimer.base = SystemClock.elapsedRealtime()
+                    recordButton.setImageResource(R.drawable.group_345)
+                    txtTimer.start()
+                    isWorking = true
+                }
+            }.start()
+
+
+        } else {
+            txtTimer.stop()
+            recordButton.setImageResource(R.drawable.group_344)
+            stopRecording()
+            Toast.makeText(this, "Recording Complete", Toast.LENGTH_SHORT).show()
+            val projectNameFormProjectDetail = intent.getStringExtra("project")
+            val intent = Intent(this, AddTrackToProjectActivity::class.java)
+            if (projectNameFormProjectDetail != null) {
+                intent.putExtra("projectFromProjectDetail", projectNameFormProjectDetail)
+            }
+            txtStatus.text = "Record Complete"
+            val selectedID = modeSelector.checkedRadioButtonId
+            val mode = findViewById<RadioButton>(selectedID)
+            intent.putExtra("convert_mode", mode.text)
+            isWorking = false
+            startActivity(intent)
+            finish()
+
+        }
+    }
+
     private var bufferElements2Rec = 1024 // want to play 2048 (2K) since 2 bytes we use only 1024
     private var bytesPerElement = 2
 
     private val pressPlay = View.OnClickListener {
-        btnRecord.isEnabled = false
-        btnRecord.visibility = View.INVISIBLE
-        btnStop.isEnabled = true
-        btnStop.visibility = View.VISIBLE
+
         centisecs = 0
+        countdown = true
+
         running = true
         modeSelector.visibility = View.INVISIBLE
-        recording()
+
+
     }
 
     private val pressStop = View.OnClickListener {
-        btnRecord.isEnabled = true
-        btnRecord.visibility = View.VISIBLE
-        btnStop.isEnabled = false
-        btnStop.visibility = View.INVISIBLE
+
 
         running = false
-        stopRecording()
-        Toast.makeText(this, "Recording Complete", Toast.LENGTH_SHORT).show()
-        val projectNameFormProjectDetail = intent.getStringExtra("project")
-
-        txtStatus.text = "Record Complete"
-        val selectedID = modeSelector.checkedRadioButtonId
-        val mode = findViewById<RadioButton>(selectedID)
 
 
-        val intent = Intent(this, AddTrackToProjectActivity::class.java)
-        if (projectNameFormProjectDetail != null) {
-            intent.putExtra("projectFromProjectDetail", projectNameFormProjectDetail)
-        }
-        intent.putExtra("convert_mode", mode.text)
-        startActivity(intent)
-        finish()
     }
 
     //this function start a stopwatch
+    /*
     private fun startTimer() {
         val handler = Handler()
         println("Start")
         handler.post(object : Runnable {
             override fun run() {
-                var millisecs = centisecs % 10
-                var minutes = centisecs / 600
-                var secs = (centisecs / 10) % 600
-                var time = String.format(
-                    Locale.getDefault(),
-                    "%d:%02d:%d", minutes, secs, millisecs
-                )
-                txtTimer.text = time
-                if (running) centisecs++
-                handler.postDelayed(this, 100)
+                if (countdown){
+                    for (i in 3 downTo 1){
+                        txtStatus.text =  "Recording in $i..."
+                    }
+                    countdown = false
+                }else{
+                    var millisecs = centisecs % 10
+                    var minutes = centisecs / 600
+                    var secs = (centisecs / 10) % 600
+                    var time = String.format(
+                        Locale.getDefault(),
+                        "%d:%02d:%d", minutes, secs, millisecs
+                    )
+                    txtTimer.text = time
+                    if (running) centisecs++
+                    handler.postDelayed(this, 100)
+                }
+
             }
         })
 
     }
-
+*/
 
     private fun recording() {
 
@@ -212,7 +264,7 @@ class RecordingActivity : AppCompatActivity() {
             )
             .setBufferSizeInBytes(bufferElements2Rec * bytesPerElement)
             .build()
-        txtStatus.text = "Recording..."
+
         recorder!!.startRecording()
         isRecording = true
         recordingThread = Thread({ writeAudioDataToFile() }, "AudioRecorder Thread")
@@ -279,6 +331,10 @@ class RecordingActivity : AppCompatActivity() {
         }
     }
 
+    override fun onDestroy() {
+        stopRecording()
+        super.onDestroy()
+    }
 
 
     @Throws(IOException::class)

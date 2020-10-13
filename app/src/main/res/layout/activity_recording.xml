@@ -7,87 +7,68 @@
     android:background="#424242"
     tools:context=".RecordingActivity">
 
-    <Button
-        android:id="@+id/btnRecord"
-        android:layout_width="wrap_content"
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_marginBottom="108dp"
         android:layout_height="wrap_content"
-        android:text="Record"
-        android:textSize="35dp"
+        android:background="@android:color/transparent"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="@style/RectoNote.ActionBarTheme"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.252"
+        app:layout_constraintVertical_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.843" />
+        app:title="" />
 
-    <Button
-        android:id="@+id/btnStop"
+
+    <ImageButton
+        android:id="@+id/recordingControl"
+        android:layout_width="250dp"
+        android:layout_height="250dp"
+        android:background="@android:color/transparent"
+        android:scaleType="fitCenter"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.498"
+        app:srcCompat="@drawable/group_344" />
+
+    <TextView
+        android:id="@+id/countdown"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:enabled="false"
-        android:text="@string/stop"
-        android:textSize="35sp"
+        android:shadowColor="@android:color/black"
+        android:shadowDx="0"
+        android:shadowDy="0"
+        android:shadowRadius="15"
+        android:text="3"
+        android:textColor="@android:color/white"
+        android:textSize="200sp"
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.785"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.843" />
-
-    <TextView
-        android:id="@+id/txtTimer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/josefin_sans_thin"
-        android:text="0.00.00"
-        android:textColor="#D5FF00"
-        android:textFontWeight="1000"
-        android:textSize="85dp"
-        app:layout_constraintBottom_toTopOf="@+id/btnRecord"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtStatus"
-        app:layout_constraintVertical_bias="0.177" />
-
-    <TextView
-        android:id="@+id/txtStatus"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/josefin_sans_semibold_italic"
-        android:text="@string/mic_ready"
-        android:textColor="#D5FF00"
-        android:textSize="30dp"
-        app:layout_constraintBottom_toTopOf="@+id/btnRecord"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.289" />
-
-    <TextView
-        android:id="@+id/txtSubStatus"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/josefin_sans_bold"
-        android:text=""
-        android:textColor="#D5FF00"
-        android:textSize="20dp"
-        app:layout_constraintBottom_toTopOf="@+id/btnRecord"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtStatus"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toBottomOf="@+id/toolbar"
+        app:layout_constraintVertical_bias="0.295" />
 
     <RadioGroup
         android:id="@+id/convertMode"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="75dp"
+        android:layout_marginTop="8dp"
         android:orientation="horizontal"
-        app:layout_constraintBottom_toTopOf="@+id/btnRecord"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtTimer">
+        app:layout_constraintTop_toBottomOf="@+id/recordingControl"
+        app:layout_constraintVertical_bias="0.23000002">
 
         <RadioButton
             android:id="@+id/radbtnMelody"
@@ -109,17 +90,51 @@
             android:textColor="#D5FF00" />
     </RadioGroup>
 
-    <Button
-        android:id="@+id/btnContinue"
+    <Chronometer
+        android:id="@+id/txtTimer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="25dp"
-        android:text="Continue"
-        android:textSize="15pt"
+        android:countDown="false"
+        android:fontFamily="@font/josefin_sans_bold"
+        android:textColor="#D5FF00"
+        android:textSize="50sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.509"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnRecord"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toBottomOf="@+id/recordingControl"
+        app:layout_constraintVertical_bias="0.597" />
+
+    <TextView
+        android:id="@+id/txtStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/josefin_sans_semibold_italic"
+        android:text="@string/mic_ready"
+        android:textColor="#D5FF00"
+        android:textSize="30sp"
+        app:layout_constraintBottom_toTopOf="@+id/txtInstr"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <TextView
+        android:id="@+id/txtInstr"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/josefin_sans_semibold_italic"
+        android:gravity="center"
+        android:text="@string/click_on_mic_icon_to_start_recording"
+        android:textAlignment="center"
+        android:textColor="#D5FF00"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/recordingControl"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.484"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.73" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -33,6 +33,11 @@
     <string name="_128_bpm">128 bpm</string>
     <string name="detail">DETAIL</string>
     <string name="preview">PREVIEW</string>
+    <string name="click_on_mic_icon_to_start_recording">Click on mic icon to start recording</string>
+    <string name="track_data">Track Data</string>
+    <string name="beats_per_minute">beats per minute</string>
+    <string name="wait">...</string>
+    <string name="key">key</string>
 
 
 </resources>

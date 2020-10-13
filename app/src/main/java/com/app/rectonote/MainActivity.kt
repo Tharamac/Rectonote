@@ -58,7 +58,6 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onQueryTextChange(newText: String): Boolean {
-                val newArrayList = ArrayList<ProjectEntity>()
                 if (newText.isNotEmpty()) {
                     projectList.clear()
                     val searchText = newText.toLowerCase()

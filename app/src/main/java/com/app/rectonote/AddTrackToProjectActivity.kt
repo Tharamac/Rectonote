@@ -23,10 +23,7 @@ import com.app.rectonote.musictheory.Melody
 import com.app.rectonote.musictheory.Note
 import com.app.rectonote.musictheory.NotePitch
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import java.util.*
 
 class AddTrackToProjectActivity : AppCompatActivity() {
@@ -41,39 +38,41 @@ class AddTrackToProjectActivity : AppCompatActivity() {
         "#BE0423",
         "#707070"
     )
-    private lateinit var projectsDatabase: ProjectsDatabase
-    private lateinit var dbViewModel: ProjectDatabaseViewModel
+    private val projectsDatabase: ProjectsDatabase by lazy {
+        ProjectsDatabase.getInstance(applicationContext)
+    }
+    private val dbViewModel: ProjectDatabaseViewModel by lazy {
+        ProjectDatabaseViewModel(projectsDatabase.projectDAO())
+    }
     private var projectData: ProjectEntity? = null
     private external fun debug(): String
     private external suspend fun startConvert(
         fs: Int,
         audioPath: String,
-        convertMode: String
     ): IntArray
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_track_to_project)
-        projectsDatabase = ProjectsDatabase.getInstance(applicationContext)
-        dbViewModel = ProjectDatabaseViewModel(projectsDatabase.projectDAO())
         val toolbar = findViewById<Toolbar>(R.id.toolbar_add_track)
         findViewById<TextView>(R.id.track_name).text = "Play Processed Track"
         val addTrackOptions = findViewById<Spinner>(R.id.add_track_options_spinner)
         val btnConfirm = findViewById<FloatingActionButton>(R.id.fabtn_confirm)
         btnConfirm.setOnClickListener(confirmAddTrack)
+        val projectsFormProjectDetail = intent.getStringExtra("projectFromProjectDetail")
         val projectCard = findViewById<CardView>(R.id.btn_project_selector)
-        Log.d("Jeelo", debug())
         val optionsAdapter = ArrayAdapter<String>(
             this,
             R.layout.item_add_to_project_spinner,
             resources.getStringArray(R.array.draft_track_option)
         )
+
         addTrackOptions.adapter = optionsAdapter
         setSupportActionBar(toolbar)
 //        if ((callingActivity?.className ?: "null") == ProjectSelectActivity::class.qualifiedName) {
 //            addTrackOptions.setSelection(optionsAdapter.getPosition("Add to Existing Project"))
 //        }
-        val projectsFormProjectDetail = intent.getStringExtra("projectFromProjectDetail")
+
         val selectButton = findViewById<TextView>(R.id.project_selected)
         if (projectsFormProjectDetail != null) {
             addTrackOptions.setSelection(1)
@@ -117,27 +116,35 @@ class AddTrackToProjectActivity : AppCompatActivity() {
         }
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
-
-        audioConvert()
-
-
-    }
-
-    private fun audioConvert() {
-        val cppScope = CoroutineScope(Dispatchers.Default)
-        val mode = intent.getStringExtra("convert_mode")
-        val cppOut = runBlocking {
-            withContext(cppScope.coroutineContext) {
-                startConvert(44100, "${filesDir}/voice16bit.pcm", mode)
-            }
+        val cppScope = CoroutineScope(Dispatchers.Default + Job())
+        var deferredMelody = cppScope.async {
+            audioConvert()
         }
-        var detectedNoteResult = Note.transformNotes(cppOut, Note(NotePitch.C, 3))
-        Log.i("NOTEOUT", detectedNoteResult.contentToString())
-        var melody = Melody(detectedNoteResult)
-        melody.generateTrack()
-        melody.calcKey()
-        Log.i("NOTEOUT", melody.toString())
+        cppScope.launch {
+            val melody = deferredMelody.await()
+            findViewById<TextView>(R.id.project_tempo).text = melody.tempo.toString()
+            findViewById<TextView>(R.id.project_key).text = melody.key?.reduced
+        }
+
+
     }
+
+    private suspend fun audioConvert(): Melody {
+        val mode = intent.getStringExtra("convert_mode")
+        val cppOut = withContext(Dispatchers.Default) {
+            startConvert(44100, "${filesDir}/voice16bit.pcm")
+        }
+        var detectedNoteResult = withContext(Dispatchers.Default) {
+            Note.transformNotes(cppOut, Note(NotePitch.C, 3))
+        }
+        Log.i("NOTEOUT", detectedNoteResult.contentToString())
+        var melody = withContext(Dispatchers.Default) {
+            Melody(detectedNoteResult)
+        }
+        Log.i("NOTEOUT", melody.toString())
+        return melody
+    }
+
 
     override fun onSupportNavigateUp(): Boolean {
         val builder = AlertDialog.Builder(this)

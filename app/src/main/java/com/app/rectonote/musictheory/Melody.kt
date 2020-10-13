@@ -8,14 +8,13 @@ import kotlin.math.pow
 import kotlin.math.roundToInt
 import kotlin.math.sqrt
 
-open class Melody(private val rawNotes: Array<Note>) {
+class Melody(private val rawNotes: Array<Note>) {
     var key: Key? = null
     var tempo: Int = 0
-    var lengthInFrame: Int = 0
-    var trackDuration: Double = 0.00
     var frameStart = -1
     var pitchProfile: Array<Int>
     private var melody = ArrayList<Note>()
+
 
     init {
         initTrack()
@@ -24,9 +23,10 @@ open class Melody(private val rawNotes: Array<Note>) {
         pitchProfile = calcPitchProfile()
         calcKey()
         calcDurations()
+        calcTempo(0.04)
     }
 
-    fun initTrack() {
+    private fun initTrack() {
         var i = 0
         while (rawNotes[i].pitch == NotePitch.REST && i < rawNotes.size) i++
         frameStart = i
@@ -36,7 +36,7 @@ open class Melody(private val rawNotes: Array<Note>) {
         }
     }
 
-    open fun generateTrack() {
+    private fun generateTrack() {
         melody.add(Note(rawNotes[frameStart].pitch, rawNotes[frameStart].octave))
         rawNotes.drop(frameStart + 1).forEach {
             if (it == melody.last()) {
@@ -48,7 +48,7 @@ open class Melody(private val rawNotes: Array<Note>) {
         }
     }
 
-    open fun updateSequence() {
+    private fun updateSequence() {
         val latestCompleteNote = melody[melody.lastIndex - 1]
         if (latestCompleteNote.lengthInFrame < 3) {
             if (abs(melody.last() - latestCompleteNote) > 1 || abs(melody.last() - latestCompleteNote) != 12) {
@@ -64,7 +64,7 @@ open class Melody(private val rawNotes: Array<Note>) {
     }
 
     //Unit Test This
-    open fun cleanTrack() {
+    private fun cleanTrack() {
         if (melody.first().pitch == NotePitch.REST) {
             melody.removeAt(0)
         }
@@ -75,12 +75,12 @@ open class Melody(private val rawNotes: Array<Note>) {
             melody.removeAt(adjacentIdx + 1)
             adjacent = melody.zipWithNext().find { it.first == it.second }
         }
-        if (melody.last().pitch == NotePitch.REST) {
+        if (melody.last().pitch == NotePitch.REST || melody.last().lengthInFrame < 3) {
             melody.removeAt(melody.lastIndex)
         }
     }
 
-    open fun calcPitchProfile(): Array<Int> {
+    private fun calcPitchProfile(): Array<Int> {
         var pitchProfile = Array<Int>(12) { 0 }
         melody.forEach {
             if (it.pitch != NotePitch.REST)
@@ -89,7 +89,7 @@ open class Melody(private val rawNotes: Array<Note>) {
         return pitchProfile
     }
 
-    fun calcKey() {
+    private fun calcKey() {
         val majorProfile =
             doubleArrayOf(6.35, 2.23, 3.48, 2.33, 4.38, 4.09, 2.52, 5.19, 2.39, 3.66, 2.29, 2.88)
         val minorProfile =
@@ -112,7 +112,7 @@ open class Melody(private val rawNotes: Array<Note>) {
         }
     }
 
-    open fun calcDurations() {
+    private fun calcDurations() {
         val minFrame = melody.minByOrNull { it.lengthInFrame }?.lengthInFrame ?: -1
         //lowest unit of note duration is a sixteenth note, so that duration 1 is a sixteenth note
         //a scale variable is use to scale whole duration in order to keep tempo between around 60 - 180 bpm
@@ -124,7 +124,7 @@ open class Melody(private val rawNotes: Array<Note>) {
         //possible least duration is 1 2 4 8 and so on...
     }
 
-    open fun calcTempo(frameSize: Double) {
+    private fun calcTempo(frameSize: Double) {
         val minFrame = melody.minByOrNull { it.lengthInFrame }!!
         val minDuration = minFrame.duration
         val minLength = minFrame.lengthInFrame
@@ -134,10 +134,10 @@ open class Melody(private val rawNotes: Array<Note>) {
     }
 
     override fun toString(): String {
-        var quote = (key?.reduced ?: "")
-        quote += "\n"
+        var quote = "\nKey : " + (key?.reduced ?: "") + "\n"
+        quote += "Tempo : $tempo\n"
         melody.forEach {
-            quote += it.toString() + "\n"
+            quote += it.toString() + "frame : ${it.lengthInFrame} ${if (it.duration != -1) "\tduration : ${it.duration}" else ""}\n"
         }
         return quote
     }

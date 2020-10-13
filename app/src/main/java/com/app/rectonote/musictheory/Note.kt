@@ -38,7 +38,7 @@ open class Note(var pitch: NotePitch, var octave: Int) {
     }
 
     override fun toString(): String {
-        return "${this.pitch.pitchName}${if (this.octave != -1) octave else ""}"
+        return "${this.pitch.pitchName}${if (this.octave != -1) octave else ""} "
     }
 
     companion object {

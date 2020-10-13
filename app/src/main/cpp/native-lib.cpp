@@ -22,10 +22,9 @@ JNIEXPORT jintArray JNICALL Java_com_app_rectonote_AddTrackToProjectActivity_sta
         JNIEnv *javaEnvironment,
         jobject __unused obj,
         jint Fs,
-        jstring audioPath,
-        jstring convertMode) {
+        jstring audioPath
+) {
     const char *path = javaEnvironment->GetStringUTFChars(audioPath, JNI_FALSE);
-    const char *convert_mode = javaEnvironment->GetStringUTFChars(convertMode, JNI_FALSE);
     RawAudio audio_input(path);
     VoiceActivityDetection voiceActivityDetection(audio_input.doubleData, 0.04, 2048, Fs);
     voiceActivityDetection.calculateFeatures();
@@ -35,7 +34,6 @@ JNIEXPORT jintArray JNICALL Java_com_app_rectonote_AddTrackToProjectActivity_sta
     pitchDetection.startDetection();
     pitchDetection.implementVad(voiceActivityDetection.getResult());
     jintArray result = packResult(javaEnvironment, pitchDetection.getNoteOffsetResult());
-    console_out = audio_input.toString() + " Mode:" + convert_mode + "\n" + vad_result;
     javaEnvironment->ReleaseStringUTFChars(audioPath, path);
     return result;
 }
@@ -61,5 +59,24 @@ jintArray packResult(JNIEnv *env, std::vector<int> offset) {
     }
     // move from the temp structure to the java structure
     env->SetIntArrayRegion(result, 0, size, fill);
+    return result;
+}
+
+extern "C"
+JNIEXPORT jintArray JNICALL
+Java_com_app_rectonote_viewmodel_MusicTheoryViewModel_startConvert(JNIEnv *javaEnvironment,
+                                                                   jobject thiz,
+                                                                   jint Fs, jstring audioPath) {
+    const char *path = javaEnvironment->GetStringUTFChars(audioPath, JNI_FALSE);
+    RawAudio audio_input(path);
+    VoiceActivityDetection voiceActivityDetection(audio_input.doubleData, 0.04, 2048, Fs);
+    voiceActivityDetection.calculateFeatures();
+    voiceActivityDetection.startDecision(40, 5, 130, 2097, 0.1);
+    std::string vad_result = voiceActivityDetection.getStringResult();
+    PitchDetection pitchDetection(audio_input.doubleData, 0.04, 4096, Fs);
+    pitchDetection.startDetection();
+    pitchDetection.implementVad(voiceActivityDetection.getResult());
+    jintArray result = packResult(javaEnvironment, pitchDetection.getNoteOffsetResult());
+    javaEnvironment->ReleaseStringUTFChars(audioPath, path);
     return result;
 }
