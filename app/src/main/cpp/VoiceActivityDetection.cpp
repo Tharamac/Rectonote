@@ -115,9 +115,9 @@ void VoiceActivityDetection::startDecision(
         const double zcrThresh) {
     // Frame #0 - #28 assuming silence.
     vadResult.resize(numOfFrame);
-    double energyMin = *min_element(frameEnergy.begin(), frameEnergy.begin() + 28);
+    double energyMin = *min_element(frameEnergy.begin(), frameEnergy.begin() + 118);
     double energyThresh = energyPThresh * energyMin;
-    for (int i = 29; i < numOfFrame; ++i) {
+    for (int i = 119; i < numOfFrame; ++i) {
         int frameScore = 0;
         if (frameEnergy[i] >= energyThresh)
             frameScore++;

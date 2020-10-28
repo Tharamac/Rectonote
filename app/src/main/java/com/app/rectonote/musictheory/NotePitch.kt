@@ -16,8 +16,10 @@ enum class NotePitch(val pitchNum: Int, val pitchName: String) {
     REST(-1, "-");
 
     companion object {
-        fun intToNotePitch(pitchNum: Int): NotePitch {
-            return NotePitch.values().find { it.pitchNum == pitchNum } ?: REST
-        }
+        fun intToNotePitch(pitchNum: Int): NotePitch =
+            NotePitch.values().find { it.pitchNum == pitchNum } ?: REST
+
+        fun plusPitch(pitch: NotePitch, offset: Int): NotePitch =
+            if (pitch != REST) intToNotePitch((pitch.pitchNum + offset) % 12) else REST
     }
 }

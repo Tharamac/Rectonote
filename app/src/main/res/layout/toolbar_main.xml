@@ -3,7 +3,7 @@
 <androidx.appcompat.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="60dp"
+    android:layout_height="?attr/actionBarSize"
     android:background="@drawable/rounded_rect"
     android:elevation="4dp"
     android:paddingVertical="9dp"
@@ -31,12 +31,12 @@
         <androidx.appcompat.widget.SearchView
             android:id="@+id/project_search"
             android:layout_width="match_parent"
-            android:layout_height="51dp"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
             app:closeIcon="@drawable/ic_baseline_close_24"
             app:defaultQueryHint="Project Search..."
             app:queryBackground="@color/colorPrimary"
-            app:searchIcon="@drawable/ic_baseline_search_32"
+            app:searchIcon="@drawable/ic_baseline_search_30"
             app:theme="@style/rectoNoteTheme.searchView"
 
             >

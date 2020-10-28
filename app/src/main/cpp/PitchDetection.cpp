@@ -83,7 +83,7 @@ double PitchDetection::calcPeakFromFilterBank(std::vector<double> &real_spectrum
 void PitchDetection::implementVad(std::vector<bool> vadResult) {
     for (size_t i = 0; i < offsetNotesFromFilterBank.size(); ++i) {
         if (!vadResult[i]) {
-            offsetNotesFromFilterBank[i] = -1;
+            offsetNotesFromFilterBank[i] = -999;
         }
     }
 }

@@ -33,34 +33,99 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+
             android:orientation="vertical"
 
 
             android:paddingHorizontal="20dp"
             android:paddingTop="10dp">
 
-            <include layout="@layout/item_track" />
+            <androidx.cardview.widget.CardView
+
+                android:id="@+id/track_result"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+
+                app:cardBackgroundColor="@color/trackBaseColor"
+                app:cardElevation="35dp"
+
+                >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/track_name"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_weight="8"
+                        android:fontFamily="@font/josefin_sans_bold"
+                        android:text=""
+                        android:textAlignment="center"
+                        android:textColor="@android:color/white"
+                        android:textFontWeight="1000"
+                        android:textSize="24sp"
+                        android:textStyle="bold" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="end"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <ImageView
+                            android:id="@+id/track_type"
+                            android:layout_width="wrap_content"
+                            android:layout_height="0dp"
+                            android:layout_gravity="center"
+                            android:layout_weight="3"
+
+                            android:background="@android:color/transparent"
+                            app:srcCompat="@drawable/ic_baseline_music_note_24" />
+
+                        <TextView
+                            android:id="@+id/track_type_label"
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+
+                            android:layout_weight="2"
+                            android:text="Melody"
+                            android:textAlignment="center"
+                            android:textColor="@android:color/white" />
+                    </LinearLayout>
+
+
+                </LinearLayout>
+
+
+            </androidx.cardview.widget.CardView>
 
             <EditText
                 android:id="@+id/new_track_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
+                android:autofillHints="Track 1"
+                android:freezesText="true"
                 android:hint="Track Name"
                 android:inputType="text"
-                android:freezesText="true"
+
                 android:maxLines="1"
                 android:text=""
                 android:textColor="@android:color/white"
                 android:textColorHint="#787878"
-                android:autofillHints="Track 1"
-                android:textSize="12pt"></EditText>
+                android:textSize="12pt" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
                 android:text="@string/track_data"
+
                 android:textAlignment="center"
                 android:textColor="#dddddd"
                 android:textSize="9pt" />
@@ -81,14 +146,14 @@
                     android:layout_height="match_parent"
                     android:layout_marginEnd="5dp"
                     android:layout_weight="1"
-                    android:shadowColor="@android:color/black"
-                    android:shadowDx="10"
-                    android:shadowDy="10"
-                    android:shadowRadius="35"
                     android:background="@drawable/rectangle2"
                     android:gravity="center"
                     android:orientation="vertical"
-                    android:paddingVertical="3dp">
+                    android:paddingVertical="3dp"
+                    android:shadowColor="@android:color/black"
+                    android:shadowDx="10"
+                    android:shadowDy="10"
+                    android:shadowRadius="35">
 
                     <TextView
                         android:id="@+id/project_tempo"
@@ -122,13 +187,13 @@
                     android:layout_weight="1"
                     android:background="@drawable/rectangle2"
 
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:paddingVertical="5dp"
                     android:shadowColor="@android:color/black"
                     android:shadowDx="10"
                     android:shadowDy="10"
-                    android:shadowRadius="35"
-                    android:gravity="center"
-                    android:orientation="vertical"
-                    android:paddingVertical="5dp">
+                    android:shadowRadius="35">
 
                     <TextView
                         android:id="@+id/project_key"
@@ -160,7 +225,8 @@
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="25dp">
+                android:layout_marginTop="25dp"
+                android:layout_weight="1">
 
                 <LinearLayout
                     android:id="@+id/add_existing_proj"
@@ -176,7 +242,7 @@
                         android:text="Select Project"
                         android:textAlignment="center"
                         android:textColor="#dddddd"
-                        android:textSize="9pt"></TextView>
+                        android:textSize="9pt" />
 
                     <androidx.cardview.widget.CardView
                         android:id="@+id/btn_project_selector"
@@ -230,7 +296,7 @@
                         android:text="New Project"
                         android:textAlignment="center"
                         android:textColor="#dddddd"
-                        android:textSize="9pt"></TextView>
+                        android:textSize="9pt" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -241,39 +307,37 @@
                             android:id="@+id/new_project_input"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_weight="2"
                             android:layout_marginTop="5dp"
+                            android:layout_weight="2"
+                            android:freezesText="true"
                             android:hint="Project Name"
                             android:inputType="text"
                             android:maxLines="1"
                             android:text=""
-                            android:freezesText="true"
                             android:textColor="@android:color/white"
                             android:textColorHint="#787878"
-                            android:textSize="12pt"></EditText>
+                            android:textSize="12pt" />
 
-<!--                        <Button-->
-<!--                            android:id="@+id/button"-->
-<!--                            style="@style/Widget.AppCompat.Button"-->
-<!--                            android:layout_width="wrap_content"-->
-<!--                            android:layout_height="wrap_content"-->
-<!--                            android:layout_weight="1"-->
-<!--                            android:backgroundTint="#2196F3" />-->
+                        <!--                        <Button-->
+                        <!--                            android:id="@+id/button"-->
+                        <!--                            style="@style/Widget.AppCompat.Button"-->
+                        <!--                            android:layout_width="wrap_content"-->
+                        <!--                            android:layout_height="wrap_content"-->
+                        <!--                            android:layout_weight="1"-->
+                        <!--                            android:backgroundTint="#2196F3" />-->
 
 
                     </LinearLayout>
 
-<!--                        <TextView-->
-<!--                            android:layout_width="wrap_content"-->
-<!--                            android:layout_height="wrap_content"-->
-<!--                            android:text="color"-->
-<!--                            android:textColor="@android:color/white"-->
-<!--                            android:layout_gravity="end"-->
-<!--                            android:layout_marginEnd="15dp">-->
+                    <!--                        <TextView-->
+                    <!--                            android:layout_width="wrap_content"-->
+                    <!--                            android:layout_height="wrap_content"-->
+                    <!--                            android:text="color"-->
+                    <!--                            android:textColor="@android:color/white"-->
+                    <!--                            android:layout_gravity="end"-->
+                    <!--                            android:layout_marginEnd="15dp">-->
 
-<!--                        </TextView>-->
-
-"
+                    <!--                        </TextView>-->
 
                 </LinearLayout>
 
@@ -284,14 +348,15 @@
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fabtn_confirm"
+            android:layout_marginEnd="45dp"
             android:layout_width="56dp"
             android:layout_height="56dp"
             android:layout_gravity="end|bottom"
+            android:layout_marginBottom="50dp"
+            android:visibility="invisible"
             android:clickable="true"
             android:focusable="true"
             app:backgroundTint="#D5FF00"
-            android:layout_marginEnd ="45dp"
-            android:layout_marginBottom="50dp"
             app:srcCompat="@drawable/ic_baseline_done_24" />
     </FrameLayout>
 

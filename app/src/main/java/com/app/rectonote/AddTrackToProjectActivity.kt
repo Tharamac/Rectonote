@@ -18,15 +18,18 @@ import com.app.rectonote.database.DraftTrackEntity
 import com.app.rectonote.database.ProjectDatabaseViewModel
 import com.app.rectonote.database.ProjectEntity
 import com.app.rectonote.database.ProjectsDatabase
-import com.app.rectonote.musictheory.Key
-import com.app.rectonote.musictheory.Melody
+import com.app.rectonote.musictheory.DraftTrackData
 import com.app.rectonote.musictheory.Note
 import com.app.rectonote.musictheory.NotePitch
+import com.app.rectonote.musictheory.TrackSequencer
+import com.beust.klaxon.Klaxon
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.*
+import java.io.File
 import java.util.*
 
 class AddTrackToProjectActivity : AppCompatActivity() {
+    lateinit var draftTrack: DraftTrackData
 
     val color: Array<String> = arrayOf<String>(
         "#DF008C",
@@ -66,6 +69,12 @@ class AddTrackToProjectActivity : AppCompatActivity() {
             R.layout.item_add_to_project_spinner,
             resources.getStringArray(R.array.draft_track_option)
         )
+        val trackTypeIcon = findViewById<ImageView>(R.id.track_type)
+        val trackTypeLabel = findViewById<TextView>(R.id.track_type_label)
+        val mode = intent.getStringExtra("convert_mode")?.split(" ")?.get(2)!!
+        Log.d("MODE", mode)
+        if (mode.toLowerCase() == "chord") trackTypeIcon.setImageResource(R.drawable.ic_baseline_queue_music_24)
+        trackTypeLabel.text = mode
 
         addTrackOptions.adapter = optionsAdapter
         setSupportActionBar(toolbar)
@@ -117,32 +126,61 @@ class AddTrackToProjectActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
         val cppScope = CoroutineScope(Dispatchers.Default + Job())
-        var deferredMelody = cppScope.async {
+        var deferredDraftTrack = cppScope.async {
             audioConvert()
         }
+
         cppScope.launch {
-            val melody = deferredMelody.await()
-            findViewById<TextView>(R.id.project_tempo).text = melody.tempo.toString()
-            findViewById<TextView>(R.id.project_key).text = melody.key?.reduced
+            draftTrack = deferredDraftTrack.await()
+
+            findViewById<TextView>(R.id.project_tempo).text = draftTrack.tempo.toString()
+            findViewById<TextView>(R.id.project_key).text = draftTrack.key.reduced
+            Log.i("NOTEOUT", Klaxon().toJsonString(draftTrack.trackSequence))
         }
-
-
+        btnConfirm.visibility = View.VISIBLE
     }
 
-    private suspend fun audioConvert(): Melody {
-        val mode = intent.getStringExtra("convert_mode")
+
+    private suspend fun audioConvert(): DraftTrackData {
+        val mode = intent.getStringExtra("convert_mode")?.split(" ")?.get(2)!!
+
         val cppOut = withContext(Dispatchers.Default) {
             startConvert(44100, "${filesDir}/voice16bit.pcm")
         }
+        Log.i("NOTEOUT", cppOut.contentToString())
         var detectedNoteResult = withContext(Dispatchers.Default) {
             Note.transformNotes(cppOut, Note(NotePitch.C, 3))
         }
         Log.i("NOTEOUT", detectedNoteResult.contentToString())
-        var melody = withContext(Dispatchers.Default) {
-            Melody(detectedNoteResult)
+        var trackSequencer = withContext(Dispatchers.Default) {
+            TrackSequencer(detectedNoteResult)
         }
-        Log.i("NOTEOUT", melody.toString())
-        return melody
+        trackSequencer.initTrack()
+        var melody = withContext(Dispatchers.Default) {
+            trackSequencer.generateTrack(mode)
+        }
+        melody = withContext(Dispatchers.Default) {
+            trackSequencer.removeNoise(melody)
+        }
+        melody = withContext(Dispatchers.Default) {
+            trackSequencer.cleanTrack(melody)
+        }
+        melody = withContext(Dispatchers.Default) {
+            trackSequencer.calcDurations(melody)
+        }
+        val pitchProfile = withContext(Dispatchers.Default) {
+            trackSequencer.calcPitchProfile(melody)
+        }
+        val key = withContext(Dispatchers.Default) {
+            trackSequencer.calcKey(pitchProfile)
+        }
+        val tempo = withContext(Dispatchers.Default) {
+            trackSequencer.calcTempo(melody, 0.04)
+        }
+        melody = withContext(Dispatchers.Default) {
+            trackSequencer.chordCorrect(melody, key)
+        }
+        return DraftTrackData(key, tempo, mode, melody)
     }
 
 
@@ -205,7 +243,7 @@ class AddTrackToProjectActivity : AppCompatActivity() {
             }
 
             if (isNameExisted) {
-                Toast.makeText(this, "\"${projectNameInput}\" existed.", Toast.LENGTH_LONG)
+                Toast.makeText(this, "\"${projectNameInput}\" existed.", Toast.LENGTH_LONG).show()
             } else {
                 confirmDialog.apply {
                     setMessage("Are you sure want to add this track to a new project (${projectNameInput})?")
@@ -226,7 +264,7 @@ class AddTrackToProjectActivity : AppCompatActivity() {
                         this,
                         "\"${trackNameInput}\" existed in \"${projectData!!.name}\".",
                         Toast.LENGTH_LONG
-                    )
+                    ).show()
                 } else {
                     confirmDialog.apply {
                         setMessage("Are you sure want to add this track to \"${projectData!!.name}\" project?")
@@ -247,8 +285,12 @@ class AddTrackToProjectActivity : AppCompatActivity() {
     }
 
     private fun addToNewProject(trackName: String, projectName: String) {
-        val trackTempo = 128
-        val trackKey = Key.D
+        val projectDir = "${getExternalFilesDir(null)}/$projectName"
+        File(projectDir).mkdir()
+        val fileDir = "$projectDir/$trackName.json"
+        File(fileDir).writeText(Klaxon().toJsonString(draftTrack.trackSequence))
+        val trackTempo = draftTrack.tempo
+        val trackKey = draftTrack.key
         val newProject = ProjectEntity(
             name = projectName,
             tempo = trackTempo,
@@ -279,6 +321,9 @@ class AddTrackToProjectActivity : AppCompatActivity() {
     }
 
     private fun addToExistingProject(trackName: String, project: ProjectEntity) {
+        val projectDir = "${getExternalFilesDir(null)}/${project.name}"
+        val fileDir = "$projectDir/$trackName.json"
+        File(fileDir).writeText(Klaxon().toJsonString(draftTrack.trackSequence))
         val newTrack = project.projectId?.let {
             DraftTrackEntity(
                 name = trackName,

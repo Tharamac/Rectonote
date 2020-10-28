@@ -8,12 +8,14 @@ import android.content.pm.PackageManager
 import android.media.AudioFormat
 import android.media.AudioRecord
 import android.media.MediaRecorder
+import android.os.Build
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.SystemClock
 import android.util.Log
 import android.view.View
 import android.widget.*
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
@@ -35,6 +37,7 @@ class RecordingActivity : AppCompatActivity() {
     private lateinit var txtTimer: Chronometer
     private lateinit var modeSelector: RadioGroup
     private lateinit var recordButton: ImageButton
+    private lateinit var txtInstr: TextView
 
     private lateinit var dialog: AlertDialog
     private lateinit var builder: AlertDialog.Builder
@@ -49,9 +52,9 @@ class RecordingActivity : AppCompatActivity() {
 
 
     private var requiredPermissions: Array<String> = arrayOf(
-        Manifest.permission.RECORD_AUDIO
-        //Manifest.permission.READ_EXTERNAL_STORAGE,
-        //Manifest.permission.WRITE_EXTERNAL_STORAGE
+        Manifest.permission.RECORD_AUDIO,
+        Manifest.permission.READ_EXTERNAL_STORAGE,
+        Manifest.permission.WRITE_EXTERNAL_STORAGE
     )
 
     //check if android have permission
@@ -75,6 +78,7 @@ class RecordingActivity : AppCompatActivity() {
         modeSelector = findViewById<RadioGroup>(R.id.convertMode)
         recordButton = findViewById(R.id.recordingControl)
         txtStatus.text = "Mic Ready"
+        txtInstr = findViewById(R.id.txtInstr)
         recordButton.setOnClickListener(record)
         setSupportActionBar(findViewById<Toolbar>(R.id.toolbar))
         //startTimer()
@@ -102,20 +106,24 @@ class RecordingActivity : AppCompatActivity() {
 
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     override fun onStart() {
         super.onStart()
+
+
         showDialog()
     }
 
     override fun onPause() {
         super.onPause()
+        stopRecording()
         dialog.dismiss()
     }
 
     private fun showDialog() {
         builder = AlertDialog.Builder(this)
-        builder.setTitle("Note :")
-        builder.setMessage("1. Try to record on environment as quiet as possible to perform best result.\n\n" + "2. Please leave silence at least one seconds to let the app record your environment.")
+        builder.setTitle("Tip :")
+        builder.setMessage("Record on environment as quiet as possible to perform best result.")
         builder.setPositiveButton("OK") { _, _ ->
             // Do something when user press the positive button
         }
@@ -146,8 +154,10 @@ class RecordingActivity : AppCompatActivity() {
 
     private val record = View.OnClickListener {
         if (!isWorking) {
+            txtInstr.text = "Recording environment..."
             recording()
             var c = 3
+            txtStatus.text
             object : CountDownTimer(2400, 800) {
                 override fun onTick(millisUntilFinished: Long) {
                     txtStatus.text = "Start Recording in ${c--}"
@@ -157,6 +167,8 @@ class RecordingActivity : AppCompatActivity() {
                     txtStatus.text = "Recording..."
                     txtTimer.base = SystemClock.elapsedRealtime()
                     recordButton.setImageResource(R.drawable.group_345)
+
+                    txtInstr.text = ""
                     txtTimer.start()
                     isWorking = true
                 }
@@ -187,24 +199,6 @@ class RecordingActivity : AppCompatActivity() {
     private var bufferElements2Rec = 1024 // want to play 2048 (2K) since 2 bytes we use only 1024
     private var bytesPerElement = 2
 
-    private val pressPlay = View.OnClickListener {
-
-        centisecs = 0
-        countdown = true
-
-        running = true
-        modeSelector.visibility = View.INVISIBLE
-
-
-    }
-
-    private val pressStop = View.OnClickListener {
-
-
-        running = false
-
-
-    }
 
     //this function start a stopwatch
     /*

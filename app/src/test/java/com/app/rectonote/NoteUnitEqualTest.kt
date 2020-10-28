@@ -73,4 +73,25 @@ class NoteUnitEqualTest {
             a == b
         }
     }
+
+    @Test
+    @Throws(Exception::class)
+    fun testRestNote() {
+        val a = Note(NotePitch.REST, -1)
+        val b = Note(NotePitch.REST, -1)
+        assertTrue {
+            a == b
+        }
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun testRestNoteWithMakeRestNote() {
+        val a = Note(NotePitch.A, 3)
+        val expected = Note(NotePitch.REST, -1)
+        a.makeRestNote()
+        assertTrue {
+            a == expected
+        }
+    }
 }

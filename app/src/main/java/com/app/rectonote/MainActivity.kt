@@ -14,6 +14,8 @@ import com.app.rectonote.adapter.ProjectListAdapter
 import com.app.rectonote.database.ProjectEntity
 import com.app.rectonote.database.ProjectsDatabase
 import kotlinx.coroutines.runBlocking
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 class MainActivity : AppCompatActivity() {
@@ -40,6 +42,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        projectList.clear()
         projectList.addAll(runBlocking {
             projectsDatabase.projectDAO().loadAllProjects()
         })
@@ -60,9 +63,11 @@ class MainActivity : AppCompatActivity() {
             override fun onQueryTextChange(newText: String): Boolean {
                 if (newText.isNotEmpty()) {
                     projectList.clear()
-                    val searchText = newText.toLowerCase()
+                    val searchText = newText.toLowerCase(Locale.ROOT)
                     runBlocking { projectsDatabase.projectDAO().loadAllProjects() }.forEach {
-                        if (it.name.toLowerCase().contains(searchText)) projectList.add(it)
+                        if (it.name.toLowerCase(Locale.ROOT).contains(searchText)) projectList.add(
+                            it
+                        )
                     }
                     recyclerView.adapter!!.notifyDataSetChanged()
 

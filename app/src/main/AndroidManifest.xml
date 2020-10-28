@@ -12,23 +12,26 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:screenOrientation="portrait"
+        android:resizeableActivity="false"
         android:supportsRtl="true"
         android:theme="@style/rectoNoteTheme">
-        <activity android:name=".ProjectSelectActivity"
-            android:parentActivityName=".AddTrackToProjectActivity"></activity>
+        <activity
+            android:name=".ProjectSelectActivity"
+            android:parentActivityName=".AddTrackToProjectActivity" />
 
         <activity
             android:name=".AddTrackToProjectActivity"
-            android:parentActivityName=".MainActivity" />
-        <activity
-            android:name=".ProjectDetailActivity"
             android:parentActivityName=".MainActivity"
             android:screenOrientation="nosensor" />
+        <activity
+            android:name=".ProjectDetailActivity"
+            android:parentActivityName=".MainActivity" />
         <activity
             android:name=".RecordingActivity"
             android:label="Add New Idea"
             android:parentActivityName=".MainActivity"
             android:screenOrientation="nosensor">
+
 
             <!-- The meta-data tag is required if you support API level 15 and lower -->
         </activity>

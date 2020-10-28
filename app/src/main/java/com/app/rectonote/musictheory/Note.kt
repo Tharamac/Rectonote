@@ -1,21 +1,25 @@
 package com.app.rectonote.musictheory
 
-open class Note(var pitch: NotePitch, var octave: Int) {
+import com.beust.klaxon.Json
+
+open class Note(
+    var pitch: NotePitch,
+    var octave: Int
+) {
+    @Json(ignored = true)
     var lengthInFrame = 1
     var duration = -1
-    var lengthInSecond = -1.00
 
     constructor(offset: Int, refNote: Note) : this(refNote.pitch, refNote.octave) {
         this.plusAssign(offset)
     }
 
     //unit test this
+
     operator fun plusAssign(offset: Int) {
-        val octaveChange = this.octave + (offset / 12)
-        val pitchShift: Int = (this.pitch.pitchNum + (offset % 12)) % 12
-        val pitchChange = NotePitch.intToNotePitch(pitchShift)
-        this.octave = octaveChange
-        this.pitch = pitchChange
+        val change = (this.octave * 12 + this.pitch.pitchNum) + offset
+        this.octave = change / 12
+        this.pitch = NotePitch.intToNotePitch(change % 12)
     }
 
     operator fun minus(b: Note): Int {
@@ -38,16 +42,20 @@ open class Note(var pitch: NotePitch, var octave: Int) {
     }
 
     override fun toString(): String {
-        return "${this.pitch.pitchName}${if (this.octave != -1) octave else ""} "
+        return "${this.pitch.pitchName}${if (this.octave != -1) octave else ""}"
     }
 
     companion object {
         fun transformNotes(offsetArray: IntArray, refNote: Note): Array<Note> =
             Array<Note>(offsetArray.size) { i ->
-                if (offsetArray[i] == -1)
+                if (offsetArray[i] == -999)
                     Note(NotePitch.REST, -1)
                 else
                     Note(offsetArray[i], refNote)
             }
+
+        fun restNote(): Note = Note(NotePitch.REST, -1)
     }
+
+
 }
