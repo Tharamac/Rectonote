@@ -7,6 +7,15 @@ import kotlin.test.assertTrue
 class ContainsSpecialCharTest {
     @Test
     @Throws(Exception::class)
+    fun testWhiteSpace() {
+        val testStr = "A "
+        assertFalse {
+            testStr.containsSpecialCharacters()
+        }
+    }
+
+    @Test
+    @Throws(Exception::class)
     fun testNotAnySpecialCharacterWithUpperCase() {
         val testStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
         assertFalse {

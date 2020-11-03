@@ -152,12 +152,9 @@ class AddTrackToProjectActivity : AppCompatActivity() {
             Note.transformNotes(cppOut, Note(NotePitch.C, 3))
         }
         Log.i("NOTEOUT", detectedNoteResult.contentToString())
-        var trackSequencer = withContext(Dispatchers.Default) {
-            TrackSequencer(detectedNoteResult)
-        }
-        trackSequencer.initTrack()
+        var trackSequencer = TrackSequencer()
         var melody = withContext(Dispatchers.Default) {
-            trackSequencer.generateTrack(mode)
+            trackSequencer.generateTrack(detectedNoteResult, mode)
         }
         melody = withContext(Dispatchers.Default) {
             trackSequencer.removeNoise(melody)

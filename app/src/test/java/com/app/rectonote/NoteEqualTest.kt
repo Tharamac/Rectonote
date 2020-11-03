@@ -3,11 +3,11 @@ package com.app.rectonote
 import com.app.rectonote.musictheory.Note
 import com.app.rectonote.musictheory.NotePitch
 
-import org.junit.Test
+import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class NoteUnitEqualTest {
+class NoteEqualTest {
 
     @Test
     @Throws(Exception::class)

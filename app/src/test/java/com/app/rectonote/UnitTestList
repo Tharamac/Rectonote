@@ -1,15 +1,19 @@
 My Unit Test Function/Method/Class
 
 No dependency
-    fun String.containsSpecialCharacters()
-    fun Melody.updateSequence()
-    fun NoteUnit.plusAssign()
-    fun NoteUnit.equals()
-    fun NoteUnit.transformNotes()
-    fun Melody.calcDuration()
-    fun Melody.calcTempo(frameSize : Double)
+    [/] fun String.containsSpecialCharacters()
+    [ ] fun TrackSequencer.updateSequence()
+    [/] fun Note.minus
+    [/] fun Note.equals()
+    [/] fun Note.transformNotes()
+    [ ] fun TrackSequencer.calcDuration()
+    [/] fun TrackSequencer.calcPitchProfile()
+    [ ] fun TrackSequencer.calcTempo(frameSize : Double)
 
 Dependency
-    fun Melody.cleanTrack()  //cuz equal sign
-    fun Melody.generateTrack()
-    fun AddTrackToProject()
+    [ ] fun TrackSequencer.cleanTrack()  //cuz equal sign
+    [/] fun TrackSequencer.generateTrack()
+    [X] fun Note.plusAssign()
+    [ ] fun TrackSequencer.removeNoise()
+    [ ] fun TrackSequencer.calcKey()
+    [ ] fun TrackSequencer.chordCorrect()
