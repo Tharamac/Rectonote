@@ -19,7 +19,7 @@ class NoteMinusTest {
     fun testNoteAMoreThanBInPitch() {
         val a = Note(NotePitch.Ab, 3)
         val b = Note(NotePitch.C, 3)
-        assertEquals(8, a - b)
+        assertEquals(8, a.minus(b))
     }
 
     @Test

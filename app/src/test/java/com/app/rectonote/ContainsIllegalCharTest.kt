@@ -4,13 +4,13 @@ import org.junit.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class ContainsSpecialCharTest {
+class ContainsIllegalCharTest {
     @Test
     @Throws(Exception::class)
     fun testWhiteSpace() {
         val testStr = "A "
         assertFalse {
-            testStr.containsSpecialCharacters()
+            testStr.containsIllegalCharacters()
         }
     }
 
@@ -19,7 +19,7 @@ class ContainsSpecialCharTest {
     fun testNotAnySpecialCharacterWithUpperCase() {
         val testStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
         assertFalse {
-            testStr.containsSpecialCharacters()
+            testStr.containsIllegalCharacters()
         }
     }
 
@@ -28,7 +28,7 @@ class ContainsSpecialCharTest {
     fun testNotAnySpecialCharacterWithLowerCase() {
         val testStr = "abcdefghijklmnopqrstuvwxyz"
         assertFalse {
-            testStr.containsSpecialCharacters()
+            testStr.containsIllegalCharacters()
         }
     }
 
@@ -37,7 +37,7 @@ class ContainsSpecialCharTest {
     fun testNotAnySpecialCharacterWithNumber() {
         val testStr = "0123456789"
         assertFalse {
-            testStr.containsSpecialCharacters()
+            testStr.containsIllegalCharacters()
         }
     }
 
@@ -46,7 +46,7 @@ class ContainsSpecialCharTest {
     fun testExclamationMark() {
         val testStr = "A!"
         assertTrue {
-            testStr.containsSpecialCharacters()
+            testStr.containsIllegalCharacters()
         }
     }
 
@@ -55,7 +55,7 @@ class ContainsSpecialCharTest {
     fun testQuestionMark() {
         val testStr = "A?"
         assertTrue {
-            testStr.containsSpecialCharacters()
+            testStr.containsIllegalCharacters()
         }
     }
 
@@ -64,7 +64,7 @@ class ContainsSpecialCharTest {
     fun testPlusSign() {
         val testStr = "A+"
         assertTrue {
-            testStr.containsSpecialCharacters()
+            testStr.containsIllegalCharacters()
         }
     }
 
@@ -73,7 +73,7 @@ class ContainsSpecialCharTest {
     fun testMinusSign() {
         val testStr = "A-"
         assertFalse {
-            testStr.containsSpecialCharacters()
+            testStr.containsIllegalCharacters()
         }
     }
 
@@ -82,7 +82,7 @@ class ContainsSpecialCharTest {
     fun testStar() {
         val testStr = "A*"
         assertTrue {
-            testStr.containsSpecialCharacters()
+            testStr.containsIllegalCharacters()
         }
     }
 
@@ -91,7 +91,7 @@ class ContainsSpecialCharTest {
     fun testBackSlash() {
         val testStr = """A\"""
         assertTrue {
-            testStr.containsSpecialCharacters()
+            testStr.containsIllegalCharacters()
         }
     }
 
@@ -100,7 +100,7 @@ class ContainsSpecialCharTest {
     fun testSlash() {
         val testStr = """A/"""
         assertTrue {
-            testStr.containsSpecialCharacters()
+            testStr.containsIllegalCharacters()
         }
     }
 
@@ -109,7 +109,7 @@ class ContainsSpecialCharTest {
     fun testParenthesesLeft() {
         val testStr = """A("""
         assertFalse {
-            testStr.containsSpecialCharacters()
+            testStr.containsIllegalCharacters()
         }
     }
 
@@ -118,7 +118,7 @@ class ContainsSpecialCharTest {
     fun testParenthesesRight() {
         val testStr = """A)"""
         assertFalse {
-            testStr.containsSpecialCharacters()
+            testStr.containsIllegalCharacters()
         }
     }
 
@@ -127,7 +127,7 @@ class ContainsSpecialCharTest {
     fun testAtSign() {
         val testStr = """A@"""
         assertTrue {
-            testStr.containsSpecialCharacters()
+            testStr.containsIllegalCharacters()
         }
     }
 
@@ -136,7 +136,7 @@ class ContainsSpecialCharTest {
     fun testAndSign() {
         val testStr = """A&"""
         assertTrue {
-            testStr.containsSpecialCharacters()
+            testStr.containsIllegalCharacters()
         }
     }
 
@@ -145,7 +145,7 @@ class ContainsSpecialCharTest {
     fun testUnderScore() {
         val testStr = """A_"""
         assertFalse {
-            testStr.containsSpecialCharacters()
+            testStr.containsIllegalCharacters()
         }
     }
 
@@ -154,7 +154,7 @@ class ContainsSpecialCharTest {
     fun testHyphen() {
         val testStr = """A^"""
         assertTrue {
-            testStr.containsSpecialCharacters()
+            testStr.containsIllegalCharacters()
         }
     }
 
@@ -163,7 +163,7 @@ class ContainsSpecialCharTest {
     fun testSquareBracketLeft() {
         val testStr = """A["""
         assertTrue {
-            testStr.containsSpecialCharacters()
+            testStr.containsIllegalCharacters()
         }
     }
 
@@ -172,7 +172,7 @@ class ContainsSpecialCharTest {
     fun testSquareBracketRight() {
         val testStr = """A]"""
         assertTrue {
-            testStr.containsSpecialCharacters()
+            testStr.containsIllegalCharacters()
         }
     }
 
@@ -181,7 +181,7 @@ class ContainsSpecialCharTest {
     fun testCurlyBraceLeft() {
         val testStr = """A{"""
         assertTrue {
-            testStr.containsSpecialCharacters()
+            testStr.containsIllegalCharacters()
         }
     }
 
@@ -190,7 +190,7 @@ class ContainsSpecialCharTest {
     fun testCurlyBraceRight() {
         val testStr = """}A"""
         assertTrue {
-            testStr.containsSpecialCharacters()
+            testStr.containsIllegalCharacters()
         }
     }
 
@@ -199,7 +199,7 @@ class ContainsSpecialCharTest {
     fun testDollarSign() {
         val testStr = "$\\A"
         assertTrue {
-            testStr.containsSpecialCharacters()
+            testStr.containsIllegalCharacters()
         }
     }
 
@@ -208,7 +208,7 @@ class ContainsSpecialCharTest {
     fun testTilde() {
         val testStr = "~A"
         assertTrue {
-            testStr.containsSpecialCharacters()
+            testStr.containsIllegalCharacters()
         }
     }
 
@@ -217,7 +217,7 @@ class ContainsSpecialCharTest {
     fun testGraveAccent() {
         val testStr = "`A"
         assertTrue {
-            testStr.containsSpecialCharacters()
+            testStr.containsIllegalCharacters()
         }
     }
 
@@ -226,7 +226,7 @@ class ContainsSpecialCharTest {
     fun testEqualSign() {
         val testStr = "=A"
         assertTrue {
-            testStr.containsSpecialCharacters()
+            testStr.containsIllegalCharacters()
         }
     }
 
@@ -235,7 +235,7 @@ class ContainsSpecialCharTest {
     fun testColon() {
         val testStr = "A:"
         assertTrue {
-            testStr.containsSpecialCharacters()
+            testStr.containsIllegalCharacters()
         }
     }
 
@@ -244,7 +244,7 @@ class ContainsSpecialCharTest {
     fun testSemiColon() {
         val testStr = "A;"
         assertTrue {
-            testStr.containsSpecialCharacters()
+            testStr.containsIllegalCharacters()
         }
     }
 
@@ -253,7 +253,7 @@ class ContainsSpecialCharTest {
     fun testComma() {
         val testStr = "A,"
         assertTrue {
-            testStr.containsSpecialCharacters()
+            testStr.containsIllegalCharacters()
         }
     }
 
@@ -262,7 +262,7 @@ class ContainsSpecialCharTest {
     fun testPeriod() {
         val testStr = "A."
         assertFalse {
-            testStr.containsSpecialCharacters()
+            testStr.containsIllegalCharacters()
         }
     }
 
@@ -271,7 +271,7 @@ class ContainsSpecialCharTest {
     fun testVerticalLine() {
         val testStr = "A|"
         assertTrue {
-            testStr.containsSpecialCharacters()
+            testStr.containsIllegalCharacters()
         }
     }
 
@@ -280,7 +280,7 @@ class ContainsSpecialCharTest {
     fun testPercentSign() {
         val testStr = "A%"
         assertTrue {
-            testStr.containsSpecialCharacters()
+            testStr.containsIllegalCharacters()
         }
     }
 
@@ -289,7 +289,7 @@ class ContainsSpecialCharTest {
     fun testLessThan() {
         val testStr = "A<"
         assertTrue {
-            testStr.containsSpecialCharacters()
+            testStr.containsIllegalCharacters()
         }
     }
 
@@ -298,7 +298,7 @@ class ContainsSpecialCharTest {
     fun testMoreThan() {
         val testStr = "A>"
         assertTrue {
-            testStr.containsSpecialCharacters()
+            testStr.containsIllegalCharacters()
         }
     }
 
@@ -307,7 +307,7 @@ class ContainsSpecialCharTest {
     fun testCompoundSample() {
         val testStr = "A{|<"
         assertTrue {
-            testStr.containsSpecialCharacters()
+            testStr.containsIllegalCharacters()
         }
     }
 
@@ -316,7 +316,7 @@ class ContainsSpecialCharTest {
     fun testSingleQuote() {
         val testStr = "A\'"
         assertTrue {
-            testStr.containsSpecialCharacters()
+            testStr.containsIllegalCharacters()
         }
     }
 
@@ -325,7 +325,7 @@ class ContainsSpecialCharTest {
     fun testDoubleQuote() {
         val testStr = "A\""
         assertTrue {
-            testStr.containsSpecialCharacters()
+            testStr.containsIllegalCharacters()
         }
     }
 
@@ -334,7 +334,7 @@ class ContainsSpecialCharTest {
     fun testAll() {
         val testStr = "!$%^&*\\\\+|@~=`{}\\[\\]:\";'<>?,\\/"
         assertTrue {
-            testStr.containsSpecialCharacters()
+            testStr.containsIllegalCharacters()
         }
     }
 

@@ -1,26 +1,31 @@
 package com.app.rectonote
 
 import com.app.rectonote.musictheory.Chord
+import com.app.rectonote.musictheory.Equal
 import com.app.rectonote.musictheory.Note
 import com.app.rectonote.musictheory.NotePitch.*
 import com.app.rectonote.musictheory.TrackSequencer
 import org.junit.runner.RunWith
+import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.Mockito.`when`
-import org.mockito.runners.MockitoJUnitRunner
+import org.mockito.Spy
+import org.mockito.junit.MockitoJUnitRunner
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
 @RunWith(MockitoJUnitRunner::class)
-class MelodyGenerateTest {
+class MelodyGenerateTrackTest {
     @Mock
-    val trackSequencerMock = TrackSequencer()
+    val equalsMock = Equal()
 
+    @Spy
+    @InjectMocks
+    val trackSequencerMock = TrackSequencer(equalsMock)
 
     @Test
     @Throws(Exception::class)
     fun `Melody must contains C4(size = 3), D4(size = 7)`() {
-
         val rawNotes = arrayOf(
             Note(C, 4),
             Note(C, 4),
@@ -41,10 +46,13 @@ class MelodyGenerateTest {
                 lengthInFrame = 7
             }
         )
+
         `when`(trackSequencerMock.initTrack(rawNotes)).thenReturn(0)
+        val actual = trackSequencerMock.generateTrack(rawNotes, "melody").toArray()
+
         assertTrue {
             expected.toArray()
-                .contentEquals(trackSequencerMock.generateTrack(rawNotes, "melody").toArray())
+                .contentEquals(actual)
         }
     }
 
@@ -67,7 +75,9 @@ class MelodyGenerateTest {
                 lengthInFrame = 3
             },
         )
+
         `when`(trackSequencerMock.initTrack(rawNotes)).thenReturn(5)
+        //   `when`(equalsMock.isSame(noteCapt.capture(), noteCapt.capture())).thenReturn(noteCapt.allValues[0].pitch == noteCapt.allValues[1].pitch && noteCapt.allValues[0].duration == noteCapt.allValues[1].duration)
         assertTrue {
             expected.toArray()
                 .contentEquals(trackSequencerMock.generateTrack(rawNotes, "melody").toArray())
@@ -107,6 +117,8 @@ class MelodyGenerateTest {
             }
         )
         `when`(trackSequencerMock.initTrack(rawNotes)).thenReturn(0)
+        //`when`(equalsMock.isSame(chordCapt.capture(), chordCapt.capture())).thenReturn(chordCapt.allValues[0].pitch == chordCapt.allValues[1].pitch && chordCapt.allValues[0].duration == chordCapt.allValues[1].duration && chordCapt.allValues[0].chordType == chordCapt.allValues[1].chordType)
+
         assertTrue {
             expected.toArray()
                 .contentEquals(trackSequencerMock.generateTrack(rawNotes, "chord").toArray())
@@ -138,6 +150,8 @@ class MelodyGenerateTest {
             },
         )
         `when`(trackSequencerMock.initTrack(rawNotes)).thenReturn(6)
+        //`when`(equalsMock.isSame(chordCapt.capture(), chordCapt.capture())).thenReturn(chordCapt.allValues[0].pitch == chordCapt.allValues[1].pitch && chordCapt.allValues[0].duration == chordCapt.allValues[1].duration && chordCapt.allValues[0].chordType == chordCapt.allValues[1].chordType)
+
         assertTrue {
             expected.toArray()
                 .contentEquals(trackSequencerMock.generateTrack(rawNotes, "chord").toArray())
@@ -151,6 +165,7 @@ class MelodyGenerateTest {
         val rawNotes = emptyArray<Note>()
         val expected = ArrayList<Note>()
         `when`(trackSequencerMock.initTrack(rawNotes)).thenReturn(-1)
+        //`when`(equalsMock.isSame(noteCapt.capture(), noteCapt.capture())).thenReturn(noteCapt.allValues[0].pitch == noteCapt.allValues[1].pitch && noteCapt.allValues[0].duration == noteCapt.allValues[1].duration)
         assertTrue {
             expected.toArray()
                 .contentEquals(trackSequencerMock.generateTrack(rawNotes, "melody").toArray())
@@ -172,6 +187,7 @@ class MelodyGenerateTest {
         )
         val expected = ArrayList<Note>()
         `when`(trackSequencerMock.initTrack(rawNotes)).thenReturn(-1)
+        //`when`(equalsMock.isSame(noteCapt.capture(), noteCapt.capture())).thenReturn(noteCapt.allValues[0].pitch == noteCapt.allValues[1].pitch && noteCapt.allValues[0].duration == noteCapt.allValues[1].duration)
         assertTrue {
             expected.toArray()
                 .contentEquals(trackSequencerMock.generateTrack(rawNotes, "melody").toArray())

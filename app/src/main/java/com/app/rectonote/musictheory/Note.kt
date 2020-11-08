@@ -3,12 +3,14 @@ package com.app.rectonote.musictheory
 import com.beust.klaxon.Json
 
 open class Note(
-    var pitch: NotePitch,
-    var octave: Int
-) {
+    var pitch: NotePitch = NotePitch.REST,
+    var octave: Int = -1,
+
+    ) {
     @Json(ignored = true)
     var lengthInFrame = 1
     var duration = -1
+
 
     constructor(offset: Int, refNote: Note) : this(refNote.pitch, refNote.octave) {
         this.plusAssign(offset)
@@ -19,18 +21,17 @@ open class Note(
     operator fun plusAssign(offset: Int) {
         val change = (this.octave * 12 + this.pitch.pitchNum) + offset
         this.octave = change / 12
-        this.pitch = NotePitch.intToNotePitch(change % 12)
-    }
-
-    operator fun minus(b: Note): Int {
-        val octaveDiff = (b.octave - this.octave) * 12
-        val pitchDiff = b.pitch.pitchNum - this.pitch.pitchNum
-        return octaveDiff + pitchDiff
+        this.pitch = PitchOperator().intToNotePitch(change % 12)
     }
 
     override operator fun equals(other: Any?): Boolean = if (other !is Note) false
-    else (this.pitch == other.pitch) && (this.octave == other.octave)
+    else (this.pitch == other.pitch) && (this.octave == other.octave) && (this.duration == other.duration) && (this.lengthInFrame == other.lengthInFrame)
 
+    operator fun minus(b: Note): Int {
+        val octaveDiff = (this.octave - b.octave) * 12
+        val pitchDiff = this.pitch.pitchNum - b.pitch.pitchNum
+        return octaveDiff + pitchDiff
+    }
 
     fun makeRestNote() {
         this.pitch = NotePitch.REST

@@ -1,32 +1,36 @@
 package com.app.rectonote.musictheory
 
-import android.util.Log
 import com.app.rectonote.correlationCoefficient
 import com.app.rectonote.leftShift
+import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.math.pow
 import kotlin.math.roundToInt
 import kotlin.math.sqrt
 
-class TrackSequencer(private val rawNotes: Array<Note>) {
-
-
-    fun initTrack(): Int {
+open class TrackSequencer(
+    private val comparator: Equal = Equal(),
+    private val pitchOperator: PitchOperator = PitchOperator()
+) {
+    open fun initTrack(rawNotes: Array<Note>): Int {
         var i = 0
         while (i < rawNotes.size && rawNotes[i].pitch == NotePitch.REST) i++
         if (i == rawNotes.size) {
-            Log.w("ZERO NOTE FOUND", "There are not any notes found.")
             return -1
         }
         return i
     }
 
-    fun generateTrack(convertType: String): ArrayList<out Note> {
-        var frameStart = initTrack()
-        var melody = ArrayList<Note>()
-        if (convertType.toLowerCase() == "melody") {
+    fun generateTrack(rawNotes: Array<Note>, convertType: String): ArrayList<out Note> {
+        val frameStart = initTrack(rawNotes)
+        val melody = ArrayList<Note>()
+        if (frameStart == -1) {
+            return melody
+        }
+        if (convertType.toLowerCase(Locale.ROOT) == "melody") {
             melody.add(Note(rawNotes[frameStart].pitch, rawNotes[frameStart].octave))
             rawNotes.drop(frameStart + 1).forEach {
-                if (it == melody.last()) {
+                if (comparator.isSame(it, melody.last())) {
                     melody.last().lengthInFrame++
                 } else {
                     melody.add(Note(it.pitch, it.octave))
@@ -36,7 +40,7 @@ class TrackSequencer(private val rawNotes: Array<Note>) {
         } else {
             melody.add(Chord(rawNotes[frameStart].pitch, rawNotes[frameStart].octave))
             rawNotes.drop(frameStart + 1).forEach {
-                if (it == melody.last()) {
+                if (comparator.isSame(it, melody.last())) {
                     melody.last().lengthInFrame++
                 } else {
                     melody.add(Chord(it.pitch, it.octave))
@@ -64,18 +68,19 @@ class TrackSequencer(private val rawNotes: Array<Note>) {
             } catch (e: IndexOutOfBoundsException) {
                 Note.restNote()
             }
-            if (left != Note.restNote()) {
+            if (!comparator.isSame(left, Note.restNote())) {
                 left.lengthInFrame += current.lengthInFrame
-                if (left == right) {
+                if (comparator.isSame(left, right)) {
                     left.lengthInFrame += right.lengthInFrame
                     try {
                         melody.removeAt(noiseNote + 1)
                     } catch (e: IndexOutOfBoundsException) {
+
                     }
                 }
                 melody.removeAt(noiseNote)
-            } else if (left == Note.restNote()) {
-                if (left == right) {
+            } else if (comparator.isSame(left, Note.restNote())) {
+                if (comparator.isSame(left, right)) {
                     left.lengthInFrame += (current.lengthInFrame + right.lengthInFrame)
                     try {
                         melody.removeAt(noiseNote + 1)
@@ -99,12 +104,12 @@ class TrackSequencer(private val rawNotes: Array<Note>) {
         if (melody.first().pitch == NotePitch.REST) {
             melody.removeAt(0)
         }
-        var adjacent = melody.zipWithNext().find { it.first == it.second }
+        var adjacent = melody.zipWithNext().find { comparator.isSame(it.first, it.second) }
         while (adjacent != null) {
             var adjacentIdx = melody.zipWithNext().indexOf(adjacent)
             melody[adjacentIdx].lengthInFrame += adjacent.second.lengthInFrame
             melody.removeAt(adjacentIdx + 1)
-            adjacent = melody.zipWithNext().find { it.first == it.second }
+            adjacent = melody.zipWithNext().find { comparator.isSame(it.first, it.second) }
         }
         if (melody.last().pitch == NotePitch.REST || melody.last().lengthInFrame < 3) {
             melody.removeAt(melody.lastIndex)
@@ -167,21 +172,25 @@ class TrackSequencer(private val rawNotes: Array<Note>) {
     }
 
     fun chordCorrect(chordProg: ArrayList<out Note>, key: Key): ArrayList<out Note> {
-        val rootNote = NotePitch.intToNotePitch(key.ordinal % 12)
+        val rootNote = pitchOperator.intToNotePitch(key.ordinal % 12)
         val minorChord = if (key.reduced.contains("m")) {
             //minor
-            arrayOf(rootNote, NotePitch.plusPitch(rootNote, 5), NotePitch.plusPitch(rootNote, 7))
+            arrayOf(
+                rootNote,
+                pitchOperator.plusPitch(rootNote, 5),
+                pitchOperator.plusPitch(rootNote, 7)
+            )
         } else {
             arrayOf(
-                NotePitch.plusPitch(rootNote, 2),
-                NotePitch.plusPitch(rootNote, 4),
-                NotePitch.plusPitch(rootNote, 9)
+                pitchOperator.plusPitch(rootNote, 2),
+                pitchOperator.plusPitch(rootNote, 4),
+                pitchOperator.plusPitch(rootNote, 9)
             ) //major
         }
         chordProg.forEach {
             if (it is Chord) {
                 if (it.pitch in minorChord) {
-                    it.chordType = "Minor"
+                    it.chordType = "minor"
                 }
             }
         }

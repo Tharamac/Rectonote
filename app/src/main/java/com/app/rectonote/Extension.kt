@@ -3,13 +3,14 @@ package com.app.rectonote
 import kotlin.math.sqrt
 
 //first time extension function
-fun String.containsSpecialCharacters(): Boolean {
+fun String.containsIllegalCharacters(): Boolean {
     val regex = "[!$%^&*\\\\+|@~=`{}\\[\\]:\";'<>?,\\/]".toRegex()
     return regex.containsMatchIn(this)
 }
 
 fun correlationCoefficient(X: DoubleArray, Y: Array<Int>): Double {
-    val size = if (X.size == Y.size) X.size else return 99.9
+    val size =
+        if (X.size == Y.size) X.size else throw IllegalArgumentException("Array size is not Equal")
     var sumX = 0.00
     var sumY = 0.00
     var sumXY = 0.00

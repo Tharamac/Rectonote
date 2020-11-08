@@ -21,7 +21,7 @@ import com.app.rectonote.R
 import com.app.rectonote.RecordingActivity
 import com.app.rectonote.adapter.DraftTracksAdapter
 import com.app.rectonote.adapter.ProjectDetailTabAdapter
-import com.app.rectonote.containsSpecialCharacters
+import com.app.rectonote.containsIllegalCharacters
 import com.app.rectonote.database.ProjectEntity
 import com.app.rectonote.database.ProjectsDatabase
 import com.app.rectonote.musictheory.Key
@@ -142,7 +142,7 @@ class ProjectDataFragment : Fragment() {
                         ).show()
                         return@OnClickListener
                     }
-                    changedName.containsSpecialCharacters() -> {
+                    changedName.containsIllegalCharacters() -> {
                         Toast.makeText(
                             context,
                             "Name Invalid",

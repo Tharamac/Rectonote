@@ -11,9 +11,8 @@ No dependency
     [ ] fun TrackSequencer.calcTempo(frameSize : Double)
 
 Dependency
-    [ ] fun TrackSequencer.cleanTrack()  //cuz equal sign
+    [/] fun TrackSequencer.cleanTrack()
     [/] fun TrackSequencer.generateTrack()
-    [X] fun Note.plusAssign()
-    [ ] fun TrackSequencer.removeNoise()
-    [ ] fun TrackSequencer.calcKey()
-    [ ] fun TrackSequencer.chordCorrect()
+    [/] fun Note.plusAssign()
+    [/] fun TrackSequencer.removeNoise()
+    [/] fun TrackSequencer.chordCorrect()

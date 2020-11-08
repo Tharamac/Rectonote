@@ -218,7 +218,7 @@ class AddTrackToProjectActivity : AppCompatActivity() {
         if (trackNameInput.isBlank()) {
             Toast.makeText(this, "Track name cannot be empty", Toast.LENGTH_SHORT).show()
             return@OnClickListener
-        } else if (trackNameInput.containsSpecialCharacters()) {
+        } else if (trackNameInput.containsIllegalCharacters()) {
             Toast.makeText(this, "Invalid Name", Toast.LENGTH_SHORT).show()
             return@OnClickListener
         }
@@ -234,7 +234,7 @@ class AddTrackToProjectActivity : AppCompatActivity() {
             if (projectNameInput.isBlank()) {
                 Toast.makeText(this, "Project name cannot be empty", Toast.LENGTH_SHORT).show()
                 return@OnClickListener
-            } else if (projectNameInput.containsSpecialCharacters()) {
+            } else if (projectNameInput.containsIllegalCharacters()) {
                 Toast.makeText(this, "Project name invalid", Toast.LENGTH_SHORT).show()
                 return@OnClickListener
             }

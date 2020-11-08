@@ -1,13 +1,16 @@
 package com.app.rectonote
 
+import com.app.rectonote.musictheory.Equal
 import com.app.rectonote.musictheory.Note
 import com.app.rectonote.musictheory.NotePitch
 import com.app.rectonote.musictheory.TrackSequencer
 import kotlin.test.Test
-
 import kotlin.test.assertTrue
 
 class CalcPitchProfileTest {
+
+
+    val trackSequencerMock = TrackSequencer(Equal())
 
     @Test
     @Throws(Exception::class)
@@ -26,7 +29,7 @@ class CalcPitchProfileTest {
         //                               C  C# D  D# E  F  F# G  G# A  A# B
         val pitchExpected = arrayOf<Int>(4, 0, 0, 0, 8, 0, 0, 0, 0, 4, 0, 0)
         assertTrue {
-            pitchExpected.contentEquals(TrackSequencer().calcPitchProfile(melody))
+            pitchExpected.contentEquals(trackSequencerMock.calcPitchProfile(melody))
         }
     }
 
@@ -74,7 +77,7 @@ class CalcPitchProfileTest {
         //                               C  C# D  D# E  F  F# G  G# A  A# B
         val pitchExpected = arrayOf<Int>(4, 4, 8, 15, 4, 8, 4, 4, 8, 8, 8, 8)
         assertTrue {
-            pitchExpected.contentEquals(TrackSequencer().calcPitchProfile(melody))
+            pitchExpected.contentEquals(trackSequencerMock.calcPitchProfile(melody))
         }
     }
 
@@ -95,7 +98,7 @@ class CalcPitchProfileTest {
         //                               C  C# D  D# E  F  F# G  G# A  A# B
         val pitchExpected = arrayOf<Int>(16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
         assertTrue {
-            pitchExpected.contentEquals(TrackSequencer().calcPitchProfile(melody))
+            pitchExpected.contentEquals(trackSequencerMock.calcPitchProfile(melody))
         }
     }
 }
