@@ -13,6 +13,7 @@ abstract class ProjectsDatabase : RoomDatabase() {
     abstract fun drafttracksDAO(): DraftTrackDao
 
     companion object {
+        @Volatile
         private var INSTANCE: ProjectsDatabase? = null
         fun getInstance(context: Context): ProjectsDatabase {
             synchronized(this) {

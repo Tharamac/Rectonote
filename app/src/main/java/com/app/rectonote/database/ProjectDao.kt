@@ -1,24 +1,25 @@
 package com.app.rectonote.database
 
+import androidx.lifecycle.LiveData
 import androidx.room.*
 
 @Dao
 interface ProjectDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun newProject(vararg project: ProjectEntity)
+    fun newProject(vararg project: ProjectEntity)
 
     @Query("SELECT * FROM projects ORDER BY date_modified DESC")
-    suspend fun loadAllProjects(): List<ProjectEntity>
+    fun loadAllProjects(): LiveData<List<ProjectEntity>>
 
     @Query("SELECT project_name FROM projects")
-    suspend fun getNames(): List<String>
+    fun getNames(): LiveData<List<String>>
 
     @Query("SELECT projectId FROM projects WHERE project_name = :projectName")
-    suspend fun getIdFromProject(projectName: String): List<Int>
+    fun getIdFromProject(projectName: String): LiveData<List<Int>>
 
     @Query("SELECT * FROM projects WHERE project_name = :projectName")
-    suspend fun getProjectFromName(projectName: String): List<ProjectEntity>
+    fun getProjectFromName(projectName: String): LiveData<List<ProjectEntity>>
 
     @Delete
-    suspend fun deleteProject(project: ProjectEntity)
+    fun deleteProject(project: ProjectEntity)
 }
