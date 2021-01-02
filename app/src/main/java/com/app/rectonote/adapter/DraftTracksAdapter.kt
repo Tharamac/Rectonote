@@ -11,6 +11,7 @@ import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.app.rectonote.R
 import com.app.rectonote.database.DraftTrackEntity
+import java.util.*
 
 class DraftTracksAdapter(
     private val draftTrackDataSet: MutableList<DraftTrackEntity>
@@ -93,12 +94,10 @@ class DraftTracksAdapter(
         var track = draftTrackDataSet[position]
         holder.trackName.text = track.name
         holder.trackType.setImageResource(
-            if (track.type == "Melody" || track.type == "melody") {
-                R.drawable.ic_baseline_music_note_24
-            } else if (track.type == "Melody" || track.type == "melody") {
-                R.drawable.ic_baseline_queue_music_24
-            } else {
-                R.drawable.ic_baseline_priority_high_24
+            when (track.type.toLowerCase(Locale.ROOT)) {
+                "melody" -> R.drawable.ic_baseline_music_note_24
+                "chord" -> R.drawable.ic_baseline_queue_music_24
+                else -> R.drawable.ic_baseline_priority_high_24
             }
         )
         holder.itemView.setOnLongClickListener {

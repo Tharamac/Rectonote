@@ -71,11 +71,9 @@ class ProjectDataFragment : Fragment() {
         }
         view?.findViewById<CardView>(R.id.add_track_to_project_button)
             ?.setOnClickListener(newTrackFormProjectDetail(projectData))
-        if (projectData != null) {
 
-            projectTempo?.text = projectData.tempo.toString()
-            projectKey?.text = Key.reduceKey(projectData.key)
-        }
+        projectTempo?.text = projectData.tempo.toString()
+        projectKey?.text = Key.reduceKey(projectData.key)
         runBlocking {
             projectData.projectId.let {
                 if (it != null) {

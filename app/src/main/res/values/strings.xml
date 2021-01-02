@@ -38,6 +38,7 @@
     <string name="beats_per_minute">beats per minute</string>
     <string name="wait">...</string>
     <string name="key">key</string>
+    <string name="mute">Mute</string>
 
 
 </resources>

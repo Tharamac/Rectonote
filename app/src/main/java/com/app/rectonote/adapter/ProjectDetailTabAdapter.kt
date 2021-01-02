@@ -13,7 +13,7 @@ class ProjectDetailTabAdapter(fragmentActivity: FragmentActivity, project: Proje
     override fun getItemCount(): Int = 2
     override fun createFragment(position: Int): Fragment = when (position) {
         0 -> ProjectDataFragment.newInstance(project)
-        1 -> PreviewTracksFragment()
+        1 -> PreviewTracksFragment.newInstance(project)
         else -> ProjectDataFragment.newInstance(project)
     }
 }

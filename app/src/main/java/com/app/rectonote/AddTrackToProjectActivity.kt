@@ -2,6 +2,7 @@ package com.app.rectonote
 
 
 import android.app.Activity
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP
@@ -18,6 +19,7 @@ import com.app.rectonote.database.DraftTrackEntity
 import com.app.rectonote.database.ProjectDatabaseViewModel
 import com.app.rectonote.database.ProjectEntity
 import com.app.rectonote.database.ProjectsDatabase
+import com.app.rectonote.midiplayback.MIDIPlayerChannel
 import com.app.rectonote.musictheory.DraftTrackData
 import com.app.rectonote.musictheory.Note
 import com.app.rectonote.musictheory.NotePitch
@@ -26,7 +28,9 @@ import com.beust.klaxon.Klaxon
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.*
 import java.io.File
+import java.io.IOException
 import java.util.*
+
 
 class AddTrackToProjectActivity : AppCompatActivity() {
     lateinit var draftTrack: DraftTrackData
@@ -48,6 +52,7 @@ class AddTrackToProjectActivity : AppCompatActivity() {
         ProjectDatabaseViewModel(projectsDatabase.projectDAO())
     }
     private var projectData: ProjectEntity? = null
+
     private external fun debug(): String
     private external suspend fun startConvert(
         fs: Int,
@@ -57,6 +62,7 @@ class AddTrackToProjectActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_track_to_project)
+
         val toolbar = findViewById<Toolbar>(R.id.toolbar_add_track)
         findViewById<TextView>(R.id.track_name).text = "Play Processed Track"
         val addTrackOptions = findViewById<Spinner>(R.id.add_track_options_spinner)
@@ -126,57 +132,93 @@ class AddTrackToProjectActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
         val cppScope = CoroutineScope(Dispatchers.Default + Job())
-        var deferredDraftTrack = cppScope.async {
-            audioConvert()
-        }
-
+        val tempoDisplay = findViewById<TextView>(R.id.project_tempo)
+        val keyDisplay = findViewById<TextView>(R.id.project_key)
         cppScope.launch {
-            draftTrack = deferredDraftTrack.await()
-
-            findViewById<TextView>(R.id.project_tempo).text = draftTrack.tempo.toString()
-            findViewById<TextView>(R.id.project_key).text = draftTrack.key.reduced
+            val draftTrack = audioConvert()
+            withContext(Dispatchers.Main) {
+                tempoDisplay.text = draftTrack.tempo.toString()
+                keyDisplay.text = draftTrack.key.reduced
+                btnConfirm.visibility = View.VISIBLE
+            }
             Log.i("NOTEOUT", Klaxon().toJsonString(draftTrack.trackSequence))
         }
-        btnConfirm.visibility = View.VISIBLE
+        val soloTrackButton = findViewById<ImageButton>(R.id.solo_button)
+        var isPlaying = false
+        soloTrackButton.setOnClickListener {
+            val soloChannel = MIDIPlayerChannel(draftTrack)
+            val audioOutScope = CoroutineScope(Dispatchers.IO)
+            soloChannel.nativeLoadSoundfont("$filesDir/tmp_sndfnt.sf2")
+            if (!isPlaying) {
+                soloTrackButton.setImageResource(R.drawable.ic_outline_stop_circle_24)
+                audioOutScope.launch {
+                    soloChannel.playDraftTrackSequence()
+                    withContext(Dispatchers.Main) {
+                        isPlaying = false
+                        soloTrackButton.setImageResource(R.drawable.ic_baseline_play_circle_outline_24)
+                    }
+                }
+                isPlaying = true
+
+
+            } else {
+                audioOutScope.launch {
+                    soloChannel.stopMessage()
+                }
+                isPlaying = false
+            }
+        }
+
+
     }
 
+
+    @Throws(IOException::class)
+    fun copyAssetToTempFile(fileName: String): String {
+        assets.open(fileName).use { `is` ->
+            val tempFileName = "tmp_$fileName"
+            openFileOutput(tempFileName, Context.MODE_PRIVATE).use { fos ->
+                var bytesRead: Int
+                val buffer = ByteArray(4096)
+                while (`is`.read(buffer).also { bytesRead = it } != -1) {
+                    fos.write(buffer, 0, bytesRead)
+                }
+            }
+            return "$filesDir/$tempFileName"
+        }
+    }
 
     private suspend fun audioConvert(): DraftTrackData {
         val mode = intent.getStringExtra("convert_mode")?.split(" ")?.get(2)!!
 
-        val cppOut = withContext(Dispatchers.Default) {
-            startConvert(44100, "${filesDir}/voice16bit.pcm")
-        }
+        val cppOut =
+            startConvert(8000, "${filesDir}/voice16bit.pcm")
+
         Log.i("NOTEOUT", cppOut.contentToString())
-        var detectedNoteResult = withContext(Dispatchers.Default) {
-            Note.transformNotes(cppOut, Note(NotePitch.C, 3))
-        }
+        val detectedNoteResult = Note.transformNotes(cppOut, Note(NotePitch.C, 3))
         Log.i("NOTEOUT", detectedNoteResult.contentToString())
-        var trackSequencer = TrackSequencer()
-        var melody = withContext(Dispatchers.Default) {
-            trackSequencer.generateTrack(detectedNoteResult, mode)
-        }
-        melody = withContext(Dispatchers.Default) {
+        val trackSequencer = TrackSequencer()
+        var melody = trackSequencer.generateTrack(detectedNoteResult, mode)
+
+        melody =
             trackSequencer.removeNoise(melody)
-        }
-        melody = withContext(Dispatchers.Default) {
+
+        melody =
             trackSequencer.cleanTrack(melody)
-        }
-        melody = withContext(Dispatchers.Default) {
+
+        melody =
             trackSequencer.calcDurations(melody)
-        }
-        val pitchProfile = withContext(Dispatchers.Default) {
+
+        val pitchProfile =
             trackSequencer.calcPitchProfile(melody)
-        }
-        val key = withContext(Dispatchers.Default) {
+
+        val key =
             trackSequencer.calcKey(pitchProfile)
-        }
-        val tempo = withContext(Dispatchers.Default) {
+
+        val tempo =
             trackSequencer.calcTempo(melody, 0.04)
-        }
-        melody = withContext(Dispatchers.Default) {
+        melody =
             trackSequencer.chordCorrect(melody, key)
-        }
         return DraftTrackData(key, tempo, mode, melody)
     }
 

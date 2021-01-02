@@ -27,7 +27,7 @@ import java.nio.ByteOrder
 
 class RecordingActivity : AppCompatActivity() {
     //constant
-    private val REC_SAMPLERATE: Int = 44100
+    private val REC_SAMPLERATE: Int = 8000
     private val REC_CHANNELS = AudioFormat.CHANNEL_IN_MONO
     private val REC_AUDIO_ENCODING = AudioFormat.ENCODING_PCM_16BIT
     private val LOG_TAG = "AudioRecordTest"

@@ -19,6 +19,7 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -31,6 +32,15 @@
     <style name="RectoNote.ActionBarTheme" parent="@style/ThemeOverlay.AppCompat.ActionBar">
         <!-- THIS is where you can color the arrow! -->
         <item name="colorControlNormal">@color/colorPrimary</item>
+    </style>
+
+
+    <style name="Widget.App.Switch" parent="Widget.AppCompat.CompoundButton.Switch">
+        <item name="materialThemeOverlay">@style/ThemeOverlay.App.Switch</item>
+    </style>
+
+    <style name="ThemeOverlay.App.Switch" parent="">
+        <item name="colorControlActivated">@color/colorPrimary</item>
     </style>
 
     <!--    <style name="MyApp.ActionBarStyle" parent="@style/Widget.AppCompat.Light.ActionBar">-->

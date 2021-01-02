@@ -1,5 +1,6 @@
 package com.app.rectonote
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
@@ -37,7 +38,22 @@ class MainActivity : AppCompatActivity() {
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = LinearLayoutManager(this)
         projectSearch = findViewById<SearchView>(R.id.project_search)
+        copyAssetToTempFile("sndfnt.sf2")
+        copyAssetToTempFile("Araiwa.mid")
+    }
 
+    fun copyAssetToTempFile(fileName: String) {
+        assets.open(fileName).use { `is` ->
+            val tempFileName = "tmp_$fileName"
+            openFileOutput(tempFileName, Context.MODE_PRIVATE).use { fos ->
+                var bytesRead: Int
+                val buffer = ByteArray(4096)
+                while (`is`.read(buffer).also { bytesRead = it } != -1) {
+                    fos.write(buffer, 0, bytesRead)
+                }
+            }
+
+        }
     }
 
     override fun onResume() {

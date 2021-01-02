@@ -4,11 +4,14 @@
     <color name="statusBarColor">#212121</color>
     <color name="colorPrimaryDark">#2D2D2D</color>
     <color name="colorAccent">#617500</color>
+    <color name="colorSecond">#AECD10</color>
     <color name="textColorPrimary">#D5FF00</color>
     <color name="windowBackground">#424242</color>
     <color name="trackBaseColor">#590044</color>
+    <color name="neutalButton">#404040</color>
+    <color name="presetButton">#391D32</color>
 
-<!--    Project Color -->
+    <!--    Project Color -->
     <color name="project_color_pink">#DF008C</color>
     <color name="project_color_blue">#0079d6</color>
     <color name="project_color_teal">#01706c</color>
