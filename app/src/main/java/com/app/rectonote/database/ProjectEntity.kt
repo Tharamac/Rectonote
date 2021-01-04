@@ -3,6 +3,7 @@ package com.app.rectonote.database
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.app.rectonote.musictheory.Key
 import java.io.Serializable
 
 import java.util.*
@@ -16,7 +17,7 @@ data class ProjectEntity(
     @ColumnInfo(name = "project_tempo")
     val tempo: Int,
     @ColumnInfo(name = "project_key")
-    val key: String,
+    val key: Key,
     @ColumnInfo(name = "date_modified")
     var dateModified: Date,
     var color: String

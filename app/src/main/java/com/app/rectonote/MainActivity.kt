@@ -5,7 +5,9 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.View
+import android.view.View.GONE
 import android.view.inputmethod.EditorInfo
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
@@ -65,6 +67,9 @@ class MainActivity : AppCompatActivity() {
         runBlocking {
             adapter = ProjectListAdapter(projectList)
             recyclerView.adapter = adapter
+            if (adapter.itemCount != 0) {
+                findViewById<TextView>(R.id.introText).visibility = GONE
+            }
         }
     }
 

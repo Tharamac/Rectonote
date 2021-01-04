@@ -35,7 +35,7 @@ open class ProjectListAdapter(
     override fun onBindViewHolder(holder: ProjectViewHolder, position: Int) {
         var project = projectDataset[position]
         holder.projectName.text = project.name
-        holder.projectData.text = "${project.tempo} bpm\n${project.key}"
+        holder.projectData.text = "${project.tempo} bpm\n${project.key.label}"
         // holder.projectKey.text = project.key
         holder.projectCard.setCardBackgroundColor(Color.parseColor(project.color))
         holder.projectCard.setOnClickListener { _ ->

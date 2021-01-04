@@ -34,6 +34,7 @@ import java.util.*
 
 class AddTrackToProjectActivity : AppCompatActivity() {
     lateinit var draftTrack: DraftTrackData
+    lateinit var soloChannel: MIDIPlayerChannel
 
     val color: Array<String> = arrayOf<String>(
         "#DF008C",
@@ -135,18 +136,19 @@ class AddTrackToProjectActivity : AppCompatActivity() {
         val tempoDisplay = findViewById<TextView>(R.id.project_tempo)
         val keyDisplay = findViewById<TextView>(R.id.project_key)
         cppScope.launch {
-            val draftTrack = audioConvert()
+            val draftTrackOut = audioConvert()
             withContext(Dispatchers.Main) {
-                tempoDisplay.text = draftTrack.tempo.toString()
-                keyDisplay.text = draftTrack.key.reduced
+                tempoDisplay.text = draftTrackOut.tempo.toString()
+                keyDisplay.text = draftTrackOut.key.reduced
                 btnConfirm.visibility = View.VISIBLE
+                draftTrack = draftTrackOut
+                soloChannel = MIDIPlayerChannel(draftTrack)
             }
             Log.i("NOTEOUT", Klaxon().toJsonString(draftTrack.trackSequence))
         }
         val soloTrackButton = findViewById<ImageButton>(R.id.solo_button)
         var isPlaying = false
         soloTrackButton.setOnClickListener {
-            val soloChannel = MIDIPlayerChannel(draftTrack)
             val audioOutScope = CoroutineScope(Dispatchers.IO)
             soloChannel.nativeLoadSoundfont("$filesDir/tmp_sndfnt.sf2")
             if (!isPlaying) {
@@ -166,6 +168,7 @@ class AddTrackToProjectActivity : AppCompatActivity() {
                     soloChannel.stopMessage()
                 }
                 isPlaying = false
+                soloTrackButton.setImageResource(R.drawable.ic_baseline_play_circle_outline_24)
             }
         }
 
@@ -333,7 +336,7 @@ class AddTrackToProjectActivity : AppCompatActivity() {
         val newProject = ProjectEntity(
             name = projectName,
             tempo = trackTempo,
-            key = trackKey.label,
+            key = trackKey,
             dateModified = Date(),
             color = color.random()
         )
@@ -346,7 +349,7 @@ class AddTrackToProjectActivity : AppCompatActivity() {
             name = trackName,
             tempo = trackTempo,
             type = "Melody",
-            key = trackKey.label,
+            key = trackKey,
             dateModified = Date(),
             color = "#590044",
             projectId = targetProjectId
@@ -401,6 +404,11 @@ class AddTrackToProjectActivity : AppCompatActivity() {
 
     }
 
+    override fun onDestroy() {
+        soloChannel.nativeRemovePlayer()
+        super.onDestroy()
+
+    }
 }
 
 

@@ -51,7 +51,26 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/appbar_main" />
+        app:layout_constraintTop_toBottomOf="@+id/appbar_main">
+
+
+    </androidx.recyclerview.widget.RecyclerView>
+
+    <TextView
+        android:id="@+id/introText"
+        android:layout_width="254dp"
+        android:layout_height="61dp"
+        android:layout_marginStart="32dp"
+        android:gravity="center_vertical"
+        android:text="Something blank here!\nTap here to add new idea ->"
+        android:textColor="#aaaaaa"
+        android:textSize="9pt"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/fabtnNewIdea"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.928" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabtnNewIdea"

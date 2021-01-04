@@ -4,6 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
+import com.app.rectonote.musictheory.Key
 
 import java.util.*
 
@@ -25,7 +26,7 @@ data class DraftTrackEntity(
     @ColumnInfo(name = "tracks_tempo")
     val tempo: Int,
     @ColumnInfo(name = "tracks_key")
-    val key: String, // 0 = key C to 11 = key B
+    val key: Key, // 0 = key C to 11 = key B
     @ColumnInfo(name = "type")
     val type: String,
     @ColumnInfo(name = "project_id")

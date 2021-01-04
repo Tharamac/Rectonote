@@ -25,7 +25,6 @@ import com.app.rectonote.containsIllegalCharacters
 import com.app.rectonote.database.ProjectEntity
 import com.app.rectonote.database.ProjectsDatabase
 import com.app.rectonote.musictheory.Key
-import com.google.android.material.tabs.TabLayout
 import kotlinx.coroutines.runBlocking
 
 class ProjectDataFragment : Fragment() {
@@ -55,7 +54,6 @@ class ProjectDataFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         Log.d("view", view.toString())
 
-        val tabLayout = view.findViewById<TabLayout>(R.id.tab_layout)
 
     }
 
@@ -163,7 +161,7 @@ class ProjectDataFragment : Fragment() {
     }
 
     private fun changeTrackName(changedName: String, trackViewId: Int) {
-        var trackData = adapter.getDatasetPosition(trackViewId)
+        val trackData = adapter.getDatasetPosition(trackViewId)
         trackData.name = changedName
         runBlocking {
             projectDatabase.drafttracksDAO().changeData(trackData)

@@ -10,6 +10,8 @@
     <color name="trackBaseColor">#590044</color>
     <color name="neutalButton">#404040</color>
     <color name="presetButton">#391D32</color>
+    <color name="multiTrackButton">#3E4A00</color>
+
 
     <!--    Project Color -->
     <color name="project_color_pink">#DF008C</color>
