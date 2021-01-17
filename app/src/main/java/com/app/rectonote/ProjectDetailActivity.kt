@@ -3,6 +3,7 @@ package com.app.rectonote
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
@@ -13,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.app.rectonote.adapter.PreviewTrackAdapter
+import com.app.rectonote.database.DraftTrackEntity
 import com.app.rectonote.database.ProjectEntity
 import com.app.rectonote.database.ProjectsDatabase
 import com.app.rectonote.fragment.ProjectDataFragment
@@ -22,7 +24,9 @@ import kotlinx.coroutines.*
 import java.util.*
 
 
-class ProjectDetailActivity : AppCompatActivity() {
+class ProjectDetailActivity :
+    AppCompatActivity(),
+    PreviewTrackAdapter.ChannelStatusCallback {
     private lateinit var viewPager2: ViewPager2
     private val titles = arrayOf("DETAIL", "PREVIEW")
     lateinit var fragment: ProjectDataFragment
@@ -30,7 +34,9 @@ class ProjectDetailActivity : AppCompatActivity() {
     lateinit var projectDatabase: ProjectsDatabase
     lateinit var projectData: ProjectEntity
     private var isPlaying: Boolean = false
+    lateinit var trackList: MutableList<DraftTrackEntity>
     lateinit var adapter: PreviewTrackAdapter
+    private val presetState = arrayListOf<TrackChannelStatus>()
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
@@ -53,7 +59,9 @@ class ProjectDetailActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
-
+        findViewById<CardView>(R.id.add_track_to_project_button).setOnClickListener(
+            newTrackFormProjectDetail(projectData)
+        )
         val audioOutScope = CoroutineScope(Dispatchers.IO)
         val brightMelodyChannel = MIDIPlayerChannel(
             DraftTrackData(
@@ -104,8 +112,11 @@ class ProjectDetailActivity : AppCompatActivity() {
         val multiTrackIcon = findViewById<ImageView>(R.id.multi_track_icon)
         playMultiTrackButton.setOnClickListener {
             if (!isPlaying) {
+                adapter.startPlaymulti = true
+                adapter.notifyDataSetChanged()
                 multiTrackText.text = "Stop".toUpperCase(Locale.ROOT)
                 multiTrackIcon.setImageResource(R.drawable.ic_baseline_stop_24)
+/*
                 audioOutScope.launch {
                     brightChordChannel.playDraftTrackSequence()
                 }
@@ -117,19 +128,24 @@ class ProjectDetailActivity : AppCompatActivity() {
                         multiTrackIcon.setImageResource(R.drawable.ic_baseline_play_arrow_24)
                     }
                 }
+
+ */
                 isPlaying = true
 
 
             } else {
+                adapter.startPlaymulti = false
+                adapter.notifyDataSetChanged()
                 multiTrackText.text = "Play Selected".toUpperCase(Locale.ROOT)
                 multiTrackIcon.setImageResource(R.drawable.ic_baseline_play_arrow_24)
-                audioOutScope.launch {
-                    brightChordChannel.stopMessage()
-                }
-                audioOutScope.launch {
-                    brightMelodyChannel.stopMessage()
-                }
-
+                /*
+                    audioOutScope.launch {
+                        brightChordChannel.stopMessage()
+                    }
+                    audioOutScope.launch {
+                        brightMelodyChannel.stopMessage()
+                    }
+                */
                 isPlaying = false
             }
 
@@ -144,20 +160,58 @@ class ProjectDetailActivity : AppCompatActivity() {
 
     }
 
+
     override fun onResume() {
         super.onResume()
-
-        runBlocking {
-            projectData.projectId?.let {
-                adapter = PreviewTrackAdapter(
-                    projectDatabase.drafttracksDAO().loadTracksFromProject(it)
+        presetState.clear()
+        CoroutineScope(Dispatchers.IO).launch {
+            val draftTrackList = projectData.projectId?.let {
+                projectDatabase.drafttracksDAO().loadTracksFromProject(
+                    it
                 )
             }
-            recyclerView.adapter = adapter
+
+            withContext(Dispatchers.Main) {
+                if (draftTrackList != null) {
+                    trackList = draftTrackList
+                }
+                trackList.forEach {
+                    val data =
+                        it.tracksId?.let { it1 -> TrackChannelStatus(it1, it.muted, it.preset) }
+                    if (data != null) {
+                        presetState.add(data)
+                    }
+                }
+
+                adapter = PreviewTrackAdapter(
+                    trackList,
+                    projectData.name,
+                    this@ProjectDetailActivity
+                )
+
+                recyclerView.adapter = adapter
+                adapter.notifyDataSetChanged()
+            }
         }
-        adapter.notifyDataSetChanged()
+        Log.d("state", presetState.toString())
 
 
+    }
+
+    override fun whenSwitchUpdate(trackId: Int, muted: Boolean) {
+        val index = presetState.indexOfFirst {
+            it.trackId == trackId
+        }
+        presetState[index].muted = muted
+        Log.d("state", presetState.toString())
+    }
+
+    override fun whenPresetUpdate(trackId: Int, preset: String) {
+        val index = presetState.indexOfFirst {
+            it.trackId == trackId
+        }
+        presetState[index].preset = preset
+        Log.d("state", presetState.toString())
     }
 
     //toolbar menu
@@ -168,7 +222,6 @@ class ProjectDetailActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
-
         R.id.action_delete_project -> {
             val builder = AlertDialog.Builder(this)
             builder.apply {
@@ -277,7 +330,7 @@ class ProjectDetailActivity : AppCompatActivity() {
     private fun changeTrackName(changedName: String, trackViewId: Int) {
         val trackData = adapter.getDatasetPosition(trackViewId)
         trackData.name = changedName
-        runBlocking {
+        CoroutineScope(Dispatchers.IO).launch {
             projectDatabase.drafttracksDAO().changeData(trackData)
         }
         recyclerView.adapter?.notifyDataSetChanged()
@@ -297,12 +350,36 @@ class ProjectDetailActivity : AppCompatActivity() {
         builder.create().show()
     }
 
+
     private fun deleteTrack(trackViewId: Int) {
         val trackData = adapter.getDatasetPosition(trackViewId)
         runBlocking {
             projectDatabase.drafttracksDAO().deleteTrack(trackData)
         }
         adapter.removeAt(trackViewId)
+        val index = presetState.indexOfFirst {
+            it.trackId == trackData.tracksId
+        }
+        presetState.removeAt(index)
+    }
+
+
+    override fun onPause() {
+        super.onPause()
+
+        CoroutineScope(Dispatchers.IO).launch {
+            presetState.forEach {
+                val index = trackList.indexOfFirst { it1 ->
+                    it1.tracksId == it.trackId
+                }
+                trackList[index].apply {
+                    preset = it.preset
+                    muted = it.muted
+                    projectDatabase.drafttracksDAO().changeData(this)
+                }
+            }
+        }
+        Log.d("does it change", trackList.toString())
     }
 
 

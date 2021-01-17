@@ -20,10 +20,7 @@ import com.app.rectonote.database.ProjectDatabaseViewModel
 import com.app.rectonote.database.ProjectEntity
 import com.app.rectonote.database.ProjectsDatabase
 import com.app.rectonote.midiplayback.MIDIPlayerChannel
-import com.app.rectonote.musictheory.DraftTrackData
-import com.app.rectonote.musictheory.Note
-import com.app.rectonote.musictheory.NotePitch
-import com.app.rectonote.musictheory.TrackSequencer
+import com.app.rectonote.musictheory.*
 import com.beust.klaxon.Klaxon
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.*
@@ -35,7 +32,7 @@ import java.util.*
 class AddTrackToProjectActivity : AppCompatActivity() {
     lateinit var draftTrack: DraftTrackData
     lateinit var soloChannel: MIDIPlayerChannel
-
+    lateinit var mode: String
     val color: Array<String> = arrayOf<String>(
         "#DF008C",
         "#0079d6",
@@ -65,7 +62,9 @@ class AddTrackToProjectActivity : AppCompatActivity() {
         setContentView(R.layout.activity_add_track_to_project)
 
         val toolbar = findViewById<Toolbar>(R.id.toolbar_add_track)
-        findViewById<TextView>(R.id.track_name).text = "Play Processed Track"
+        val trackName = findViewById<TextView>(R.id.track_name)
+        trackName.text = "processing..."
+
         val addTrackOptions = findViewById<Spinner>(R.id.add_track_options_spinner)
         val btnConfirm = findViewById<FloatingActionButton>(R.id.fabtn_confirm)
         btnConfirm.setOnClickListener(confirmAddTrack)
@@ -78,7 +77,7 @@ class AddTrackToProjectActivity : AppCompatActivity() {
         )
         val trackTypeIcon = findViewById<ImageView>(R.id.track_type)
         val trackTypeLabel = findViewById<TextView>(R.id.track_type_label)
-        val mode = intent.getStringExtra("convert_mode")?.split(" ")?.get(2)!!
+        mode = intent.getStringExtra("convert_mode")?.split(" ")?.get(2)!!
         Log.d("MODE", mode)
         if (mode.toLowerCase() == "chord") trackTypeIcon.setImageResource(R.drawable.ic_baseline_queue_music_24)
         trackTypeLabel.text = mode
@@ -135,6 +134,7 @@ class AddTrackToProjectActivity : AppCompatActivity() {
         val cppScope = CoroutineScope(Dispatchers.Default + Job())
         val tempoDisplay = findViewById<TextView>(R.id.project_tempo)
         val keyDisplay = findViewById<TextView>(R.id.project_key)
+        val soloTrackButton = findViewById<ImageButton>(R.id.solo_button)
         cppScope.launch {
             val draftTrackOut = audioConvert()
             withContext(Dispatchers.Main) {
@@ -143,10 +143,12 @@ class AddTrackToProjectActivity : AppCompatActivity() {
                 btnConfirm.visibility = View.VISIBLE
                 draftTrack = draftTrackOut
                 soloChannel = MIDIPlayerChannel(draftTrack)
+                soloTrackButton.visibility = View.VISIBLE
+                trackName.text = "Complete!"
             }
             Log.i("NOTEOUT", Klaxon().toJsonString(draftTrack.trackSequence))
         }
-        val soloTrackButton = findViewById<ImageButton>(R.id.solo_button)
+
         var isPlaying = false
         soloTrackButton.setOnClickListener {
             val audioOutScope = CoroutineScope(Dispatchers.IO)
@@ -329,8 +331,6 @@ class AddTrackToProjectActivity : AppCompatActivity() {
     private fun addToNewProject(trackName: String, projectName: String) {
         val projectDir = "${getExternalFilesDir(null)}/$projectName"
         File(projectDir).mkdir()
-        val fileDir = "$projectDir/$trackName.json"
-        File(fileDir).writeText(Klaxon().toJsonString(draftTrack.trackSequence))
         val trackTempo = draftTrack.tempo
         val trackKey = draftTrack.key
         val newProject = ProjectEntity(
@@ -348,15 +348,17 @@ class AddTrackToProjectActivity : AppCompatActivity() {
         val newTrack = DraftTrackEntity(
             name = trackName,
             tempo = trackTempo,
-            type = "Melody",
+            type = mode.toLowerCase(Locale.ROOT),
             key = trackKey,
             dateModified = Date(),
             color = "#590044",
             projectId = targetProjectId
         )
-        runBlocking {
+        val latestTrackId = runBlocking {
             projectsDatabase.drafttracksDAO().newDraftTrack(newTrack)
         }
+        val fileDir = "$projectDir/$latestTrackId.json"
+        File(fileDir).writeText(Klaxon().toJsonString(draftTrack.trackSequence))
         val backIntent = Intent(this, MainActivity::class.java)
         backIntent.flags = FLAG_ACTIVITY_CLEAR_TOP
         startActivity(backIntent)
@@ -364,28 +366,74 @@ class AddTrackToProjectActivity : AppCompatActivity() {
 
     private fun addToExistingProject(trackName: String, project: ProjectEntity) {
         val projectDir = "${getExternalFilesDir(null)}/${project.name}"
-        val fileDir = "$projectDir/$trackName.json"
-        File(fileDir).writeText(Klaxon().toJsonString(draftTrack.trackSequence))
+
+        Log.i("INTODB", Klaxon().toJsonString(draftTrack.trackSequence))
+        if (draftTrack.key != project.key) {
+            keyCalibrate(project.key, draftTrack.key)
+        }
         val newTrack = project.projectId?.let {
             DraftTrackEntity(
                 name = trackName,
                 tempo = project.tempo,
-                type = "Melody",
+                type = mode.toLowerCase(Locale.ROOT),
                 key = project.key,
                 dateModified = Date(),
                 color = "#590044",
                 projectId = it
             )
         }
-        runBlocking {
-            if (newTrack != null) {
-                projectsDatabase.drafttracksDAO().newDraftTrack(newTrack)
-            }
+        val latestTrackId = runBlocking {
+            projectsDatabase.drafttracksDAO().newDraftTrack(newTrack!!)
         }
+        val fileDir = "$projectDir/$latestTrackId.json"
+        File(fileDir).writeText(Klaxon().toJsonString(draftTrack.trackSequence))
         val backIntent = Intent(this, ProjectDetailActivity::class.java)
         backIntent.putExtra("project", project)
         backIntent.flags = FLAG_ACTIVITY_CLEAR_TOP
         startActivity(backIntent)
+    }
+
+    private fun keyCalibrate(projectKey: Key, draftTrackKey: Key) {
+        val doesScaleChange = (projectKey.ordinal / 12) - (draftTrackKey.ordinal / 12)
+        /*
+        *  0 = scale not change
+        *  1 = major -> minor
+        *  -1 = minor -> major
+        * */
+        val pitchDiff = (projectKey.ordinal % 12) - (draftTrackKey.ordinal % 12)
+        val pitchOperator = PitchOperator()
+        val rootNote = pitchOperator.intToNotePitch(draftTrackKey.ordinal % 12)
+        // change scale
+        when (doesScaleChange) {
+            1 -> {
+                val changedNote = arrayOf(
+                    pitchOperator.plusPitch(rootNote, 4),
+                    pitchOperator.plusPitch(rootNote, 9),
+                    pitchOperator.plusPitch(rootNote, 11)
+                )
+                draftTrack.trackSequence.forEach {
+                    if (it.pitch in changedNote) {
+                        it.plusAssign(-1)
+                    }
+                }
+            }
+            -1 -> {
+                val changedNote = arrayOf(
+                    pitchOperator.plusPitch(rootNote, 3),
+                    pitchOperator.plusPitch(rootNote, 8),
+                    pitchOperator.plusPitch(rootNote, 10)
+                )
+                draftTrack.trackSequence.forEach {
+                    if (it.pitch in changedNote) {
+                        it.plusAssign(1)
+                    }
+                }
+            }
+        }
+        // change pitch
+        draftTrack.trackSequence.forEach {
+            it.plusAssign(pitchDiff)
+        }
     }
 
 
@@ -405,7 +453,12 @@ class AddTrackToProjectActivity : AppCompatActivity() {
     }
 
     override fun onDestroy() {
-        soloChannel.nativeRemovePlayer()
+        try {
+            soloChannel.nativeRemovePlayer()
+        } catch (e: UninitializedPropertyAccessException) {
+
+        }
+
         super.onDestroy()
 
     }

@@ -16,21 +16,17 @@ import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.viewpager2.widget.ViewPager2
 import com.app.rectonote.R
 import com.app.rectonote.RecordingActivity
 import com.app.rectonote.adapter.DraftTracksAdapter
-import com.app.rectonote.adapter.ProjectDetailTabAdapter
 import com.app.rectonote.containsIllegalCharacters
 import com.app.rectonote.database.ProjectEntity
 import com.app.rectonote.database.ProjectsDatabase
-import com.app.rectonote.musictheory.Key
 import kotlinx.coroutines.runBlocking
 
 class ProjectDataFragment : Fragment() {
     // TODO: Rename and change types of parameters
-    private lateinit var projectDetailTabAdapter: ProjectDetailTabAdapter
-    private lateinit var viewPager: ViewPager2
+
     lateinit var projectData: ProjectEntity
     private var recyclerView: RecyclerView? = null
     lateinit var projectDatabase: ProjectsDatabase
@@ -71,7 +67,7 @@ class ProjectDataFragment : Fragment() {
             ?.setOnClickListener(newTrackFormProjectDetail(projectData))
 
         projectTempo?.text = projectData.tempo.toString()
-        projectKey?.text = Key.reduceKey(projectData.key)
+        projectKey?.text = projectData.key.reduced
         runBlocking {
             projectData.projectId.let {
                 if (it != null) {

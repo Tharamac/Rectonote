@@ -33,5 +33,7 @@ data class DraftTrackEntity(
     val projectId: Int,
     @ColumnInfo(name = "date_modified")
     var dateModified: Date,
-    var color: String
+    var color: String,
+    var muted: Boolean = false,
+    var preset: String = "piano"
 )

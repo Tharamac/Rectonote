@@ -19,9 +19,12 @@ open class Note(
     //unit test this
 
     operator fun plusAssign(offset: Int) {
-        val change = (this.octave * 12 + this.pitch.pitchNum) + offset
-        this.octave = change / 12
-        this.pitch = PitchOperator().intToNotePitch(change % 12)
+        if (this.pitch != NotePitch.REST) {
+            val change = (this.octave * 12 + this.pitch.pitchNum) + offset
+            this.octave = change / 12
+            this.pitch = PitchOperator().intToNotePitch(change % 12)
+        }
+
     }
 
     override operator fun equals(other: Any?): Boolean = if (other !is Note) false

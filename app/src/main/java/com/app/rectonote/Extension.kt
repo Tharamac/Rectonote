@@ -2,6 +2,11 @@ package com.app.rectonote
 
 import kotlin.math.sqrt
 
+data class TrackChannelStatus(
+    val trackId: Int,
+    var muted: Boolean,
+    var preset: String
+)
 //first time extension function
 fun String.containsIllegalCharacters(): Boolean {
     val regex = "[!$%^&*\\\\+|@~=`{}\\[\\]:\";'<>?,\\/]".toRegex()
