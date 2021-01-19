@@ -58,8 +58,8 @@ jintArray packResult(JNIEnv *env, std::vector<int> offset) {
     jintArray result;
     const size_t size = offset.size();
     result = env->NewIntArray(size);
-    if (result == NULL) {
-        return NULL; /* out of memory error thrown */
+    if (result == nullptr) {
+        return nullptr; /* out of memory error thrown */
     }
     // fill a temp structure to use to populate the java int array
     jint fill[size];

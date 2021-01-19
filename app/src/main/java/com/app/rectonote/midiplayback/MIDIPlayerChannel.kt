@@ -15,6 +15,9 @@ class MIDIPlayerChannel(draftTrack: DraftTrackData) {
     var muted = false
     var isPlaying = false
     val duration = trackSequence.sumBy { it.duration }
+    var playChannel = 0
+    var bankNumber = 0
+    var progNumber = 0
 
 
     companion object {
@@ -52,7 +55,7 @@ class MIDIPlayerChannel(draftTrack: DraftTrackData) {
 
     val nativeObjectPointer = nativeNew()
 
-    fun playDraftTrackSequence() {
+    fun playDraftTrackSequence(): Boolean {
         isPlaying = true
         if (!muted) {
             trackSequence.forEach {
@@ -87,6 +90,11 @@ class MIDIPlayerChannel(draftTrack: DraftTrackData) {
             }
         }
         isPlaying = false
+        return true
+    }
+
+    fun loadPreset(channel: Int, preset: GeneralMidiPreset) {
+        nativeLoadPreset(channel, preset.bankNumber, preset.programNumber)
     }
 
     fun stopMessage() {
@@ -113,9 +121,6 @@ class MIDIPlayerChannel(draftTrack: DraftTrackData) {
         )
     }
 
-    protected fun finalize() {
-        nativeRemovePlayer()
-    }
 
 
 }

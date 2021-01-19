@@ -18,9 +18,13 @@ import com.app.rectonote.database.DraftTrackEntity
 import com.app.rectonote.database.ProjectEntity
 import com.app.rectonote.database.ProjectsDatabase
 import com.app.rectonote.fragment.ProjectDataFragment
+import com.app.rectonote.midiplayback.DraftTrackJsonParser
+import com.app.rectonote.midiplayback.GeneralMidiPreset
 import com.app.rectonote.midiplayback.MIDIPlayerChannel
+import com.app.rectonote.midiplayback.TrackChannelStatus
 import com.app.rectonote.musictheory.*
 import kotlinx.coroutines.*
+import java.io.File
 import java.util.*
 
 
@@ -34,9 +38,14 @@ class ProjectDetailActivity :
     lateinit var projectDatabase: ProjectsDatabase
     lateinit var projectData: ProjectEntity
     private var isPlaying: Boolean = false
-    lateinit var trackList: MutableList<DraftTrackEntity>
+    lateinit var draftTracksData: MutableList<DraftTrackEntity>
     lateinit var adapter: PreviewTrackAdapter
+    private val midiChannels = arrayListOf<MIDIPlayerChannel>()
     private val presetState = arrayListOf<TrackChannelStatus>()
+    lateinit var playMultiTrackButton: CardView
+    private var trackSequenceList = listOf<ArrayList<out Note>>()
+    private val audioOutScope = CoroutineScope(Dispatchers.IO)
+    private val loadDataScope = CoroutineScope(Dispatchers.IO)
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
@@ -63,6 +72,7 @@ class ProjectDetailActivity :
             newTrackFormProjectDetail(projectData)
         )
         val audioOutScope = CoroutineScope(Dispatchers.IO)
+
         val brightMelodyChannel = MIDIPlayerChannel(
             DraftTrackData(
                 key = Key.Gb,
@@ -107,56 +117,67 @@ class ProjectDetailActivity :
         brightMelodyChannel.nativeLoadSoundfont(tempSoundfontPath)
         brightChordChannel.nativeLoadPreset(0, 0, 0)
         brightMelodyChannel.nativeLoadPreset(0, 0, 35)
-        val playMultiTrackButton = findViewById<CardView>(R.id.play_selected_button)
+        playMultiTrackButton = findViewById<CardView>(R.id.play_selected_button)
+        playMultiTrackButton.setOnClickListener(playSelected)
+
+
+    }
+
+    private val playSelected = View.OnClickListener {
         val multiTrackText = findViewById<TextView>(R.id.multi_track_text)
         val multiTrackIcon = findViewById<ImageView>(R.id.multi_track_icon)
-        playMultiTrackButton.setOnClickListener {
+        val playSelectedChannels = presetState.map {
+            MIDIPlayerChannel(
+                DraftTrackData(
+                    key = projectData.key,
+                    tempo = projectData.tempo,
+                    trackType = it.trackType,
+                    trackSequence = it.trackSequence
+                )
+            ).apply {
+                nativeLoadSoundfont("$filesDir/tmp_sndfnt.sf2")
+                loadPreset(
+                    channel = 0,
+                    preset = it.preset
+                )
+                muted = it.muted
+            }
+        }
+        GlobalScope.launch {
             if (!isPlaying) {
-                adapter.startPlaymulti = true
-                adapter.notifyDataSetChanged()
-                multiTrackText.text = "Stop".toUpperCase(Locale.ROOT)
-                multiTrackIcon.setImageResource(R.drawable.ic_baseline_stop_24)
-/*
-                audioOutScope.launch {
-                    brightChordChannel.playDraftTrackSequence()
+                withContext(Dispatchers.Main) {
+                    multiTrackIcon.setImageResource(R.drawable.ic_baseline_stop_24)
+                    multiTrackText.text = "STOP"
+                    isPlaying = true
                 }
-                audioOutScope.launch {
-                    brightMelodyChannel.playDraftTrackSequence()
-                    withContext(Dispatchers.Main) {
-                        isPlaying = false
-                        multiTrackText.text = "Play Selected".toUpperCase(Locale.ROOT)
-                        multiTrackIcon.setImageResource(R.drawable.ic_baseline_play_arrow_24)
+
+                val playingStatus = playSelectedChannels.map {
+                    audioOutScope.async {
+                        it.playDraftTrackSequence()
                     }
                 }
-
- */
-                isPlaying = true
-
+                playingStatus.awaitAll()
+                withContext(Dispatchers.Main) {
+                    isPlaying = false
+                    multiTrackIcon.setImageResource(R.drawable.ic_baseline_play_arrow_24)
+                    multiTrackText.text = "PLAY SELECTED"
+                }
 
             } else {
-                adapter.startPlaymulti = false
-                adapter.notifyDataSetChanged()
-                multiTrackText.text = "Play Selected".toUpperCase(Locale.ROOT)
-                multiTrackIcon.setImageResource(R.drawable.ic_baseline_play_arrow_24)
-                /*
+
+                playSelectedChannels.forEach {
                     audioOutScope.launch {
-                        brightChordChannel.stopMessage()
+                        it.stopMessage()
                     }
-                    audioOutScope.launch {
-                        brightMelodyChannel.stopMessage()
-                    }
-                */
-                isPlaying = false
+                }
+
+                withContext(Dispatchers.Main) {
+                    multiTrackIcon.setImageResource(R.drawable.ic_baseline_play_arrow_24)
+                    multiTrackText.text = "PLAY SELECTED"
+                    isPlaying = false
+                }
             }
-
-
         }
-
-
-//        fragment = ProjectDataFragment()
-//        transaction = supportFragmentManager.beginTransaction()
-//        transaction.add(R.id.project_detail,fragment)
-//        transaction.commit()
 
     }
 
@@ -164,38 +185,56 @@ class ProjectDetailActivity :
     override fun onResume() {
         super.onResume()
         presetState.clear()
-        CoroutineScope(Dispatchers.IO).launch {
-            val draftTrackList = projectData.projectId?.let {
+
+
+        val jsonDraftTracksList =
+            File("${getExternalFilesDir(null)}/${projectData.name}/").walk().toList().filter {
+                it.extension == "json"
+            }.map {
+                it.readText()
+            }
+        Log.i("555", jsonDraftTracksList.filter {
+            it.contains("chordType")
+        }.toString())
+        GlobalScope.launch(Dispatchers.Main) {
+            val draftTracksDeferred = jsonDraftTracksList.map {
+                CoroutineScope(Dispatchers.Default).async {
+                    Log.i("load", Thread.currentThread().name)
+                    DraftTrackJsonParser.draftTrackJSONParse(it)
+
+                }
+            }
+
+            val draftTrackListDeferred = CoroutineScope(Dispatchers.IO).async {
                 projectDatabase.drafttracksDAO().loadTracksFromProject(
-                    it
-                )
-            }
-
-            withContext(Dispatchers.Main) {
-                if (draftTrackList != null) {
-                    trackList = draftTrackList
-                }
-                trackList.forEach {
-                    val data =
-                        it.tracksId?.let { it1 -> TrackChannelStatus(it1, it.muted, it.preset) }
-                    if (data != null) {
-                        presetState.add(data)
-                    }
-                }
-
-                adapter = PreviewTrackAdapter(
-                    trackList,
-                    projectData.name,
-                    this@ProjectDetailActivity
+                    projectData.projectId!!
                 )
 
-                recyclerView.adapter = adapter
-                adapter.notifyDataSetChanged()
             }
+            draftTracksData = draftTrackListDeferred.await()
+            Log.i("load Finished", "555")
+            val draftTracks = draftTracksDeferred.awaitAll()
+            Log.i("parse Finished", "555")
+            adapter = PreviewTrackAdapter(
+                draftTracksData,
+                projectData.name,
+                this@ProjectDetailActivity
+            )
+            recyclerView.adapter = adapter
+
+            for (i in draftTracks.indices) {
+                val data = TrackChannelStatus(
+                    trackId = draftTracksData[i].tracksId!!,
+                    muted = draftTracksData[i].muted,
+                    preset = draftTracksData[i].preset,
+                    trackType = draftTracksData[i].type,
+                    trackSequence = draftTracks[i]
+                )
+                presetState.add(data)
+            }
+            adapter.notifyDataSetChanged()
+            Log.d("load state", presetState.toString())
         }
-        Log.d("state", presetState.toString())
-
-
     }
 
     override fun whenSwitchUpdate(trackId: Int, muted: Boolean) {
@@ -206,7 +245,7 @@ class ProjectDetailActivity :
         Log.d("state", presetState.toString())
     }
 
-    override fun whenPresetUpdate(trackId: Int, preset: String) {
+    override fun whenPresetUpdate(trackId: Int, preset: GeneralMidiPreset) {
         val index = presetState.indexOfFirst {
             it.trackId == trackId
         }
@@ -243,12 +282,13 @@ class ProjectDetailActivity :
     }
 
     private fun deleteProject() {
-        val projectDatabase = ProjectsDatabase.getInstance(applicationContext)
-        val projectData = intent.getSerializableExtra("project") as? ProjectEntity
-        if (projectData != null) {
-            runBlocking {
-                projectDatabase.projectDAO().deleteProject(projectData)
-            }
+
+        val projectDir = File("${getExternalFilesDir(null)}/${projectData.name}/")
+        if (projectDir.deleteRecursively())
+            Toast.makeText(this, "Project \"${projectData.name}\" deleted!", Toast.LENGTH_SHORT)
+                .show()
+        runBlocking {
+            projectDatabase.projectDAO().deleteProject(projectData)
         }
         finish()
     }
@@ -338,14 +378,23 @@ class ProjectDetailActivity :
 
     private fun spawnDialogDeleteTrack(trackViewId: Int) {
         val builder = AlertDialog.Builder(this)
-        builder.apply {
-            setMessage("Are you sure want to delete a track?")
-            setPositiveButton("Yes", DialogInterface.OnClickListener { _, _ ->
-                deleteTrack(trackViewId)
-            })
-            setNegativeButton("No", DialogInterface.OnClickListener { _, _ ->
+        builder.setNegativeButton("No", DialogInterface.OnClickListener { _, _ ->
 
-            })
+        })
+        if (adapter.itemCount == 1) {
+            builder.apply {
+                setMessage("There is only one track left.\nAre you sure want to delete this project?")
+                setPositiveButton("Yes", DialogInterface.OnClickListener { _, _ ->
+                    deleteProject()
+                })
+            }
+        } else {
+            builder.apply {
+                setMessage("Are you sure want to delete a track?")
+                setPositiveButton("Yes", DialogInterface.OnClickListener { _, _ ->
+                    deleteTrack(trackViewId)
+                })
+            }
         }
         builder.create().show()
     }
@@ -353,13 +402,20 @@ class ProjectDetailActivity :
 
     private fun deleteTrack(trackViewId: Int) {
         val trackData = adapter.getDatasetPosition(trackViewId)
+
+        val index = presetState.indexOfFirst {
+            it.trackId == trackData.tracksId
+        }
+        val jsonFile =
+            File("${getExternalFilesDir(null)}/${projectData.name}/${trackData.tracksId}.json")
+        if (jsonFile.exists() && jsonFile.delete()) {
+            Toast.makeText(this, "Track \"${projectData.name}\" deleted!", Toast.LENGTH_SHORT)
+                .show()
+        }
         runBlocking {
             projectDatabase.drafttracksDAO().deleteTrack(trackData)
         }
         adapter.removeAt(trackViewId)
-        val index = presetState.indexOfFirst {
-            it.trackId == trackData.tracksId
-        }
         presetState.removeAt(index)
     }
 
@@ -367,19 +423,22 @@ class ProjectDetailActivity :
     override fun onPause() {
         super.onPause()
 
+        Toast.makeText(this, "Saving...", Toast.LENGTH_SHORT).show()
+        recyclerView.adapter = null
         CoroutineScope(Dispatchers.IO).launch {
             presetState.forEach {
-                val index = trackList.indexOfFirst { it1 ->
+                val index = draftTracksData.indexOfFirst { it1 ->
                     it1.tracksId == it.trackId
                 }
-                trackList[index].apply {
+                draftTracksData[index].apply {
                     preset = it.preset
                     muted = it.muted
                     projectDatabase.drafttracksDAO().changeData(this)
                 }
             }
         }
-        Log.d("does it change", trackList.toString())
+
+
     }
 
 

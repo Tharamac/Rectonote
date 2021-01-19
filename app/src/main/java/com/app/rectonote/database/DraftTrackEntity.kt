@@ -4,6 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
+import com.app.rectonote.midiplayback.GeneralMidiPreset
 import com.app.rectonote.musictheory.Key
 
 import java.util.*
@@ -35,5 +36,5 @@ data class DraftTrackEntity(
     var dateModified: Date,
     var color: String,
     var muted: Boolean = false,
-    var preset: String = "piano"
+    var preset: GeneralMidiPreset = GeneralMidiPreset.piano
 )

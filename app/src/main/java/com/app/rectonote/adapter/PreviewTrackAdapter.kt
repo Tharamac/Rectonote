@@ -15,14 +15,13 @@ import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.app.rectonote.R
 import com.app.rectonote.database.DraftTrackEntity
+import com.app.rectonote.midiplayback.DraftTrackJsonParser.Companion.draftTrackChordJsonConverter
+import com.app.rectonote.midiplayback.DraftTrackJsonParser.Companion.draftTrackNoteJsonConverter
+import com.app.rectonote.midiplayback.GeneralMidiPreset
 import com.app.rectonote.midiplayback.MIDIPlayerChannel
 import com.app.rectonote.musictheory.Chord
 import com.app.rectonote.musictheory.DraftTrackData
 import com.app.rectonote.musictheory.Note
-import com.app.rectonote.musictheory.NotePitch
-import com.app.rectonote.musictheory.NotePitch.REST
-import com.beust.klaxon.Converter
-import com.beust.klaxon.JsonValue
 import com.beust.klaxon.Klaxon
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -45,65 +44,25 @@ class PreviewTrackAdapter(
 
     interface ChannelStatusCallback {
         fun whenSwitchUpdate(trackId: Int, muted: Boolean)
-        fun whenPresetUpdate(trackId: Int, preset: String)
+        fun whenPresetUpdate(trackId: Int, preset: GeneralMidiPreset)
     }
 
-    private val draftTrackNoteJsonConverter = object : Converter {
-        override fun canConvert(cls: Class<*>): Boolean = cls == Note::class.java
 
-
-        override fun fromJson(jv: JsonValue): Any {
-
-            return Note(
-                pitch = NotePitch.values().find { it.name == jv.objString("pitch") } ?: REST,
-                octave = jv.objInt("octave")
-            ).apply {
-                duration = jv.objInt("duration")
-            }
-
-        }
-
-        override fun toJson(value: Any): String {
-            return Klaxon().toJsonString(value)
-        }
-
-    }
-    private val draftTrackChordJsonConverter = object : Converter {
-        override fun canConvert(cls: Class<*>): Boolean = cls == Chord::class.java
-        override fun fromJson(jv: JsonValue): Any {
-
-            return Chord(
-                pitch = NotePitch.values().find { it.pitchName == jv.objString("pitch") } ?: REST,
-                octave = jv.objInt("octave")
-            ).apply {
-                duration = jv.objInt("duration")
-                chordType = jv.objString("chordType")
-            }
-
-        }
-
-        override fun toJson(value: Any): String {
-            return Klaxon().toJsonString(value)
-        }
-
-    }
 
 
     inner class TracksViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView),
         View.OnCreateContextMenuListener {
 
         val context: Context = itemView.context
-        val play = itemView.findViewById<CardView>(R.id.play_selected_button)
         val trackName = itemView.findViewById<TextView>(R.id.track_name)
         val trackType = itemView.findViewById<ImageView>(R.id.track_type)
         val soloTrack = itemView.findViewById<ImageView>(R.id.preview_solo_button)
         val muteButton = itemView.findViewById<SwitchCompat>(R.id.mute_switch)
         val presetSelect = itemView.findViewById<ImageButton>(R.id.preset_button)
         private val trackCard = itemView.findViewById<CardView>(R.id.track_card)
-
+        lateinit var testChannel: MIDIPlayerChannel
         init {
             trackCard.setOnCreateContextMenuListener(this)
-
         }
 
         override fun onCreateContextMenu(
@@ -131,19 +90,19 @@ class PreviewTrackAdapter(
         val trackSequence = ArrayList<Note>()
         holder.muteButton.isChecked = !track.muted
         CoroutineScope(Dispatchers.Default).launch {
+            val trackList = when (track.type.toLowerCase(Locale.ROOT)) {
+                "melody" -> Klaxon().converter(draftTrackNoteJsonConverter)
+                    .parseArray<Note>(draftTrackString)
+                "chord" -> Klaxon().converter(draftTrackChordJsonConverter)
+                    .parseArray<Chord>(draftTrackString)
+                else -> listOf()
+            }
             withContext(Dispatchers.Main) {
-                when (track.type.toLowerCase(Locale.ROOT)) {
-                    "melody" -> Klaxon().converter(draftTrackNoteJsonConverter)
-                        .parseArray<Note>(draftTrackString)
-                    "chord" -> Klaxon().converter(draftTrackChordJsonConverter)
-                        .parseArray<Chord>(draftTrackString)
-                    else -> listOf()
-                }?.forEach {
-                    trackSequence.add(it)
-                }
+                if (trackList != null)
+                    trackSequence.addAll(trackList)
             }
         }
-        val testChannel = MIDIPlayerChannel(
+        holder.testChannel = MIDIPlayerChannel(
             DraftTrackData(
                 key = track.key,
                 tempo = track.tempo,
@@ -160,23 +119,43 @@ class PreviewTrackAdapter(
             when (it.title.toString().toLowerCase(Locale.ROOT)) {
                 "piano" -> {
                     holder.presetSelect.setImageResource(R.drawable.ic_baseline_piano_28)
-                    testChannel.nativeLoadPreset(0, 0, 0)
-                    track.tracksId?.let { it1 -> statusCallback.whenPresetUpdate(it1, "piano") }
+                    holder.testChannel.nativeLoadPreset(0, 0, 0)
+                    track.tracksId?.let { it1 ->
+                        statusCallback.whenPresetUpdate(
+                            it1,
+                            GeneralMidiPreset.piano
+                        )
+                    }
                 }
                 "guitar" -> {
                     holder.presetSelect.setImageResource(R.drawable.ic_guitar)
-                    testChannel.nativeLoadPreset(0, 0, 24)
-                    track.tracksId?.let { it1 -> statusCallback.whenPresetUpdate(it1, "guitar") }
+                    holder.testChannel.nativeLoadPreset(0, 0, 24)
+                    track.tracksId?.let { it1 ->
+                        statusCallback.whenPresetUpdate(
+                            it1,
+                            GeneralMidiPreset.guitar
+                        )
+                    }
                 }
                 "violin" -> {
                     holder.presetSelect.setImageResource(R.drawable.ic_violin)
-                    testChannel.nativeLoadPreset(0, 0, 40)
-                    track.tracksId?.let { it1 -> statusCallback.whenPresetUpdate(it1, "violin") }
+                    holder.testChannel.nativeLoadPreset(0, 0, 40)
+                    track.tracksId?.let { it1 ->
+                        statusCallback.whenPresetUpdate(
+                            it1,
+                            GeneralMidiPreset.violin
+                        )
+                    }
                 }
                 "bass" -> {
                     holder.presetSelect.setImageResource(R.drawable.ic_bass__1_)
-                    testChannel.nativeLoadPreset(0, 0, 32)
-                    track.tracksId?.let { it1 -> statusCallback.whenPresetUpdate(it1, "bass") }
+                    holder.testChannel.nativeLoadPreset(0, 0, 32)
+                    track.tracksId?.let { it1 ->
+                        statusCallback.whenPresetUpdate(
+                            it1,
+                            GeneralMidiPreset.bass
+                        )
+                    }
                 }
                 else -> holder.presetSelect.setImageResource(R.drawable.ic_baseline_piano_28)
             }
@@ -185,34 +164,33 @@ class PreviewTrackAdapter(
         holder.presetSelect.setOnClickListener {
             popupMenu.show()
         }
-        when (track.preset.toLowerCase(Locale.ROOT)) {
+        when (track.preset) {
 
-            "piano" -> {
-                track.tracksId?.let { statusCallback.whenPresetUpdate(it, "piano") }
+            GeneralMidiPreset.piano -> {
+                //track.tracksId?.let { statusCallback.whenPresetUpdate(it, "piano") }
                 holder.presetSelect.setImageResource(R.drawable.ic_baseline_piano_28)
-                testChannel.nativeLoadPreset(0, 0, 0)
+                holder.testChannel.nativeLoadPreset(0, 0, 0)
             }
-            "guitar" -> {
-                track.tracksId?.let { statusCallback.whenPresetUpdate(it, "piano") }
+            GeneralMidiPreset.guitar -> {
+                //track.tracksId?.let { statusCallback.whenPresetUpdate(it, "guitar") }
                 holder.presetSelect.setImageResource(R.drawable.ic_guitar)
-                testChannel.nativeLoadPreset(0, 0, 24)
+                holder.testChannel.nativeLoadPreset(0, 0, 24)
             }
-            "violin" -> {
-                track.tracksId?.let { statusCallback.whenPresetUpdate(it, "piano") }
+            GeneralMidiPreset.violin -> {
+                //track.tracksId?.let { statusCallback.whenPresetUpdate(it, "violin") }
                 holder.presetSelect.setImageResource(R.drawable.ic_violin)
-                testChannel.nativeLoadPreset(0, 0, 40)
+                holder.testChannel.nativeLoadPreset(0, 0, 40)
             }
-            "bass" -> {
-                track.tracksId?.let { statusCallback.whenPresetUpdate(it, "piano") }
+            GeneralMidiPreset.bass -> {
+                //track.tracksId?.let { statusCallback.whenPresetUpdate(it, "bass") }
                 holder.presetSelect.setImageResource(R.drawable.ic_bass__1_)
-                testChannel.nativeLoadPreset(0, 0, 32)
+                holder.testChannel.nativeLoadPreset(0, 0, 32)
             }
-            else -> holder.presetSelect.setImageResource(R.drawable.ic_baseline_piano_28)
+
         }
 
         holder.muteButton.setOnCheckedChangeListener { _, isChecked ->
-            testChannel.muted = !isChecked
-            track.tracksId?.let { statusCallback.whenSwitchUpdate(it, testChannel.muted) }
+            track.tracksId?.let { statusCallback.whenSwitchUpdate(it, !isChecked) }
         }
         holder.trackName.text = track.name
         holder.trackType.setImageResource(
@@ -226,10 +204,12 @@ class PreviewTrackAdapter(
 
 
         holder.soloTrack.setOnClickListener {
+            //init
+
             if (!isPlaying) {
                 holder.soloTrack.setImageResource(R.drawable.ic_outline_stop_circle_24)
                 audioOutScope.launch {
-                    testChannel.playDraftTrackSequence()
+                    holder.testChannel.playDraftTrackSequence()
                     withContext(Dispatchers.Main) {
                         isPlaying = false
                         holder.soloTrack.setImageResource(R.drawable.ic_baseline_play_circle_outline_24)
@@ -240,13 +220,14 @@ class PreviewTrackAdapter(
 
             } else {
                 audioOutScope.launch {
-                    testChannel.stopMessage()
+                    holder.testChannel.stopMessage()
                 }
                 isPlaying = false
                 holder.soloTrack.setImageResource(R.drawable.ic_baseline_play_circle_outline_24)
             }
         }
     }
+
 
     override fun getItemCount(): Int = draftTracksList.size
 
@@ -255,6 +236,12 @@ class PreviewTrackAdapter(
     fun removeAt(position: Int) {
         draftTracksList.removeAt(position)
         notifyItemRemoved(position)
+    }
+
+    override fun onViewDetachedFromWindow(holder: TracksViewHolder) {
+        super.onViewDetachedFromWindow(holder)
+        Log.d("isDetached", "555")
+        holder.testChannel.nativeRemovePlayer()
     }
 
 

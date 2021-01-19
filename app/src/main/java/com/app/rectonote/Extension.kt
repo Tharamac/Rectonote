@@ -1,12 +1,15 @@
 package com.app.rectonote
 
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import kotlin.math.sqrt
 
-data class TrackChannelStatus(
-    val trackId: Int,
-    var muted: Boolean,
-    var preset: String
-)
+
+suspend fun <A, B> Iterable<A>.pmap(f: suspend (A) -> B): List<B> = coroutineScope {
+    map { async { f(it) } }.awaitAll()
+}
+
 //first time extension function
 fun String.containsIllegalCharacters(): Boolean {
     val regex = "[!$%^&*\\\\+|@~=`{}\\[\\]:\";'<>?,\\/]".toRegex()
