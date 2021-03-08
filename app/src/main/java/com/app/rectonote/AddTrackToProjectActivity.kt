@@ -22,6 +22,7 @@ import com.app.rectonote.database.ProjectsDatabase
 import com.app.rectonote.midiplayback.MIDIPlayerChannel
 import com.app.rectonote.musictheory.*
 import com.beust.klaxon.Klaxon
+import com.github.doyaaaaaken.kotlincsv.dsl.csvWriter
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.*
 import java.io.File
@@ -56,6 +57,9 @@ class AddTrackToProjectActivity : AppCompatActivity() {
         fs: Int,
         audioPath: String,
     ): IntArray
+    private val testSetDir :String by lazy {
+        intent.getStringExtra("testSetDir")
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -148,6 +152,18 @@ class AddTrackToProjectActivity : AppCompatActivity() {
                 trackName.text = "Complete!"
             }
             Log.i("NOTEOUT", Klaxon().toJsonString(draftTrack.trackSequence))
+            File("$testSetDir/track_data.txt").writeText("${tempoDisplay.text},${keyDisplay.text}")
+            val draftTrackSequence = draftTrack.trackSequence
+            csvWriter().writeAll(
+                listOf(
+                    List(draftTrackSequence.size) {
+                        "${draftTrackSequence[it].pitch}${draftTrackSequence[it].octave}" },
+                    List(draftTrackSequence.size){draftTrackSequence[it].lengthInFrame},
+                    List(draftTrackSequence.size){draftTrackSequence[it].duration}
+                    ),
+                "$testSetDir/note_output.csv"
+            )
+
         }
 
         var isPlaying = false
@@ -229,8 +245,15 @@ class AddTrackToProjectActivity : AppCompatActivity() {
             startConvert(8000, "${filesDir}/voice16bit.pcm")
 
         Log.i("NOTEOUT", cppOut.contentToString())
-        val detectedNoteResult = Note.transformNotes(cppOut, Note(NotePitch.C, 3))
+        val detectedNoteResult = Note.transformNotes(cppOut, Note(NotePitch.C, 2))
         Log.i("NOTEOUT", detectedNoteResult.contentToString())
+        csvWriter().writeAll(
+            listOf(
+                List(cppOut.size){it},
+                cppOut.toList(),
+                detectedNoteResult.toList()
+            ), "$testSetDir/raw_data.csv"
+        )
         val trackSequencer = TrackSequencer()
         var melody = trackSequencer.generateTrack(rawNotes = detectedNoteResult, mode)
 
