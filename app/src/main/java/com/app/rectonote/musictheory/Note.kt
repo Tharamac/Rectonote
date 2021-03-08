@@ -52,7 +52,7 @@ open class Note(
     companion object {
         fun transformNotes(offsetArray: IntArray, refNote: Note): Array<Note> =
             Array<Note>(offsetArray.size) { i ->
-                if (offsetArray[i] == -999)
+                if (offsetArray[i] < -99)
                     Note(NotePitch.REST, -1)
                 else
                     Note(offsetArray[i], refNote)

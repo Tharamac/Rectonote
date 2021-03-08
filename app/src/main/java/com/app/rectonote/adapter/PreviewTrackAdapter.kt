@@ -211,6 +211,7 @@ class PreviewTrackAdapter(
                 audioOutScope.launch {
                     holder.testChannel.playDraftTrackSequence()
                     withContext(Dispatchers.Main) {
+
                         isPlaying = false
                         holder.soloTrack.setImageResource(R.drawable.ic_baseline_play_circle_outline_24)
                     }
@@ -221,6 +222,7 @@ class PreviewTrackAdapter(
             } else {
                 audioOutScope.launch {
                     holder.testChannel.stopMessage()
+                    Log.i("stop", Thread.currentThread().name)
                 }
                 isPlaying = false
                 holder.soloTrack.setImageResource(R.drawable.ic_baseline_play_circle_outline_24)

@@ -6,7 +6,7 @@
 
 RawAudio::RawAudio(const char *path) {
     std::ifstream pcm;
-    int size;
+    int size = 0;
     pcm.open(path, std::ios::in | std::ios::binary | std::ios::ate);
     if (pcm.is_open()) {
         size = (int) pcm.tellg();
@@ -19,6 +19,7 @@ RawAudio::RawAudio(const char *path) {
     sampleSize = size / 2;
     shortData.resize(sampleSize);
     doubleData.resize(sampleSize);
+    floatData.resize(sampleSize);
     for (size_t i = 0; i < sampleSize; i++) {
         shortData[i] = (((short) byteData[i * 2 + 1]) << 8) | (byteData[i * 2] & 0xFF);
         doubleData[i] = (double) shortData[i] / 32768.0;

@@ -144,19 +144,21 @@ class ProjectDetailActivity :
             }
         }
         GlobalScope.launch {
+            var playingStatus = listOf<Job>()
             if (!isPlaying) {
                 withContext(Dispatchers.Main) {
-                    multiTrackIcon.setImageResource(R.drawable.ic_baseline_stop_24)
-                    multiTrackText.text = "STOP"
+                    //multiTrackIcon.setImageResource(R.drawable.ic_baseline_stop_24)
+                    multiTrackText.text = "PLAYING"
                     isPlaying = true
                 }
 
-                val playingStatus = playSelectedChannels.map {
-                    audioOutScope.async {
+                playingStatus = playSelectedChannels.map {
+                    launch {
+                        Log.i("play", Thread.currentThread().name)
                         it.playDraftTrackSequence()
                     }
                 }
-                playingStatus.awaitAll()
+                playingStatus.joinAll()
                 withContext(Dispatchers.Main) {
                     isPlaying = false
                     multiTrackIcon.setImageResource(R.drawable.ic_baseline_play_arrow_24)
@@ -168,14 +170,15 @@ class ProjectDetailActivity :
                 playSelectedChannels.forEach {
                     audioOutScope.launch {
                         it.stopMessage()
+                        it.nativeRemovePlayer()
                     }
                 }
 
-                withContext(Dispatchers.Main) {
-                    multiTrackIcon.setImageResource(R.drawable.ic_baseline_play_arrow_24)
-                    multiTrackText.text = "PLAY SELECTED"
-                    isPlaying = false
-                }
+//                withContext(Dispatchers.Main) {
+//                    multiTrackIcon.setImageResource(R.drawable.ic_baseline_play_arrow_24)
+//                    multiTrackText.text = "PLAY SELECTED"
+//                    isPlaying = false
+//                }
             }
         }
 
@@ -186,20 +189,26 @@ class ProjectDetailActivity :
         super.onResume()
         presetState.clear()
 
-
-        val jsonDraftTracksList =
+        val fileList =
             File("${getExternalFilesDir(null)}/${projectData.name}/").walk().toList().filter {
                 it.extension == "json"
-            }.map {
-                it.readText()
+            }.sortedByDescending {
+                it.name
             }
-        Log.i("555", jsonDraftTracksList.filter {
-            it.contains("chordType")
-        }.toString())
+        val jsonDraftTracksList = fileList.map {
+            it.readText()
+        }
+        Log.i(
+            "555", "${
+                fileList.map {
+                    it.name
+                }
+            }"
+        )
         GlobalScope.launch(Dispatchers.Main) {
             val draftTracksDeferred = jsonDraftTracksList.map {
                 CoroutineScope(Dispatchers.Default).async {
-                    Log.i("load", Thread.currentThread().name)
+
                     DraftTrackJsonParser.draftTrackJSONParse(it)
 
                 }
@@ -212,9 +221,9 @@ class ProjectDetailActivity :
 
             }
             draftTracksData = draftTrackListDeferred.await()
-            Log.i("load Finished", "555")
+            Log.i("load Finished", draftTracksData.toString())
             val draftTracks = draftTracksDeferred.awaitAll()
-            Log.i("parse Finished", "555")
+            Log.i("parse Finished", draftTracks.toString())
             adapter = PreviewTrackAdapter(
                 draftTracksData,
                 projectData.name,
@@ -326,7 +335,7 @@ class ProjectDetailActivity :
             setPositiveButton("OK", DialogInterface.OnClickListener { _, _ ->
                 val changedName = input.text.toString()
                 val isNameExisted = runBlocking {
-                    projectDatabase.drafttracksDAO().loadTrackNames()
+                    projectDatabase.drafttracksDAO().loadTrackNames(projectData.projectId!!)
                 }.any { eachName -> eachName == changedName }
                 when {
                     changedName.isEmpty() -> {

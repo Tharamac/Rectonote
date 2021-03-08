@@ -11,6 +11,7 @@ cmake_minimum_required(VERSION 3.4.1)
 # Gradle automatically packages shared libraries with your APK.
 
 set(fluidsynth_DIR ${CMAKE_CURRENT_SOURCE_DIR}/fluidsynth)
+set(q_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Q)
 add_library(libc++_shared SHARED IMPORTED)
 set_target_properties(libc++_shared PROPERTIES IMPORTED_LOCATION ${fluidsynth_DIR}/lib/${ANDROID_ABI}/libc++_shared.so)
 
@@ -75,9 +76,12 @@ add_library(preloadable_libiconv SHARED IMPORTED)
 set_target_properties(preloadable_libiconv PROPERTIES IMPORTED_LOCATION ${fluidsynth_DIR}/lib/${ANDROID_ABI}/preloadable_libiconv.so)
 message(${ANDROID_ABI})
 
-include_directories(
-        src/main/cpp/
-)
+include_directories(src/main/cpp/)
+include_directories(fftw3lib/includes/)
+include_directories(${fluidsynth_DIR}/includes)
+include_directories(${q_DIR}/infra/include)
+include_directories(${q_DIR}/q_io/include)
+include_directories(${q_DIR}/q_lib/include)
 add_library( # Sets the name of the library.
         midiplayer_interface
         SHARED
@@ -92,6 +96,7 @@ add_library( # Sets the name of the library.
         RawAudio.cpp
         PitchDetection.cpp
         VoiceActivityDetection.cpp
+        pitch_tracking.cpp
         dsp.cpp
         )
 
@@ -109,8 +114,7 @@ set_target_properties(fftw3 PROPERTIES IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/fft
 # you want to add. CMake verifies that the library exists before
 # completing its build.
 
-include_directories(fftw3lib/includes/)
-include_directories(${fluidsynth_DIR}/includes)
+
 find_library( # Sets the name of the path variable.
         log-lib
         log

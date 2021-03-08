@@ -58,6 +58,16 @@
                     android:orientation="horizontal">
 
                     <ImageButton
+                        android:id="@+id/preset_button"
+                        android:layout_width="56dp"
+                        android:layout_height="match_parent"
+
+                        android:background="@color/presetButton"
+                        android:src="@drawable/ic_baseline_piano_28">
+
+                    </ImageButton>
+
+                    <ImageButton
                         android:id="@+id/solo_button"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
@@ -149,6 +159,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
 
+                android:baselineAligned="false"
                 android:gravity="center">
 
                 <LinearLayout
@@ -275,7 +286,7 @@
                                 android:text="Walking To The Room"
                                 android:textAlignment="center"
                                 android:textColor="@android:color/white"
-                                android:textSize="25sp"></TextView>
+                                android:textSize="25sp" />
 
                             <ImageView
                                 android:layout_width="wrap_content"

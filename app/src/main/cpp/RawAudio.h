@@ -1,8 +1,6 @@
 //
 // Created by TharaMac on 9/28/2020.
 //
-
-
 #ifndef RECTONOTE_RAWAUDIO_H
 #define RECTONOTE_RAWAUDIO_H
 
@@ -18,6 +16,7 @@ private:
 public:
     std::vector<short> shortData;
     std::vector<double> doubleData;
+    std::vector<float> floatData;
 
     RawAudio(const char *path);
 

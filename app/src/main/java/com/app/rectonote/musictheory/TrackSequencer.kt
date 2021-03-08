@@ -1,12 +1,13 @@
 package com.app.rectonote.musictheory
 
+import android.util.Log
 import com.app.rectonote.correlationCoefficient
 import com.app.rectonote.leftShift
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.math.log2
 import kotlin.math.pow
 import kotlin.math.roundToInt
-import kotlin.math.sqrt
 
 open class TrackSequencer(
     private val comparator: Equal = Equal(),
@@ -57,13 +58,13 @@ open class TrackSequencer(
             it.lengthInFrame <= 3
         }
         while (noiseNote != -1) {
-            var left = try {
+            val left = try {
                 melody[noiseNote - 1]
             } catch (e: ArrayIndexOutOfBoundsException) {
                 Note.restNote()
             }
-            var current = melody[noiseNote]
-            var right = try {
+            val current = melody[noiseNote]
+            val right = try {
                 melody[noiseNote + 1]
             } catch (e: IndexOutOfBoundsException) {
                 Note.restNote()
@@ -106,7 +107,7 @@ open class TrackSequencer(
         }
         var adjacent = melody.zipWithNext().find { comparator.isSame(it.first, it.second) }
         while (adjacent != null) {
-            var adjacentIdx = melody.zipWithNext().indexOf(adjacent)
+            val adjacentIdx = melody.zipWithNext().indexOf(adjacent)
             melody[adjacentIdx].lengthInFrame += adjacent.second.lengthInFrame
             melody.removeAt(adjacentIdx + 1)
             adjacent = melody.zipWithNext().find { comparator.isSame(it.first, it.second) }
@@ -118,7 +119,7 @@ open class TrackSequencer(
     }
 
     fun calcPitchProfile(melody: ArrayList<out Note>): Array<Int> {
-        var pitchProfile = Array<Int>(12) { 0 }
+        val pitchProfile = Array<Int>(12) { 0 }
         melody.forEach {
             if (it.pitch != NotePitch.REST)
                 pitchProfile[it.pitch.pitchNum] += it.lengthInFrame
@@ -131,8 +132,8 @@ open class TrackSequencer(
             doubleArrayOf(6.35, 2.23, 3.48, 2.33, 4.38, 4.09, 2.52, 5.19, 2.39, 3.66, 2.29, 2.88)
         val minorProfile =
             doubleArrayOf(6.33, 2.68, 3.52, 5.38, 2.60, 3.53, 2.54, 4.75, 3.98, 2.69, 3.34, 3.17)
-        var majorR = DoubleArray(12) { 0.00 }
-        var minorR = DoubleArray(12) { 0.00 }
+        val majorR = DoubleArray(12) { 0.00 }
+        val minorR = DoubleArray(12) { 0.00 }
         for (i in majorR.indices) {
             majorR[i] = correlationCoefficient(majorProfile, pitchProfile)
             minorR[i] = correlationCoefficient(minorProfile, pitchProfile)
@@ -153,10 +154,13 @@ open class TrackSequencer(
         val minFrame = melody.minByOrNull { it.lengthInFrame }?.lengthInFrame ?: -1
         //lowest unit of note duration is a sixteenth note, so that duration 1 is a sixteenth note
         //a scale variable is use to scale whole duration in order to keep tempo between around 60 - 180 bpm
-        val scale = minFrame / 13
+        val scale = minFrame / 6
         melody.forEach {
+            //     CoroutineScope(Dispatchers.Default).launch {
             it.duration =
-                (it.lengthInFrame.toDouble() / minFrame).roundToInt() * (2.00.pow(scale).toInt())
+                (it.lengthInFrame.toDouble() / minFrame).roundToInt() * (2.00.pow(scale)
+                    .toInt())
+            //}
         }
         //possible least duration is 1 2 4 8 and so on...
         return melody
@@ -166,8 +170,9 @@ open class TrackSequencer(
         val minFrame = melody.minByOrNull { it.lengthInFrame }!!
         val minDuration = minFrame.duration
         val minLength = minFrame.lengthInFrame
-        val blackNoteFrameLength = minLength * 2.00.pow(3.0 - sqrt(minDuration.toFloat()))
-        val blackNoteInSecond = (blackNoteFrameLength * frameSize * 0.5) + (frameSize * 0.5)
+        val blackNoteFrameLength = minLength * 2.00.pow(3.0 - log2(minDuration.toFloat() * 2))
+        val blackNoteInSecond = blackNoteFrameLength * frameSize
+        Log.d("blacknote", blackNoteInSecond.toString())
         return (60 / blackNoteInSecond).roundToInt()
     }
 

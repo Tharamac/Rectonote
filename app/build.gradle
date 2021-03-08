@@ -20,7 +20,7 @@ android {
         externalNativeBuild {
             cmake {
                 arguments  '-DANDROID_TOOLCHAIN=clang', '-DANDROID_ARM_NEON=TRUE'
-                cppFlags "-std=c++1z"
+                cppFlags "-std=c++17"
 
             }
         }

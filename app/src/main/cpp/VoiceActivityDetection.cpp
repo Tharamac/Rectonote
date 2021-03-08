@@ -127,11 +127,7 @@ void VoiceActivityDetection::startDecision(
             frameScore++;
         if (framePeakFreq[i] >= freqLowerBound && framePeakFreq[i] <= freqUpperBound)
             frameScore++;
-        if (frameScore > 2) {
-            vadResult[i] = true;
-        } else {
-            vadResult[i] = false;
-        }
+        vadResult[i] = frameScore > 2;
     }
 }
 
@@ -141,8 +137,8 @@ std::vector<bool> VoiceActivityDetection::getResult() {
 
 std::string VoiceActivityDetection::getStringResult() {
     std::string out = "num of frame = " + std::to_string(numOfFrame) + "\nVadResult = ";
-    for (size_t i = 0; i < vadResult.size(); ++i) {
-        out += std::to_string(vadResult[i]);
+    for (auto &&i : vadResult) {
+        out += std::to_string(i);
     }
     return out;
 }

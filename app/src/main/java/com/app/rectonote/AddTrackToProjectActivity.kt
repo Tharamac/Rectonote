@@ -105,9 +105,10 @@ class AddTrackToProjectActivity : AppCompatActivity() {
             val intent = Intent(this, ProjectSelectActivity::class.java)
             startActivityForResult(intent, 1)
         }
+        val addToNew = findViewById<LinearLayout>(R.id.add_new_proj)
+        val addExisting = findViewById<LinearLayout>(R.id.add_existing_proj)
         addTrackOptions.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            val addToNew = findViewById<LinearLayout>(R.id.add_new_proj)
-            val addExisting = findViewById<LinearLayout>(R.id.add_existing_proj)
+
             override fun onNothingSelected(parent: AdapterView<*>?) {}
 
             override fun onItemSelected(
@@ -173,7 +174,35 @@ class AddTrackToProjectActivity : AppCompatActivity() {
                 soloTrackButton.setImageResource(R.drawable.ic_baseline_play_circle_outline_24)
             }
         }
-
+        val presetSelect = findViewById<ImageButton>(R.id.preset_button)
+        val popupMenu = PopupMenu(this, presetSelect)
+        popupMenu.menuInflater.inflate(R.menu.menu_preset, popupMenu.menu)
+        popupMenu.setOnMenuItemClickListener {
+            Log.d("PresetSelect", "${it.itemId}")
+            when (it.title.toString().toLowerCase(Locale.ROOT)) {
+                "piano" -> {
+                    presetSelect.setImageResource(R.drawable.ic_baseline_piano_28)
+                    soloChannel.nativeLoadPreset(0, 0, 0)
+                }
+                "guitar" -> {
+                    presetSelect.setImageResource(R.drawable.ic_guitar)
+                    soloChannel.nativeLoadPreset(0, 0, 24)
+                }
+                "violin" -> {
+                    presetSelect.setImageResource(R.drawable.ic_violin)
+                    soloChannel.nativeLoadPreset(0, 0, 40)
+                }
+                "bass" -> {
+                    presetSelect.setImageResource(R.drawable.ic_bass__1_)
+                    soloChannel.nativeLoadPreset(0, 0, 32)
+                }
+                else -> presetSelect.setImageResource(R.drawable.ic_baseline_piano_28)
+            }
+            true
+        }
+        presetSelect.setOnClickListener {
+            popupMenu.show()
+        }
 
     }
 
@@ -203,7 +232,7 @@ class AddTrackToProjectActivity : AppCompatActivity() {
         val detectedNoteResult = Note.transformNotes(cppOut, Note(NotePitch.C, 3))
         Log.i("NOTEOUT", detectedNoteResult.contentToString())
         val trackSequencer = TrackSequencer()
-        var melody = trackSequencer.generateTrack(detectedNoteResult, mode)
+        var melody = trackSequencer.generateTrack(rawNotes = detectedNoteResult, mode)
 
         melody =
             trackSequencer.removeNoise(melody)
@@ -221,7 +250,7 @@ class AddTrackToProjectActivity : AppCompatActivity() {
             trackSequencer.calcKey(pitchProfile)
 
         val tempo =
-            trackSequencer.calcTempo(melody, 0.04)
+            trackSequencer.calcTempo(melody, 0.05)
         melody =
             trackSequencer.chordCorrect(melody, key)
         return DraftTrackData(key, tempo, mode, melody)
@@ -300,7 +329,7 @@ class AddTrackToProjectActivity : AppCompatActivity() {
         } else if (choice == 1) {
             //add existing
             val isNameExisted = runBlocking {
-                projectsDatabase.drafttracksDAO().loadTrackNames()
+                projectsDatabase.drafttracksDAO().loadTrackNames(projectData?.projectId!!)
             }.any { eachName -> eachName == trackNameInput }
             if (projectData != null) {
                 if (isNameExisted) {
@@ -317,6 +346,8 @@ class AddTrackToProjectActivity : AppCompatActivity() {
                         })
                         setNegativeButton("No", DialogInterface.OnClickListener { _, _ -> })
                     }
+                    val dialog = confirmDialog.create()
+                    dialog.show()
                 }
             } else {
                 Toast.makeText(this, "Project field cannot be blank ", Toast.LENGTH_SHORT).show()
@@ -324,8 +355,7 @@ class AddTrackToProjectActivity : AppCompatActivity() {
             }
 
         }
-        val dialog = confirmDialog.create()
-        dialog.show()
+
     }
 
     private fun addToNewProject(trackName: String, projectName: String) {
@@ -407,9 +437,9 @@ class AddTrackToProjectActivity : AppCompatActivity() {
         when (doesScaleChange) {
             1 -> {
                 val changedNote = arrayOf(
-                    pitchOperator.plusPitch(rootNote, 4),
-                    pitchOperator.plusPitch(rootNote, 9),
-                    pitchOperator.plusPitch(rootNote, 11)
+                    pitchOperator.plusPitch(rootNote, 4), //mi
+                    pitchOperator.plusPitch(rootNote, 9), //la
+                    pitchOperator.plusPitch(rootNote, 11) //ti
                 )
                 draftTrack.trackSequence.forEach {
                     if (it.pitch in changedNote) {

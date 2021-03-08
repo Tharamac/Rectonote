@@ -115,7 +115,7 @@ class ProjectDataFragment : Fragment() {
             setPositiveButton("OK", DialogInterface.OnClickListener { _, _ ->
                 val changedName = input.text.toString()
                 val isNameExisted = runBlocking {
-                    projectDatabase.drafttracksDAO().loadTrackNames()
+                    projectDatabase.drafttracksDAO().loadTrackNames(projectData.projectId!!)
                 }.any { eachName -> eachName == changedName }
                 when {
                     changedName.isEmpty() -> {

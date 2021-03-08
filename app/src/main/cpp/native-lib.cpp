@@ -6,6 +6,7 @@
 #include <fluidsynth.h>
 #include <unistd.h>
 #include <android/log.h>
+#include <q/support/frequency.hpp>
 
 #define TAG "CPP_TAG"
 
@@ -15,16 +16,24 @@
 #define LOGD(...) __android_log_print(ANDROID_LOG_DEBUG,    TAG, __VA_ARGS__)
 #define REAL 0
 #define IMAG 1
+#define C2 65.41
 #define C3 130.81278265
 
 #include "RawAudio.h"
 #include "dsp.h"
 #include "VoiceActivityDetection.h"
 #include "PitchDetection.h"
+#include "pitch_tracking.h"
 
 std::string console_out = "";
+typedef std::pair<
+        std::vector<float>,
+        std::vector<float>
+> time_frequency_pair;
 
 jintArray packResult(JNIEnv *env, std::vector<int> offset);
+
+jfloatArray packResult(JNIEnv *env, std::vector<float> offset);
 
 extern "C"
 JNIEXPORT jintArray JNICALL Java_com_app_rectonote_AddTrackToProjectActivity_startConvert(
@@ -35,16 +44,53 @@ JNIEXPORT jintArray JNICALL Java_com_app_rectonote_AddTrackToProjectActivity_sta
 ) {
     const char *path = javaEnvironment->GetStringUTFChars(audioPath, JNI_FALSE);
     RawAudio audio_input(path);
-    VoiceActivityDetection voiceActivityDetection(audio_input.doubleData, 0.04, 2048, Fs);
+//    jclass noteOffsetWithTime = javaEnvironment->FindClass("com/app/rectonote/musictheory/NoteOffsetWithTime");
+//    jmethodID constructor = javaEnvironment->GetMethodID(noteOffsetWithTime,"<init>","([F[I)V");
+    VoiceActivityDetection voiceActivityDetection(audio_input.doubleData, 0.04, 4096, Fs);
     voiceActivityDetection.calculateFeatures();
-    voiceActivityDetection.startDecision(40, 5, 130, 2097, 0.1);
-    std::string vad_result = voiceActivityDetection.getStringResult();
-    PitchDetection pitchDetection(audio_input.doubleData, 0.04, 4096, Fs);
-    pitchDetection.startDetection();
-    pitchDetection.implementVad(voiceActivityDetection.getResult());
-    jintArray result = packResult(javaEnvironment, pitchDetection.getNoteOffsetResult());
+    voiceActivityDetection.startDecision(40, 5, 30, 2097, 0.1);
+    auto vad_result = voiceActivityDetection.getResult();
+    std::vector<float> in(audio_input.doubleData.begin(), audio_input.doubleData.end());
+    for (size_t i = 0; i < in.size(); ++i) {
+        auto vad_result_index = i / 160;
+        if (vad_result_index == 0)
+            in[i] *= (float) vad_result[vad_result_index];
+        else if (vad_result_index >= vad_result.size()) {
+            in[i] *= (float) vad_result[vad_result.size() - 1];
+        } else {
+            in[i] *= (float) (vad_result[vad_result_index] || vad_result[vad_result_index - 1]);
+        }
+    }
+
+
+//    auto  vad_result = voiceActivityDetection.getResult();
+//    for (size_t i = 0; i <vad_result.size(); ++i) {
+//        if (!vad_result[i]) {
+//            in[i] = 0;
+//        }
+//    }
+
+    time_frequency_pair pd_out = process(in, 8000, q::frequency(30), q::frequency(1000));
+    auto time_set = pd_out.first;
+    auto freq_set = pd_out.second;
+    std::vector<float> time;
+    std::vector<int> note_offset;
+    for (size_t i = 0; i < time_set.size() - 1; i += 2) {
+        float time_exact = (std::round(time_set[i] * 100 + (float) .5)) / 100;
+        time.push_back(time_exact);
+        float chosen_freq_value = (std::abs(time_exact - time_set[i]) <
+                                   std::abs(time_exact - time_set[i + 1]))
+                                  ? freq_set[i]
+                                  : freq_set[i + 1];
+        note_offset.push_back(12 * log2(chosen_freq_value / C2));
+    }
+//    PitchDetection pitchDetection(audio_input.doubleData, 0.04, 4096, Fs);
+//    pitchDetection.startDetection();
+//    pitchDetection.implementVad(voiceActivityDetection.getResult());
+    //jfloatArray time_result = packResult(javaEnvironment,time);
+    jintArray offset_result = packResult(javaEnvironment, note_offset);
     javaEnvironment->ReleaseStringUTFChars(audioPath, path);
-    return result;
+    return offset_result;
 }
 
 extern "C"
@@ -68,6 +114,23 @@ jintArray packResult(JNIEnv *env, std::vector<int> offset) {
     }
     // move from the temp structure to the java structure
     env->SetIntArrayRegion(result, 0, size, fill);
+    return result;
+}
+
+jfloatArray packResult(JNIEnv *env, std::vector<float> offset) {
+    jfloatArray result;
+    const size_t size = offset.size();
+    result = env->NewFloatArray(size);
+    if (result == nullptr) {
+        return nullptr; /* out of memory error thrown */
+    }
+    // fill a temp structure to use to populate the java int array
+    jfloat fill[size];
+    for (size_t i = 0; i < size; i++) {
+        fill[i] = offset[i]; // put whatever logic you want to populate the values here.
+    }
+    // move from the temp structure to the java structure
+    env->SetFloatArrayRegion(result, 0, size, fill);
     return result;
 }
 
