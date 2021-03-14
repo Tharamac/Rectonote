@@ -82,6 +82,7 @@ dependencies {
     implementation 'com.github.KyoSherlock:MidiDriver:1492bd0ea9'
 
     implementation 'com.beust:klaxon:5.0.1'
+    implementation 'com.github.doyaaaaaken:kotlin-csv-jvm:0.15.1'
 
     testImplementation "io.mockk:mockk:1.10.2"
     testImplementation 'junit:junit:4.13.1'

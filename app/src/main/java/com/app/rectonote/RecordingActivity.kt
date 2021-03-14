@@ -12,7 +12,6 @@ import android.os.Build
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.SystemClock
-import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.annotation.RequiresApi
@@ -23,6 +22,7 @@ import androidx.core.content.res.ResourcesCompat
 import java.io.*
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
+import java.util.*
 
 
 class RecordingActivity : AppCompatActivity() {
@@ -49,6 +49,12 @@ class RecordingActivity : AppCompatActivity() {
     private var running = false
     private var countdown = false
     private var centisecs = 0
+
+    private val testDirPath = "sdcard/RectoNoteTest"
+    private val dateId = Date().hashCode()
+    private val testSetDir = "$testDirPath/$dateId"
+
+
 
 
     private var requiredPermissions: Array<String> = arrayOf(
@@ -80,6 +86,7 @@ class RecordingActivity : AppCompatActivity() {
         txtStatus.text = "Mic Ready"
         txtInstr = findViewById(R.id.txtInstr)
         recordButton.setOnClickListener(record)
+        File(testDirPath).mkdir()
         setSupportActionBar(findViewById<Toolbar>(R.id.toolbar))
         //startTimer()
         if (!hasPermissions(this, requiredPermissions)) {
@@ -189,6 +196,7 @@ class RecordingActivity : AppCompatActivity() {
             val selectedID = modeSelector.checkedRadioButtonId
             val mode = findViewById<RadioButton>(selectedID)
             intent.putExtra("convert_mode", mode.text)
+            intent.putExtra("testSetDir", testSetDir)
             isWorking = false
             startActivity(intent)
             finish()
@@ -232,7 +240,7 @@ class RecordingActivity : AppCompatActivity() {
 */
 
     private fun recording() {
-
+        File(testSetDir).mkdir()
         var bufferSizeInBytes = AudioRecord.getMinBufferSize(
             REC_SAMPLERATE,
             REC_CHANNELS,
@@ -279,9 +287,10 @@ class RecordingActivity : AppCompatActivity() {
 
     private fun writeAudioDataToFile() {
         //val filePath = filesDir + "/voice16bit.pcm"
-        val filePath = "${filesDir}/voice16bit.pcm"
-        var sData = ShortArray(bufferElements2Rec)
-        Log.i("file_dir", filePath)
+
+        val filePath = "$filesDir/voice16bit.pcm"
+
+        val sData = ShortArray(bufferElements2Rec)
         var outputStream: FileOutputStream? = null
         try {
             outputStream = FileOutputStream(filePath)
@@ -304,6 +313,7 @@ class RecordingActivity : AppCompatActivity() {
         } catch (e: IOException) {
             e.printStackTrace()
         }
+
     }
 
     private fun stopRecording() { // stops the recording activity
@@ -313,15 +323,15 @@ class RecordingActivity : AppCompatActivity() {
             recorder!!.release()
             recorder = null
             recordingThread = null
-            /*
-            val f1 = File("/sdcard/voice16bit.pcm") // The location of your PCM file
-            val f2 = File("/sdcard/voice16bit.wav") // The location where you want your WAV file
+
+            val f1 = File("$filesDir/voice16bit.pcm") // The location of your PCM file
+            val f2 = File("${testSetDir}/voice16bitInput.wav") // The location where you want your WAV file
+            f1.copyTo(File("${testSetDir}/voice16bitInput.pcm"))
             try {
                 rawToWave(f1, f2)
             } catch (e: IOException) {
                 e.printStackTrace()
-            }*/
-
+            }
         }
     }
 
@@ -346,7 +356,7 @@ class RecordingActivity : AppCompatActivity() {
             writeInt(output, 16) // subchunk 1 size
             writeShort(output, 1.toShort()) // audio format (1 = PCM)
             writeShort(output, 1.toShort()) // number of channels
-            writeInt(output, 44100) // sample rate
+            writeInt(output, 8000) // sample rate
             writeInt(output, REC_SAMPLERATE * 2) // byte rate
             writeShort(output, 2.toShort()) // block align
             writeShort(output, 16.toShort()) // bits per sample
