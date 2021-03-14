@@ -140,7 +140,9 @@ class AddTrackToProjectActivity : AppCompatActivity() {
         val tempoDisplay = findViewById<TextView>(R.id.project_tempo)
         val keyDisplay = findViewById<TextView>(R.id.project_key)
         val soloTrackButton = findViewById<ImageButton>(R.id.solo_button)
+
         cppScope.launch {
+            val startTime = System.currentTimeMillis()
             val draftTrackOut = audioConvert()
             withContext(Dispatchers.Main) {
                 tempoDisplay.text = draftTrackOut.tempo.toString()
@@ -152,18 +154,26 @@ class AddTrackToProjectActivity : AppCompatActivity() {
                 trackName.text = "Complete!"
             }
             Log.i("NOTEOUT", Klaxon().toJsonString(draftTrack.trackSequence))
-            File("$testSetDir/track_data.txt").writeText("${tempoDisplay.text},${keyDisplay.text}")
+            File("$testSetDir/track_data.txt").writeText("${tempoDisplay.text},${keyDisplay.text}\n")
             val draftTrackSequence = draftTrack.trackSequence
             csvWriter().writeAll(
                 listOf(
                     List(draftTrackSequence.size) {
-                        "${draftTrackSequence[it].pitch}${draftTrackSequence[it].octave}" },
-                    List(draftTrackSequence.size){draftTrackSequence[it].lengthInFrame},
-                    List(draftTrackSequence.size){draftTrackSequence[it].duration}
-                    ),
+                        "${draftTrackSequence[it].pitch.pitchName}${draftTrackSequence[it].octave}" +
+                                if (draftTrackSequence[0] is Chord) {
+                                    (draftTrackSequence[it] as Chord).chordType
+                                } else {
+                                    ""
+                                }
+                    },
+
+                    List(draftTrackSequence.size) { draftTrackSequence[it].lengthInFrame },
+                    List(draftTrackSequence.size) { draftTrackSequence[it].duration }
+                ),
                 "$testSetDir/note_output.csv"
             )
-
+            val processedTime = System.currentTimeMillis() - startTime
+            File("$testSetDir/track_data.txt").appendText("Processed Time : $processedTime ms")
         }
 
         var isPlaying = false

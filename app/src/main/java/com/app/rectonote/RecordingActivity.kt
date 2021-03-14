@@ -12,7 +12,6 @@ import android.os.Build
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.SystemClock
-import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.annotation.RequiresApi
@@ -327,6 +326,7 @@ class RecordingActivity : AppCompatActivity() {
 
             val f1 = File("$filesDir/voice16bit.pcm") // The location of your PCM file
             val f2 = File("${testSetDir}/voice16bitInput.wav") // The location where you want your WAV file
+            f1.copyTo(File("${testSetDir}/voice16bitInput.pcm"))
             try {
                 rawToWave(f1, f2)
             } catch (e: IOException) {
@@ -356,7 +356,7 @@ class RecordingActivity : AppCompatActivity() {
             writeInt(output, 16) // subchunk 1 size
             writeShort(output, 1.toShort()) // audio format (1 = PCM)
             writeShort(output, 1.toShort()) // number of channels
-            writeInt(output, 44100) // sample rate
+            writeInt(output, 8000) // sample rate
             writeInt(output, REC_SAMPLERATE * 2) // byte rate
             writeShort(output, 2.toShort()) // block align
             writeShort(output, 16.toShort()) // bits per sample
