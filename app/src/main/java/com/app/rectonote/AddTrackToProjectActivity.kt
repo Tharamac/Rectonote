@@ -358,6 +358,8 @@ class AddTrackToProjectActivity : AppCompatActivity() {
                     })
                     setNegativeButton("No", DialogInterface.OnClickListener { _, _ -> })
                 }
+                val dialog = confirmDialog.create()
+                dialog.show()
             }
         } else if (choice == 1) {
             //add existing
