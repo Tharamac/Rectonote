@@ -34,8 +34,6 @@ Translate ideas into song tracks requires experience to make it fast. Sometimes 
 * Lauszus/fftw3-android:  Compile FFTW into android
 * FluidSynth: Synthesizer API
 * Klaxon: Manipulate JSON in Kotlin
-![image](https://user-images.githubusercontent.com/16939538/155761500-ba9da972-5c90-4a4a-84aa-02987404a7a9.png)
-
 
 ## Inside RectoNote 
 ![Picture3](https://user-images.githubusercontent.com/16939538/155741232-54db2610-5109-4b78-8011-aaf8fa8916f6.png)
