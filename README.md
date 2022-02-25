@@ -27,6 +27,14 @@ Idea of a song has tricky way to jot it.
 
 Translate ideas into song tracks requires experience to make it fast. Sometimes good ideas are forgotten because transcribe process take too much time. RectoNote will solve this kind of problem
 
+## Tools and Technologies
+* Android Studio
+** Written in Kotlin and C++ (with Native Development Kit: NDK)
+* FFTW: Fast Fourier Transform Library
+* Lauszus/fftw3-android:  Compile FFTW into android
+* FluidSynth: Synthesizer API
+* Klaxon: Manipulate JSON in Kotlin
+![image](https://user-images.githubusercontent.com/16939538/155761500-ba9da972-5c90-4a4a-84aa-02987404a7a9.png)
 
 
 ## Inside RectoNote 
