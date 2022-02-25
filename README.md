@@ -26,7 +26,6 @@ Translate ideas into song tracks requires experience to make it fast. Sometimes 
 * **ProjectDetailActivity**: [ProjectDetailActivity.kt](https://github.com/Tharamac/Rectonote/blob/master/app/src/main/java/com/app/rectonote/ProjectDetailActivity.kt)
 
 ## Inside RectoNote 
-* User interfaces is captured on real application.
 ![Picture3](https://user-images.githubusercontent.com/16939538/155741232-54db2610-5109-4b78-8011-aaf8fa8916f6.png)
-
+* User interfaces is captured on real application.
 
