@@ -13,10 +13,6 @@ Idea of a song has tricky way to jot it.
 
 Translate ideas into song tracks requires experience to make it fast. Sometimes good ideas are forgotten because transcribe process take too much time. RectoNote will solve this kind of problem
 
-## Inside RectoNote 
-* User interfaces is captured on real application.
-![Picture3](https://user-images.githubusercontent.com/16939538/155741232-54db2610-5109-4b78-8011-aaf8fa8916f6.png)
-
 ## Code Highlight
 ### C++ (developed under std/C++17)
 * **Voice Activity Detection:** [VoiceActivityDetection.h](https://github.com/Tharamac/Rectonote/blob/master/app/src/main/cpp/VoiceActivityDetection.h) |  [VoiceActivityDetection.cpp](https://github.com/Tharamac/Rectonote/blob/master/app/src/main/cpp/VoiceActivityDetection.cpp)
@@ -28,3 +24,9 @@ Translate ideas into song tracks requires experience to make it fast. Sometimes 
 * **RecordActivity**: [RecordingActivity.kt](https://github.com/Tharamac/Rectonote/blob/master/app/src/main/java/com/app/rectonote/RecordActivity.kt)
 * **AddTrackToProjectActivity**: [AddTrackToProjectActivity.kt](https://github.com/Tharamac/Rectonote/blob/master/app/src/main/java/com/app/rectonote/AddTrackToProjectActivity.kt)
 * **ProjectDetailActivity**: [ProjectDetailActivity.kt](https://github.com/Tharamac/Rectonote/blob/master/app/src/main/java/com/app/rectonote/ProjectDetailActivity.kt)
+
+## Inside RectoNote 
+* User interfaces is captured on real application.
+![Picture3](https://user-images.githubusercontent.com/16939538/155741232-54db2610-5109-4b78-8011-aaf8fa8916f6.png)
+
+
