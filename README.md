@@ -15,4 +15,8 @@ Translate ideas into song tracks requires experience to make it fast. Sometimes 
 ![Picture3](https://user-images.githubusercontent.com/16939538/155741232-54db2610-5109-4b78-8011-aaf8fa8916f6.png)
 
 ## Code Highlight
-
+C++ develop under std/C++17
+* **Voice Activity Detection:** [VoiceActivityDetection.h](https://github.com/Tharamac/Rectonote/blob/master/app/src/main/cpp/VoiceActivityDetection.h) |  [VoiceActivityDetection.cpp](https://github.com/Tharamac/Rectonote/blob/master/app/src/main/cpp/VoiceActivityDetection.cpp)
+* **MIDIplayer using Fluidsynth API:** [MidiPlayer.h](https://github.com/Tharamac/Rectonote/blob/master/app/src/main/cpp/MidiPlayer.h) | [MidiPlayer.cpp](https://github.com/Tharamac/Rectonote/blob/master/app/src/main/cpp/MidiPlayer.cpp) 
+* **Audio Processing JNI Interface:** [native-lib.cpp](https://github.com/Tharamac/Rectonote/blob/master/app/src/main/cpp/native-lib.cpp)
+* **MIDIplayer JNI Interface:**  [midiplayer_interface.cpp](https://github.com/Tharamac/Rectonote/blob/master/app/src/main/cpp/midiplayer_interface.cpp)
