@@ -1,4 +1,4 @@
-# Rectonote
+Unit# Rectonote
 
 ## Abstract
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**RectoNote** is an Android application that can jot song ideas by using voice recording converted into melody and chord progression tracks in MIDI. The tracks are stored in projects and can be played. 
@@ -18,6 +18,7 @@
 * **RecordActivity**: [RecordingActivity.kt](https://github.com/Tharamac/Rectonote/blob/master/app/src/main/java/com/app/rectonote/RecordActivity.kt)
 * **AddTrackToProjectActivity**: [AddTrackToProjectActivity.kt](https://github.com/Tharamac/Rectonote/blob/master/app/src/main/java/com/app/rectonote/AddTrackToProjectActivity.kt)
 * **ProjectDetailActivity**: [ProjectDetailActivity.kt](https://github.com/Tharamac/Rectonote/blob/master/app/src/main/java/com/app/rectonote/ProjectDetailActivity.kt)
+* **Unit Test using Mockito and JUnit**: [/test/java/com/app/rectonote](https://github.com/Tharamac/Rectonote/tree/master/app/src/test/java/com/app/rectonote)
 
 ## Why RectoNote?
 Idea of a song has tricky way to jot it.
