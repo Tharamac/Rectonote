@@ -18,7 +18,7 @@ Unit# Rectonote
 * **RecordActivity**: [RecordingActivity.kt](https://github.com/Tharamac/Rectonote/blob/master/app/src/main/java/com/app/rectonote/RecordActivity.kt)
 * **AddTrackToProjectActivity**: [AddTrackToProjectActivity.kt](https://github.com/Tharamac/Rectonote/blob/master/app/src/main/java/com/app/rectonote/AddTrackToProjectActivity.kt)
 * **ProjectDetailActivity**: [ProjectDetailActivity.kt](https://github.com/Tharamac/Rectonote/blob/master/app/src/main/java/com/app/rectonote/ProjectDetailActivity.kt)
-* **Unit Test using Mockito and JUnit**: [/test/java/com/app/rectonote](https://github.com/Tharamac/Rectonote/tree/master/app/src/test/java/com/app/rectonote)
+* **Unit Test using Mockito and JUnit**: [/test/java/com/app/rectonote/](https://github.com/Tharamac/Rectonote/tree/master/app/src/test/java/com/app/rectonote)
 
 ## Why RectoNote?
 Idea of a song has tricky way to jot it.
@@ -30,11 +30,12 @@ Translate ideas into song tracks requires experience to make it fast. Sometimes 
 
 ## Tools and Technologies
 * Android Studio
-** Written in Kotlin and C++ (with Native Development Kit: NDK)
+  * Written in Kotlin and C++ (with Native Development Kit: NDK)
 * FFTW: Fast Fourier Transform Library
 * Lauszus/fftw3-android:  Compile FFTW into android
 * FluidSynth: Synthesizer API
 * Klaxon: Manipulate JSON in Kotlin
+* Unit Test: Mockito and JUnit
 
 ## Inside RectoNote 
 ![Picture3](https://user-images.githubusercontent.com/16939538/155741232-54db2610-5109-4b78-8011-aaf8fa8916f6.png)
