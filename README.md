@@ -1,4 +1,4 @@
-Unit# Rectonote
+# Rectonote
 
 ## Abstract
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**RectoNote** is an Android application that can jot song ideas by using voice recording converted into melody and chord progression tracks in MIDI. The tracks are stored in projects and can be played. 
